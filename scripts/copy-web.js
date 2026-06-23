@@ -14,15 +14,18 @@ fs.mkdirSync(www, { recursive: true });
 });
 
 // asset folders (copied recursively)
+function copyDir(src, dst) {
+  fs.mkdirSync(dst, { recursive: true });
+  fs.readdirSync(src).forEach(f => {
+    const s = path.join(src, f), d = path.join(dst, f);
+    if (fs.statSync(s).isDirectory()) copyDir(s, d);
+    else { fs.copyFileSync(s, d); console.log('✓ ' + path.relative(root, d)); }
+  });
+}
 ['icons', 'vendor', 'art'].forEach(dir => {
   const src = path.join(root, dir);
   if (!fs.existsSync(src)) return;
-  const dst = path.join(www, dir);
-  fs.mkdirSync(dst, { recursive: true });
-  fs.readdirSync(src).forEach(f => {
-    fs.copyFileSync(path.join(src, f), path.join(dst, f));
-    console.log('✓ ' + dir + '/' + f);
-  });
+  copyDir(src, path.join(www, dir));
 });
 
 console.log('→ www/ ready to deploy');

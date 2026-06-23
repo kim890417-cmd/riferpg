@@ -13,7 +13,7 @@
 <title>LIFE RPG</title>
 <script src="vendor/tailwind.js"></script>
 <style>
-  /* Orbitron — 로컬 번들(오프라인). 한글 본문은 기기 시스템 폰트 사용 */
+  /* Orbitron ??로컬 번들(?�프?�인). ?��? 본문?�?기기 ?�스???�트 ?�용 */
   @font-face {
     font-family:'Orbitron';
     font-style:normal; font-weight:400 900; font-display:swap;
@@ -25,7 +25,7 @@
 
   body {
     background-color:var(--bg-primary);
-    font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic','맑은 고딕',-apple-system,sans-serif;
+    font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic','맑�? 고딕',-apple-system,sans-serif;
     color:#e2e8f0; min-height:100vh; overflow-x:hidden;
     background-image:
       radial-gradient(ellipse at 20% 20%,rgba(16,185,129,.06) 0%,transparent 50%),
@@ -43,7 +43,7 @@
 
   .card { background:linear-gradient(135deg,rgba(26,39,68,.9),rgba(15,23,42,.9)); border:1px solid rgba(16,185,129,.2); border-radius:16px; backdrop-filter:blur(10px); }
 
-  /* ── RANK EMBLEM (계급 휘장) ── */
+  /* ?�?�?RANK EMBLEM (계급 ?�장) ?�?�?*/
   .rank-emblem { display:inline-flex; align-items:center; gap:6px; padding:3px 11px 3px 7px; border-radius:999px; font-size:.72rem; font-weight:800; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,.18); color:#fff; }
   .rank-emblem .rank-ico { font-size:.95rem; line-height:1; filter:drop-shadow(0 1px 2px rgba(0,0,0,.4)); }
   .rank-emblem .rank-pic { width:20px; height:20px; border-radius:50%; object-fit:cover; object-position:top center; border:1px solid rgba(255,255,255,.5); flex:none; }
@@ -51,37 +51,37 @@
   @keyframes artReveal { 0%{opacity:0; transform:scale(.6) rotate(-4deg)} 100%{opacity:1; transform:scale(1) rotate(0)} }
   .rank-emblem::after { content:''; position:absolute; top:0; left:-60%; width:50%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent); transform:skewX(-20deg); animation:emblemShine 3.5s ease-in-out infinite; }
   @keyframes emblemShine { 0%,55%{left:-60%} 80%,100%{left:130%} }
-  /* 큰 계급 메달 (레벨업 연출용) */
+  /* ??계급 메달 (?�벨???�출?? */
   .rank-medal { width:108px; height:108px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:3rem; margin:0 auto 10px; position:relative; border:3px solid rgba(255,255,255,.35); }
   .rank-medal::before { content:''; position:absolute; inset:-7px; border-radius:50%; border:2px dashed rgba(255,255,255,.25); animation:spin 9s linear infinite; }
   @keyframes spin { to{transform:rotate(360deg)} }
 
-  /* ── STAT CARDS ── */
+  /* ?�?�?STAT CARDS ?�?�?*/
   .stat-card { background:rgba(15,23,42,.8); border-radius:12px; border:1px solid rgba(255,255,255,.08); padding:10px 8px; text-align:center; transition:all .3s ease; }
   .stat-card.pulse-stat { animation:statPulse .5s ease; }
   @keyframes statPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
   .stat-bar-track { background:rgba(30,41,59,.8); border-radius:999px; overflow:hidden; height:4px; margin-top:4px; }
   .stat-bar-fill { height:100%; border-radius:999px; transition:width .6s cubic-bezier(.4,0,.2,1); }
 
-  /* ── PROGRESS TABS ── */
+  /* ?�?�?PROGRESS TABS ?�?�?*/
   .prog-tab { flex:1; padding:6px; text-align:center; border-radius:8px; cursor:pointer; font-family:'Orbitron',monospace; font-size:.6rem; letter-spacing:.1em; color:#64748b; transition:all .2s; border:1px solid transparent; }
   .prog-tab.active { background:rgba(16,185,129,.15); color:#10b981; border-color:rgba(16,185,129,.3); }
 
-  /* ── DAY CIRCLES ── */
+  /* ?�?�?DAY CIRCLES ?�?�?*/
   .day-circle { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.65rem; font-weight:600; border:2px solid rgba(30,41,59,.8); position:relative; overflow:hidden; cursor:pointer; }
   .day-fill { position:absolute; bottom:0; left:0; right:0; transition:height .5s ease; }
   .day-lbl { position:relative; z-index:1; }
   .day-circle.today { border-color:#10b981; box-shadow:0 0 8px rgba(16,185,129,.5); }
   .day-circle.viewing { outline:2px solid #fbbf24; outline-offset:1px; }
 
-  /* ── ACCORDION ── */
+  /* ?�?�?ACCORDION ?�?�?*/
   .accordion-content { max-height:0; overflow:hidden; transition:max-height .4s cubic-bezier(.4,0,.2,1); }
   .accordion-content.open { max-height:600px; }
   .accordion-icon { transition:transform .3s ease; }
   .accordion-icon.open { transform:rotate(180deg); }
   .nested-ref { background:rgba(15,23,42,.5); border:1px solid rgba(148,163,184,.25); border-radius:10px; padding:10px 12px; margin-bottom:12px; }
 
-  /* ── QUESTS ── */
+  /* ?�?�?QUESTS ?�?�?*/
   .quest-item { background:rgba(15,23,42,.7); border:1px solid rgba(56,189,248,.15); border-radius:12px; transition:all .3s ease; position:relative; overflow:hidden; }
   .quest-item.completed { opacity:.5; }
   .quest-item.completed .quest-text { text-decoration:line-through; color:#64748b; }
@@ -97,13 +97,13 @@
 
   .stat-badge { font-size:.65rem; padding:1px 6px; border-radius:4px; font-weight:700; font-family:'Orbitron',monospace; }
 
-  /* ── OVERLAYS ── */
+  /* ?�?�?OVERLAYS ?�?�?*/
   .overlay { position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:9999; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .4s ease; padding:16px; }
   .overlay.show { opacity:1; pointer-events:all; }
   .overlay-card { text-align:center; animation:popIn .5s cubic-bezier(.34,1.56,.64,1); }
   @keyframes popIn { from{transform:scale(.5);opacity:0} to{transform:scale(1);opacity:1} }
 
-  /* ── MODAL ── */
+  /* ?�?�?MODAL ?�?�?*/
   .modal-card { background:linear-gradient(135deg,rgba(26,39,68,.98),rgba(15,23,42,.98)); border:1px solid rgba(16,185,129,.3); border-radius:18px; width:100%; max-width:440px; max-height:85vh; overflow-y:auto; text-align:left; animation:popIn .35s cubic-bezier(.34,1.56,.64,1); }
   .cat-row { display:flex; align-items:center; gap:8px; background:rgba(15,23,42,.7); border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:8px; }
   .icon-input { width:40px; height:36px; text-align:center; font-size:1.1rem; background:rgba(15,23,42,.8); border:1px solid rgba(56,189,248,.25); border-radius:8px; color:#e2e8f0; outline:none; }
@@ -111,13 +111,13 @@
   .color-input::-webkit-color-swatch-wrapper { padding:0; }
   .color-input::-webkit-color-swatch { border:1px solid rgba(255,255,255,.2); border-radius:8px; }
 
-  /* ── FLOAT / BURST ── */
+  /* ?�?�?FLOAT / BURST ?�?�?*/
   .xp-float { position:fixed; font-family:'Orbitron',monospace; font-weight:700; font-size:1rem; pointer-events:none; z-index:9997; animation:floatUp 1.2s ease forwards; }
   @keyframes floatUp { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-80px) scale(1.3)} }
   @keyframes burstRing { 0%{transform:scale(.5);opacity:1} 100%{transform:scale(2.5);opacity:0} }
   .burst-ring { position:fixed; border-radius:50%; border:2px solid #10b981; pointer-events:none; z-index:9996; animation:burstRing .6s ease forwards; }
 
-  /* ── INPUTS ── */
+  /* ?�?�?INPUTS ?�?�?*/
   .game-input { background:rgba(15,23,42,.8); border:1px solid rgba(56,189,248,.3); border-radius:10px; color:#e2e8f0; outline:none; transition:border-color .3s,box-shadow .3s; }
   .game-input:focus { border-color:#10b981; box-shadow:0 0 0 3px rgba(16,185,129,.15); }
   .game-input::placeholder { color:#475569; }
@@ -153,6 +153,28 @@
   ::-webkit-scrollbar { width:4px; }
   ::-webkit-scrollbar-thumb { background:rgba(16,185,129,.4); border-radius:2px; }
   #particles { position:fixed; inset:0; pointer-events:none; z-index:0; }
+
+  /* ?�?�?CHARACTER PORTRAIT ?�?�?*/
+  .portrait-wrap { flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .portrait-img { width:128px; height:176px; object-fit:cover; border-radius:14px; border:2px solid rgba(255,255,255,.25); transition:all .6s cubic-bezier(.4,0,.2,1); cursor:pointer; }
+  .portrait-img:hover { transform:scale(1.03); }
+  .portrait-img.evolving { animation:evoReveal .8s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes evoReveal { 0%{opacity:0;transform:scale(.7) rotate(-3deg);filter:brightness(2)} 50%{filter:brightness(1.3)} 100%{opacity:1;transform:scale(1) rotate(0);filter:brightness(1)} }
+  .pet-badge { display:inline-flex; align-items:center; gap:4px; font-size:.7rem; background:rgba(15,23,42,.7); border:1px solid rgba(255,255,255,.12); border-radius:999px; padding:2px 10px 2px 4px; cursor:pointer; transition:all .2s; }
+  .pet-badge:hover { border-color:rgba(16,185,129,.4); }
+  .pet-badge-img { width:24px; height:24px; border-radius:50%; object-fit:cover; }
+  .pet-collection-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:8px; }
+  .pet-card { background:rgba(15,23,42,.7); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:10px 6px; text-align:center; transition:all .2s; }
+  .pet-card.unlocked { border-color:rgba(16,185,129,.35); }
+  .pet-card.equipped { border-color:rgba(16,185,129,.7); box-shadow:0 0 14px rgba(16,185,129,.25); }
+  .pet-card.locked { opacity:.4; filter:grayscale(.6); }
+  .pet-card-img { width:64px; height:64px; object-fit:cover; border-radius:10px; margin:0 auto 4px; display:block; }
+  .mood-bubble { position:absolute; top:-8px; right:-8px; font-size:1.2rem; filter:drop-shadow(0 2px 4px rgba(0,0,0,.6)); animation:moodPop .4s cubic-bezier(.34,1.56,.64,1); pointer-events:none; z-index:2; }
+  @keyframes moodPop { 0%{opacity:0;transform:scale(0) rotate(-20deg)} 100%{opacity:1;transform:scale(1) rotate(0)} }
+  .speech-bubble { position:absolute; top:-24px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.85); color:#e2e8f0; font-size:.65rem; padding:3px 10px; border-radius:999px; white-space:nowrap; border:1px solid rgba(16,185,129,.3); animation:speechPop .5s cubic-bezier(.34,1.56,.64,1) forwards; pointer-events:none; z-index:3; }
+  @keyframes speechPop { 0%{opacity:0;transform:translateX(-50%) translateY(8px) scale(.7)} 100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)} }
+  .collection-progress { background:rgba(15,23,42,.6); border-radius:999px; height:6px; overflow:hidden; }
+  .collection-progress-fill { height:100%; background:linear-gradient(90deg,#10b981,#38bdf8); border-radius:999px; transition:width .6s ease; }
   .month-dot { aspect-ratio:1; border-radius:3px; cursor:pointer; }
   .shop-item { background:rgba(15,23,42,.7); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:8px 6px; text-align:center; transition:all .2s; }
   .shop-item.equipped { border-color:rgba(16,185,129,.6); box-shadow:0 0 12px rgba(16,185,129,.25); }
@@ -169,9 +191,9 @@
     <div class="font-orbitron text-6xl font-black text-glow-emerald mb-4" style="color:#10b981">LEVEL UP!</div>
     <div class="font-orbitron text-2xl text-white mb-2">LV <span id="newLevelDisplay" class="text-glow-blue" style="color:#38bdf8">1</span></div>
     <div id="newTitleDisplay" class="text-sm font-bold mb-3" style="display:none"></div>
-    <div class="text-slate-400 text-sm mb-6">계속 나아가라, 용사여!</div>
-    <div id="levelUpEmblem" class="text-6xl mb-6">⚔️</div>
-    <button onclick="closeLevelUp()" class="btn-primary px-8 py-3 text-sm font-orbitron tracking-wider">CONTINUE →</button>
+    <div class="text-slate-400 text-sm mb-6">계속 ?�아가?? ?�사??</div>
+    <div id="levelUpEmblem" class="text-6xl mb-6">?�️</div>
+    <button onclick="closeLevelUp()" class="btn-primary px-8 py-3 text-sm font-orbitron tracking-wider">CONTINUE ??/button>
   </div>
 </div>
 
@@ -179,9 +201,9 @@
 <div class="overlay" id="statUpOverlay" style="background:rgba(0,0,0,.8);">
   <div class="overlay-card px-8 py-8">
     <div class="font-orbitron text-3xl font-black mb-2" id="statUpTitle" style="color:#10b981">UP!</div>
-    <div class="text-6xl mb-3" id="statUpIcon">⚔️</div>
+    <div class="text-6xl mb-3" id="statUpIcon">?�️</div>
     <div class="font-orbitron text-xl text-white mb-1">LEVEL <span id="statUpLv" style="color:#38bdf8">2</span></div>
-    <div class="text-slate-400 text-sm mb-6" id="statUpDesc">능력이 향상되었다!</div>
+    <div class="text-slate-400 text-sm mb-6" id="statUpDesc">?�력???�상?�었??</div>
     <button onclick="closeStatUp()" class="btn-primary px-6 py-2 text-xs font-orbitron tracking-wider">OK</button>
   </div>
 </div>
@@ -190,14 +212,14 @@
 <div class="overlay" id="catModal">
   <div class="modal-card p-5">
     <div class="flex items-center justify-between mb-1">
-      <div class="font-orbitron text-sm font-bold" style="color:#10b981">능력치 / 카테고리 관리</div>
+      <div class="font-orbitron text-sm font-bold" style="color:#10b981">?�력�?/ 카테고리 관�?/div>
       <button onclick="closeCatModal()" class="btn-danger" style="width:30px;height:30px">
         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
-    <div class="text-xs text-slate-500 mb-4">이모지·이름·색을 직접 바꿀 수 있어요. 할 일을 이 카테고리로 분류하고, 완료하면 해당 능력치가 성장합니다.</div>
+    <div class="text-xs text-slate-500 mb-4">?�모지·?�름·?�을 직접 바�? ???�어?? ???�을 ??카테고리�?분류?�고, ?�료?�면 ?�당 ?�력치�? ?�장?�니??</div>
     <div id="catEditList" class="space-y-2 mb-3"></div>
-    <button class="btn-primary w-full py-2.5 text-xs font-orbitron tracking-wider" onclick="addCategory()">+ 카테고리 추가</button>
+    <button class="btn-primary w-full py-2.5 text-xs font-orbitron tracking-wider" onclick="addCategory()">+ 카테고리 추�?</button>
   </div>
 </div>
 
@@ -205,71 +227,71 @@
 <div class="overlay" id="routineModal">
   <div class="modal-card p-5">
     <div class="flex items-center justify-between mb-1">
-      <div class="font-orbitron text-sm font-bold" style="color:#38bdf8">🔁 반복 업무 (루틴) 관리</div>
+      <div class="font-orbitron text-sm font-bold" style="color:#38bdf8">?�� 반복 ?�무 (루틴) 관�?/div>
       <button onclick="closeRoutineModal()" class="btn-danger" style="width:30px;height:30px">
         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
-    <div class="text-xs text-slate-500 mb-4">매일 자동으로 다시 생기는 할 일이에요. 여기서 삭제하면 내일부터 안 나타납니다.</div>
+    <div class="text-xs text-slate-500 mb-4">매일 ?�동?�로 ?�시 ?�기?????�이?�요. ?�기????��?�면 ?�일부?????��??�니??</div>
     <div id="routineEditList" class="space-y-2"></div>
-    <div id="routineEmpty" class="text-center text-slate-600 text-sm py-6">아직 반복 업무가 없습니다.<br>할 일 추가할 때 "매일 반복"을 켜보세요.</div>
+    <div id="routineEmpty" class="text-center text-slate-600 text-sm py-6">?�직 반복 ?�무가 ?�습?�다.<br>????추�?????"매일 반복"??켜보?�요.</div>
   </div>
 </div>
 
-<!-- SETTINGS MODAL (사운드 · 알림 · 백업) -->
+<!-- SETTINGS MODAL (?�운??· ?�림 · 백업) -->
 <div class="overlay" id="settingsModal">
   <div class="modal-card p-5">
     <div class="flex items-center justify-between mb-3">
-      <div class="font-orbitron text-sm font-bold" style="color:#10b981">⚙️ 설정</div>
+      <div class="font-orbitron text-sm font-bold" style="color:#10b981">?�️ ?�정</div>
       <button onclick="closeSettingsModal()" class="btn-danger" style="width:30px;height:30px">
         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
 
-    <!-- 사운드 -->
+    <!-- ?�운??-->
     <div class="cat-row mb-2">
-      <div style="font-size:1.1rem">🔊</div>
+      <div style="font-size:1.1rem">?��</div>
       <div class="flex-1 min-w-0">
-        <div class="text-sm font-medium">효과음</div>
-        <div class="text-xs text-slate-500">완료·레벨업·코인 사운드</div>
+        <div class="text-sm font-medium">?�과??/div>
+        <div class="text-xs text-slate-500">?�료·?�벨?�·코???�운??/div>
       </div>
       <button id="soundToggle" class="shop-buy" style="width:56px" onclick="toggleSound()">ON</button>
     </div>
 
-    <!-- 캐릭터 성별 -->
+    <!-- 캐릭???�별 -->
     <div class="cat-row mb-2">
-      <div style="font-size:1.1rem">🧝</div>
+      <div style="font-size:1.1rem">?��</div>
       <div class="flex-1 min-w-0">
-        <div class="text-sm font-medium">캐릭터</div>
-        <div class="text-xs text-slate-500">계급 일러스트 성별</div>
+        <div class="text-sm font-medium">캐릭??/div>
+        <div class="text-xs text-slate-500">계급 ?�러?�트 ?�별</div>
       </div>
       <div class="flex gap-1">
-        <button id="genderM" class="shop-buy" style="width:42px" onclick="setGender('m')">남</button>
-        <button id="genderF" class="shop-buy" style="width:42px" onclick="setGender('f')">여</button>
+        <button id="genderM" class="shop-buy" style="width:42px" onclick="setGender('m')">??/button>
+        <button id="genderF" class="shop-buy" style="width:42px" onclick="setGender('f')">??/button>
       </div>
     </div>
 
-    <!-- 알림 -->
+    <!-- ?�림 -->
     <div class="cat-row mb-1" style="flex-wrap:wrap">
-      <div style="font-size:1.1rem">🔔</div>
+      <div style="font-size:1.1rem">?��</div>
       <div class="flex-1 min-w-0">
-        <div class="text-sm font-medium">매일 알림</div>
-        <div class="text-xs text-slate-500">지정한 시간에 리마인드</div>
+        <div class="text-sm font-medium">매일 ?�림</div>
+        <div class="text-xs text-slate-500">지?�한 ?�간??리마?�드</div>
       </div>
       <input type="time" id="notifyTimeInput" class="game-input px-2 py-1 text-xs" style="width:92px" onchange="setNotifyTime(this.value)">
       <button id="notifyToggle" class="shop-buy" style="width:56px" onclick="toggleNotify()">OFF</button>
     </div>
-    <div class="text-xs text-slate-600 mb-4" id="notifyHint">⏰ 앱이 실행 중일 때 알려줘요. 폰을 완전히 닫으면 못 울릴 수 있어요.</div>
+    <div class="text-xs text-slate-600 mb-4" id="notifyHint">???�이 ?�행 중일 ???�려줘요. ?�을 ?�전???�으�?�??�릴 ???�어??</div>
 
     <!-- 백업 -->
     <div class="border-t border-slate-700 pt-3">
-      <div class="text-sm font-medium mb-1">💾 백업 / 복원</div>
-      <div class="text-xs text-slate-500 mb-3">모든 데이터를 파일로 저장하고 새 기기에서 복원해요. 폰 바꿔도 안전.</div>
-      <button class="btn-primary w-full py-2.5 text-xs font-orbitron tracking-wider mb-2" onclick="exportData()">📤 내보내기 (백업 파일 저장)</button>
-      <button class="btn-primary w-full py-2.5 text-xs font-orbitron tracking-wider" style="background:linear-gradient(135deg,#38bdf8,#a78bfa)" onclick="document.getElementById('importFile').click()">📥 가져오기 (복원)</button>
+      <div class="text-sm font-medium mb-1">?�� 백업 / 복원</div>
+      <div class="text-xs text-slate-500 mb-3">모든 ?�이?��? ?�일�??�?�하�???기기?�서 복원?�요. ??바꿔???�전.</div>
+      <button class="btn-primary w-full py-2.5 text-xs font-orbitron tracking-wider mb-2" onclick="exportData()">?�� ?�보?�기 (백업 ?�일 ?�??</button>
+      <button class="btn-primary w-full py-2.5 text-xs font-orbitron tracking-wider" style="background:linear-gradient(135deg,#38bdf8,#a78bfa)" onclick="document.getElementById('importFile').click()">?�� 가?�오�?(복원)</button>
       <input type="file" id="importFile" accept="application/json,.json" style="display:none" onchange="importData(event)">
-      <div class="text-xs text-slate-600 text-center mt-3">마지막 백업: <span id="lastBackupInfo">기록 없음</span></div>
-      <div class="text-xs text-amber-500/70 text-center mt-1">⚠️ 복원하면 현재 데이터를 덮어씁니다.</div>
+      <div class="text-xs text-slate-600 text-center mt-3">마�?�?백업: <span id="lastBackupInfo">기록 ?�음</span></div>
+      <div class="text-xs text-amber-500/70 text-center mt-1">?�️ 복원?�면 ?�재 ?�이?��? ??��?�니??</div>
     </div>
   </div>
 </div>
@@ -278,20 +300,20 @@
 <div class="overlay" id="rewardModal">
   <div class="modal-card p-5">
     <div class="flex items-center justify-between mb-1">
-      <div class="font-orbitron text-sm font-bold" style="color:#fbbf24">🎁 셀프 리워드 관리</div>
+      <div class="font-orbitron text-sm font-bold" style="color:#fbbf24">?�� ?�??리워??관�?/div>
       <button onclick="closeRewardModal()" class="btn-danger" style="width:30px;height:30px">
         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
-    <div class="text-xs text-slate-500 mb-4">목표 레벨을 달성하면 스스로에게 줄 <b class="text-amber-400">현실 보상</b>을 등록하세요. 레벨에 도달하면 잠금이 풀려 받을 수 있어요.</div>
+    <div class="text-xs text-slate-500 mb-4">목표 ?�벨???�성?�면 ?�스로에�?�?<b class="text-amber-400">?�실 보상</b>???�록?�세?? ?�벨???�달?�면 ?�금???�??받을 ???�어??</div>
     <div id="rewardEditList" class="space-y-2 mb-4"></div>
     <div class="space-y-2 border-t border-slate-700 pt-3">
-      <input type="text" class="game-input w-full px-3 py-2 text-sm" id="rewardText" placeholder="보상 내용 (예: 사고 싶던 신발 사기)">
+      <input type="text" class="game-input w-full px-3 py-2 text-sm" id="rewardText" placeholder="보상 ?�용 (?? ?�고 ?�던 ?�발 ?�기)">
       <div class="flex gap-2 items-center">
-        <span class="text-xs text-slate-400 flex-shrink-0">달성 목표</span>
+        <span class="text-xs text-slate-400 flex-shrink-0">?�성 목표</span>
         <span class="text-xs text-slate-500 flex-shrink-0">Lv.</span>
         <input type="number" min="1" value="10" class="game-input w-16 px-2 py-2 text-sm text-center" id="rewardLevel">
-        <button class="btn-primary flex-1 py-2 text-xs font-orbitron tracking-wider" onclick="addReward()">+ 추가</button>
+        <button class="btn-primary flex-1 py-2 text-xs font-orbitron tracking-wider" onclick="addReward()">+ 추�?</button>
       </div>
     </div>
   </div>
@@ -301,19 +323,37 @@
 <div class="overlay" id="shopModal">
   <div class="modal-card p-5">
     <div class="flex items-center justify-between mb-1">
-      <div class="font-orbitron text-sm font-bold" style="color:#fbbf24">🛒 상점</div>
+      <div class="font-orbitron text-sm font-bold" style="color:#fbbf24">?�� ?�점</div>
       <button onclick="closeShopModal()" class="btn-danger" style="width:30px;height:30px">
         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
-    <div class="text-xs mb-3" id="shopBalance" style="color:#fbbf24">🪙 0  💎 0</div>
+    <div class="text-xs mb-3" id="shopBalance" style="color:#fbbf24">?�� 0  ?�� 0</div>
     <div class="seg mb-3">
-      <div class="seg-btn active" id="shopTabAvatar" onclick="switchShopTab('avatar')">🧙 아바타</div>
-      <div class="seg-btn" id="shopTabTheme" onclick="switchShopTab('theme')">🎨 테마</div>
-      <div class="seg-btn" id="shopTabBg" onclick="switchShopTab('bg')">🖼️ 배경</div>
+      <div class="seg-btn active" id="shopTabAvatar" onclick="switchShopTab('avatar')">?�� ?�바?�?/div>
+      <div class="seg-btn" id="shopTabTheme" onclick="switchShopTab('theme')">?�� ?�마</div>
+      <div class="seg-btn" id="shopTabBg" onclick="switchShopTab('bg')">?���?배경</div>
     </div>
     <div id="shopGrid" class="grid grid-cols-3 gap-2"></div>
-    <div class="text-xs text-slate-600 text-center mt-3">할 일을 완료하면 🪙코인이 떨어져요. 가끔 💎젬도!</div>
+    <div class="text-xs text-slate-600 text-center mt-3">???�을 ?�료?�면 ?��코인???�어?�요. 가???��?�도!</div>
+  </div>
+</div>
+
+<!-- PET COLLECTION MODAL -->
+<div class="overlay" id="petModal">
+  <div class="modal-card p-5">
+    <div class="flex items-center justify-between mb-1">
+      <div class="font-orbitron text-sm font-bold" style="color:#10b981">?�� ??컬렉??/div>
+      <button onclick="closePetModal()" class="btn-danger" style="width:30px;height:30px">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="text-xs text-slate-500 mb-3">계급???�라가�??�로???�을 만날 ???�어?? ?��? 캐릭?��? ?�께 ?�닙?�다!</div>
+    <div class="flex items-center gap-2 mb-3">
+      <div class="flex-1 collection-progress"><div class="collection-progress-fill" id="petProgressFill" style="width:0%"></div></div>
+      <span class="font-orbitron text-xs" style="color:#10b981" id="petProgressText">0/8</span>
+    </div>
+    <div class="pet-collection-grid" id="petGrid"></div>
   </div>
 </div>
 
@@ -321,14 +361,14 @@
 <div class="overlay" id="reportModal">
   <div class="modal-card p-5">
     <div class="flex items-center justify-between mb-1">
-      <div class="font-orbitron text-sm font-bold" style="color:#38bdf8">📊 회고 리포트</div>
+      <div class="font-orbitron text-sm font-bold" style="color:#38bdf8">?�� ?�고 리포??/div>
       <button onclick="closeReportModal()" class="btn-danger" style="width:30px;height:30px">
         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
     <div class="seg mb-4 mt-2">
-      <div class="seg-btn active" id="reportTabMonth" onclick="switchReportScope('month')">🗓️ 월간 회고</div>
-      <div class="seg-btn" id="reportTabYear" onclick="switchReportScope('year')">🎉 연간 결산</div>
+      <div class="seg-btn active" id="reportTabMonth" onclick="switchReportScope('month')">?���??�간 ?�고</div>
+      <div class="seg-btn" id="reportTabYear" onclick="switchReportScope('year')">?�� ?�간 결산</div>
     </div>
     <div id="reportBody"></div>
   </div>
@@ -345,36 +385,45 @@
         <div class="text-slate-400 text-xs" id="currentDate"></div>
       </div>
       <div class="flex items-center gap-2">
-        <button onclick="openReportModal()" class="navbtn" title="회고 리포트" style="font-size:.85rem">📊</button>
-        <button onclick="openShopModal()" class="navbtn" title="상점" style="font-size:.85rem">🛒</button>
-        <button onclick="openSettingsModal()" class="navbtn" title="설정" style="font-size:.85rem">⚙️</button>
+        <button onclick="openReportModal()" class="navbtn" title="?�고 리포?? style="font-size:.85rem">?��</button>
+        <button onclick="openPetModal()" class="navbtn" title="??컬렉?? style="font-size:.85rem">?��</button>
+        <button onclick="openShopModal()" class="navbtn" title="?�점" style="font-size:.85rem">?��</button>
+        <button onclick="openSettingsModal()" class="navbtn" title="?�정" style="font-size:.85rem">?�️</button>
         <div class="pulse-dot"></div>
         <span class="text-emerald-400 text-xs font-medium">ONLINE</span>
       </div>
     </div>
     <div class="card p-4 glow-emerald">
-      <div class="flex items-center justify-between mb-3">
-        <div class="flex items-center gap-3">
-          <div id="levelCircle" style="width:48px;height:48px;background:linear-gradient(135deg,#10b981,#38bdf8);border-radius:50%;display:flex;align-items:center;justify-content:center;">
-            <span class="font-orbitron font-black text-white text-xs" id="levelAvatar">LV</span>
+      <div class="flex gap-4">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-3 mb-2">
+            <div id="levelCircle" style="width:48px;height:48px;background:linear-gradient(135deg,#10b981,#38bdf8);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+              <span class="font-orbitron font-black text-white text-xs" id="levelAvatar">LV</span>
+            </div>
+            <div>
+              <div class="font-orbitron font-black text-3xl text-glow-emerald" id="levelDisplay" style="color:#10b981;line-height:1">1</div>
+              <div class="text-xs font-bold" id="rankTitle" style="color:#94a3b8">?�� ?�돌??/div>
+            </div>
           </div>
-          <div>
-            <div class="font-orbitron font-black text-3xl text-glow-emerald" id="levelDisplay" style="color:#10b981;line-height:1">1</div>
-            <div class="text-xs font-bold" id="rankTitle" style="color:#94a3b8">🌾 떠돌이</div>
+          <div class="xp-bar-container h-3 w-full mb-1">
+            <div class="xp-bar-fill h-full" id="xpBar" style="width:0%"></div>
           </div>
+          <div class="flex justify-between text-xs text-slate-500 mb-2">
+            <span><span id="currentXP">0</span> / <span id="maxXP">100</span> XP</span>
+            <span id="xpToNext">?�음까�? 100 XP</span>
+          </div>
+          <div class="text-xs text-slate-500">?�� ?�속 <span id="streakDisplay" class="text-amber-400">0</span>??<span id="streakBadge"></span></div>
+          <div class="text-xs mt-1"><span id="coinDisplay" style="color:#fbbf24">?�� 0</span><span id="gemDisplay" style="color:#c4b5fd" class="ml-2">?�� 0</span></div>
+          <div class="text-xs text-slate-600 mt-1" id="nextTitle">?�음 �?�� ?��? · Lv.4</div>
         </div>
-        <div class="text-right">
-          <div class="stat-chip mb-1"><span id="currentXP">0</span> / <span id="maxXP">100</span> XP</div>
-          <div class="text-slate-500 text-xs">🔥 연속 <span id="streakDisplay" class="text-amber-400">0</span>일 <span id="streakBadge"></span></div>
-          <div class="text-xs mt-1"><span id="coinDisplay" style="color:#fbbf24">🪙 0</span><span id="gemDisplay" style="color:#c4b5fd" class="ml-2">💎 0</span></div>
+        <div class="portrait-wrap">
+          <div class="relative">
+            <img id="characterPortrait" class="portrait-img" src="art/peasant-m.webp" alt="" onclick="onCharacterClick()">
+            <div id="moodBubble" class="mood-bubble" style="display:none"></div>
+            <div id="speechBubble" class="speech-bubble" style="display:none"></div>
+          </div>
+          <div id="petDisplay" onclick="openPetModal()" style="cursor:pointer"></div>
         </div>
-      </div>
-      <div class="xp-bar-container h-4 w-full">
-        <div class="xp-bar-fill h-full" id="xpBar" style="width:0%"></div>
-      </div>
-      <div class="flex justify-between text-xs text-slate-500 mt-1">
-        <span id="nextTitle">다음 칭호 평민 · Lv.4</span>
-        <span id="xpToNext">다음 레벨까지 100 XP</span>
       </div>
     </div>
   </div>
@@ -399,7 +448,7 @@
           <div id="monthRing" class="flex-shrink-0"></div>
           <div class="flex-1 min-w-0">
             <div class="font-orbitron text-sm font-bold" style="color:#a78bfa" id="monthPct">0%</div>
-            <div class="text-slate-500 text-xs mb-2" id="monthLabel">활성 일수</div>
+            <div class="text-slate-500 text-xs mb-2" id="monthLabel">?�성 ?�수</div>
             <div class="grid gap-1" id="monthGrid" style="grid-template-columns:repeat(7,1fr)"></div>
           </div>
         </div>
@@ -410,12 +459,12 @@
           <div id="yearRing" class="flex-shrink-0"></div>
           <div>
             <div class="font-orbitron text-sm font-bold" style="color:#38bdf8" id="yearPct">0%</div>
-            <div class="text-slate-500 text-xs mb-1" id="yearLabel">올해 활성 일수</div>
+            <div class="text-slate-500 text-xs mb-1" id="yearLabel">?�해 ?�성 ?�수</div>
             <div class="text-xs text-slate-600" id="yearGoalPreview"></div>
           </div>
         </div>
       </div>
-      <div class="text-center text-xs text-slate-600 mt-3">💡 날짜를 누르면 그날의 할 일을 보고 체크할 수 있어요</div>
+      <div class="text-center text-xs text-slate-600 mt-3">?�� ?�짜�??�르�?그날?????�을 보고 체크?????�어??/div>
     </div>
   </div>
 
@@ -423,7 +472,7 @@
   <div class="mb-4">
     <div class="flex items-center justify-between mb-2">
       <div class="section-title" style="margin-bottom:0">QUESTS</div>
-      <button onclick="openRoutineModal()" class="text-xs text-slate-400 flex items-center gap-1 hover:text-sky-400 transition" style="cursor:pointer">🔁 <span>루틴 관리</span></button>
+      <button onclick="openRoutineModal()" class="text-xs text-slate-400 flex items-center gap-1 hover:text-sky-400 transition" style="cursor:pointer">?�� <span>루틴 관�?/span></button>
     </div>
     <div class="card p-4">
 
@@ -433,52 +482,52 @@
           <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
         </button>
         <div class="text-center">
-          <div class="font-orbitron text-sm font-bold" id="viewDateLabel" style="color:#10b981">오늘</div>
+          <div class="font-orbitron text-sm font-bold" id="viewDateLabel" style="color:#10b981">?�늘</div>
           <div class="text-xs text-slate-500" id="viewDateSub"></div>
         </div>
         <button class="navbtn" id="nextDayBtn" onclick="shiftDay(1)">
           <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
         </button>
       </div>
-      <button id="backToTodayBtn" onclick="goToday()" class="w-full mb-4 py-2 text-xs rounded-lg" style="display:none;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.3);color:#fbbf24;cursor:pointer">📅 과거 기록 보는 중 — 오늘로 돌아가기</button>
+      <button id="backToTodayBtn" onclick="goToday()" class="w-full mb-4 py-2 text-xs rounded-lg" style="display:none;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.3);color:#fbbf24;cursor:pointer">?�� 과거 기록 보는 �????�늘�??�아가�?/button>
 
       <div class="flex gap-2 mb-4">
         <div class="flex-1 text-center py-2 rounded-lg" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2)">
           <div class="font-orbitron font-bold text-emerald-400 text-lg" id="completedCount">0</div>
-          <div class="text-xs text-slate-500">완료</div>
+          <div class="text-xs text-slate-500">?�료</div>
         </div>
         <div class="flex-1 text-center py-2 rounded-lg" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2)">
           <div class="font-orbitron font-bold text-sky-400 text-lg" id="totalCount">0</div>
-          <div class="text-xs text-slate-500">전체</div>
+          <div class="text-xs text-slate-500">?�체</div>
         </div>
         <div class="flex-1 text-center py-2 rounded-lg" style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2)">
           <div class="font-orbitron font-bold text-amber-400 text-lg" id="todayXP">0</div>
-          <div class="text-xs text-slate-500">획득 XP</div>
+          <div class="text-xs text-slate-500">?�득 XP</div>
         </div>
       </div>
 
       <div class="space-y-2 mb-3">
         <input type="text" class="game-input w-full px-3 py-2 text-sm" id="questInput"
-               placeholder="할 일을 입력하세요..." onkeydown="if(event.key==='Enter')addQuest()">
+               placeholder="???�을 ?�력?�세??.." onkeydown="if(event.key==='Enter')addQuest()">
         <div class="flex gap-2">
           <select class="game-input flex-1 px-2 py-2 text-xs" id="statSelect"></select>
           <select class="game-input w-20 px-2 py-2 text-xs" id="difficultySelect">
-            <option value="easy">하 ⚡</option>
-            <option value="medium" selected>중 🔥</option>
-            <option value="hard">상 ⚔️</option>
+            <option value="easy">????/option>
+            <option value="medium" selected>�??��</option>
+            <option value="hard">???�️</option>
           </select>
         </div>
         <div class="seg" id="repeatSeg">
-          <div class="seg-btn active" data-rep="0" onclick="setRepeat(0)">📌 오늘만</div>
-          <div class="seg-btn" data-rep="1" onclick="setRepeat(1)">🔁 매일 반복</div>
+          <div class="seg-btn active" data-rep="0" onclick="setRepeat(0)">?�� ?�늘�?/div>
+          <div class="seg-btn" data-rep="1" onclick="setRepeat(1)">?�� 매일 반복</div>
         </div>
       </div>
       <button class="btn-primary w-full py-3 text-sm font-orbitron tracking-widest mb-4" onclick="addQuest()">+ ADD QUEST</button>
 
       <div id="questList"></div>
       <div id="emptyState" class="text-center py-8 text-slate-600">
-        <div class="text-4xl mb-2">⚔️</div>
-        <div class="text-sm">할 일이 없습니다.<br>새로운 퀘스트를 추가하세요!</div>
+        <div class="text-4xl mb-2">?�️</div>
+        <div class="text-sm">???�이 ?�습?�다.<br>?�로???�스?��? 추�??�세??</div>
       </div>
     </div>
   </div>
@@ -487,29 +536,29 @@
   <div class="mb-4">
     <div class="section-title">OBJECTIVES</div>
 
-    <!-- WEEKLY — 항상 펼쳐진 눈에 띄는 카드 -->
+    <!-- WEEKLY ????�� ?�쳐�??�에 ?�는 카드 -->
     <div class="card mb-3" style="border-color:rgba(16,185,129,.45);box-shadow:0 0 18px rgba(16,185,129,.12)">
       <div class="p-4">
         <div class="flex items-center gap-3 mb-3">
-          <span class="text-xl">🗓️</span>
+          <span class="text-xl">?���?/span>
           <div>
             <div class="font-orbitron text-xs font-bold" style="color:#10b981">WEEKLY QUEST</div>
-            <div class="text-slate-500 text-xs" id="weekRangeLabel">이번 주</div>
+            <div class="text-slate-500 text-xs" id="weekRangeLabel">?�번 �?/div>
           </div>
         </div>
         <textarea class="game-input w-full p-3 text-sm" id="weeklyGoal"
-                  placeholder="이번 주에 꼭 해낼 일을 적어보세요..." oninput="saveGoals()"></textarea>
+                  placeholder="?�번 주에 �??�낼 ?�을 ?�어보세??.." oninput="saveGoals()"></textarea>
       </div>
     </div>
 
-    <!-- MONTHLY — 펼치면 이번 주 계획이 보임 -->
+    <!-- MONTHLY ???�치�??�번 �?계획??보임 -->
     <div class="card mb-3" style="border-color:rgba(167,139,250,.2)">
       <button class="w-full flex items-center justify-between p-4 text-left" onclick="toggleAccordion('monthly')">
         <div class="flex items-center gap-3">
-          <span class="text-xl">📋</span>
+          <span class="text-xl">?��</span>
           <div>
             <div class="font-orbitron text-xs font-bold" style="color:#a78bfa">MONTHLY QUEST</div>
-            <div class="text-slate-500 text-xs" id="monthlyPreview">목표를 입력하세요</div>
+            <div class="text-slate-500 text-xs" id="monthlyPreview">목표�??�력?�세??/div>
           </div>
         </div>
         <svg class="accordion-icon w-5 h-5 text-slate-400" id="monthlyIcon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -519,24 +568,24 @@
       <div class="accordion-content" id="monthlyContent">
         <div class="px-4 pb-4 border-t border-slate-700 pt-3">
           <div class="nested-ref" style="border-color:rgba(16,185,129,.4)">
-            <div class="text-xs font-bold mb-1" style="color:#10b981">🗓️ 이번 주 계획</div>
-            <div class="text-xs text-slate-400" id="monthlyWeekRef" style="white-space:pre-wrap">아직 비어 있어요</div>
+            <div class="text-xs font-bold mb-1" style="color:#10b981">?���??�번 �?계획</div>
+            <div class="text-xs text-slate-400" id="monthlyWeekRef" style="white-space:pre-wrap">?�직 비어 ?�어??/div>
           </div>
-          <div class="text-xs text-slate-500 mb-2">📋 <span id="currentMonth"></span>월의 목표</div>
+          <div class="text-xs text-slate-500 mb-2">?�� <span id="currentMonth"></span>?�의 목표</div>
           <textarea class="game-input w-full p-3 text-sm" id="monthlyGoal"
-                    placeholder="예: 운동 20회, 독서 3권..." oninput="saveGoals()"></textarea>
+                    placeholder="?? ?�동 20?? ?�서 3�?.." oninput="saveGoals()"></textarea>
         </div>
       </div>
     </div>
 
-    <!-- YEARLY — 펼치면 이번 달 계획이 보임 -->
+    <!-- YEARLY ???�치�??�번 ??계획??보임 -->
     <div class="card" style="border-color:rgba(56,189,248,.2)">
       <button class="w-full flex items-center justify-between p-4 text-left" onclick="toggleAccordion('yearly')">
         <div class="flex items-center gap-3">
-          <span class="text-xl">🎯</span>
+          <span class="text-xl">?��</span>
           <div>
             <div class="font-orbitron text-xs font-bold" style="color:#38bdf8">YEARLY QUEST</div>
-            <div class="text-slate-500 text-xs" id="yearlyPreview">목표를 입력하세요</div>
+            <div class="text-slate-500 text-xs" id="yearlyPreview">목표�??�력?�세??/div>
           </div>
         </div>
         <svg class="accordion-icon w-5 h-5 text-slate-400" id="yearlyIcon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -546,12 +595,12 @@
       <div class="accordion-content" id="yearlyContent">
         <div class="px-4 pb-4 border-t border-slate-700 pt-3">
           <div class="nested-ref" style="border-color:rgba(167,139,250,.4)">
-            <div class="text-xs font-bold mb-1" style="color:#a78bfa">📋 이번 달 계획</div>
-            <div class="text-xs text-slate-400" id="yearlyMonthRef" style="white-space:pre-wrap">아직 비어 있어요</div>
+            <div class="text-xs font-bold mb-1" style="color:#a78bfa">?�� ?�번 ??계획</div>
+            <div class="text-xs text-slate-400" id="yearlyMonthRef" style="white-space:pre-wrap">?�직 비어 ?�어??/div>
           </div>
-          <div class="text-xs text-slate-500 mb-2">🎯 <span id="currentYear"></span>년의 목표</div>
+          <div class="text-xs text-slate-500 mb-2">?�� <span id="currentYear"></span>?�의 목표</div>
           <textarea class="game-input w-full p-3 text-sm" id="yearlyGoal"
-                    placeholder="예: 체중 10kg 감량, 토익 900점 달성..." oninput="saveGoals()"></textarea>
+                    placeholder="?? 체중 10kg 감량, ?�익 900???�성..." oninput="saveGoals()"></textarea>
         </div>
       </div>
     </div>
@@ -561,23 +610,23 @@
   <div class="mb-4">
     <div class="flex items-center justify-between mb-2">
       <div class="section-title" style="margin-bottom:0">SELF REWARDS</div>
-      <button onclick="openRewardModal()" class="text-xs text-slate-400 flex items-center gap-1 hover:text-amber-400 transition" style="cursor:pointer">🎁 <span>보상 관리</span></button>
+      <button onclick="openRewardModal()" class="text-xs text-slate-400 flex items-center gap-1 hover:text-amber-400 transition" style="cursor:pointer">?�� <span>보상 관�?/span></button>
     </div>
     <div class="card p-4">
       <div id="rewardList"></div>
       <div id="rewardEmpty" class="text-center py-6 text-slate-600">
-        <div class="text-3xl mb-2">🎁</div>
-        <div class="text-sm">레벨을 달성하면 받을 현실 보상을 등록해보세요!<br>(예: Lv.20 달성 → 사고 싶던 신발 사기)</div>
+        <div class="text-3xl mb-2">?��</div>
+        <div class="text-sm">?�벨???�성?�면 받을 ?�실 보상???�록?�보?�요!<br>(?? Lv.20 ?�성 ???�고 ?�던 ?�발 ?�기)</div>
       </div>
     </div>
   </div>
 
-  <!-- CHARACTER STATS (능력치 — 참고용, 맨 아래) -->
+  <!-- CHARACTER STATS (?�력�???참고?? �??�래) -->
   <div class="mb-4">
     <div class="flex items-center justify-between mb-2">
       <div class="section-title" style="margin-bottom:0">CHARACTER STATS</div>
       <button onclick="openCatModal()" class="text-xs text-slate-400 flex items-center gap-1 hover:text-emerald-400 transition" style="cursor:pointer">
-        ⚙️ <span>편집</span>
+        ?�️ <span>?�집</span>
       </button>
     </div>
     <div class="card p-3">
@@ -592,60 +641,57 @@
      style="background:rgba(16,185,129,.9);color:white;backdrop-filter:blur(10px)"></div>
 
 <script>
-// ─────────────────────────────────────────────
-//  CONSTANTS
-// ─────────────────────────────────────────────
-const XP_PER_LEVEL   = 100;
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  CONSTANTS
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?const XP_PER_LEVEL   = 100;
 const STAT_XP_PER_LV = 100;
 const XP_MAP   = { easy:10, medium:30, hard:50 };
-const DIFF_LBL  = { easy:'하', medium:'중', hard:'상' };
-const DIFF_ICON = { easy:'⚡', medium:'🔥', hard:'⚔️' };
+const DIFF_LBL  = { easy:'??, medium:'�?, hard:'?? };
+const DIFF_ICON = { easy:'??, medium:'?��', hard:'?�️' };
 const PALETTE = ['#fbbf24','#ef4444','#38bdf8','#a78bfa','#10b981','#f472b6','#fb923c','#22d3ee'];
 
 const DEFAULT_CATEGORIES = [
-  { id:'must',     name:'오늘 반드시', icon:'⭐', color:'#fbbf24', xp:0, level:1 },
-  { id:'exercise', name:'운동',       icon:'💪', color:'#ef4444', xp:0, level:1 },
-  { id:'work',     name:'일/업무',    icon:'💼', color:'#38bdf8', xp:0, level:1 },
-  { id:'study',    name:'독서/공부',  icon:'📚', color:'#a78bfa', xp:0, level:1 },
-  { id:'health',   name:'건강/습관',  icon:'💚', color:'#10b981', xp:0, level:1 }
+  { id:'must',     name:'?�늘 반드??, icon:'�?, color:'#fbbf24', xp:0, level:1 },
+  { id:'exercise', name:'?�동',       icon:'?��', color:'#ef4444', xp:0, level:1 },
+  { id:'work',     name:'???�무',    icon:'?��', color:'#38bdf8', xp:0, level:1 },
+  { id:'study',    name:'?�서/공�?',  icon:'?��', color:'#a78bfa', xp:0, level:1 },
+  { id:'health',   name:'건강/?��?',  icon:'?��', color:'#10b981', xp:0, level:1 }
 ];
 
-// ── 계급 / 칭호 (레벨 구간별) ── color=대표색, c2=그라데이션 보조색, glow=발광 강도
+// ?�?�?계급 / �?�� (?�벨 구간�? ?�?�?color=?�?�색, c2=그라?�이??보조?? glow=발광 강도
 const RANKS = [
-  { name:'평민', icon:'🌾', art:'peasant', color:'#94a3b8', c2:'#cbd5e1', glow:0,    tiers:[ {name:'떠돌이',min:1},  {name:'평민',min:4},      {name:'자유민',min:7} ] },
-  { name:'종자', icon:'🛡️', art:'squire',  color:'#a3e635', c2:'#65a30d', glow:.3,   tiers:[ {name:'견습 종자',min:10},{name:'종자',min:13},   {name:'숙련 종자',min:17} ] },
-  { name:'기사', icon:'⚔️', art:'knight',  color:'#38bdf8', c2:'#6366f1', glow:.45,  tiers:[ {name:'수습 기사',min:20},{name:'기사',min:25},   {name:'정예 기사',min:30} ] },
-  { name:'영주', icon:'🏰', art:'lord',    color:'#22d3ee', c2:'#0ea5e9', glow:.55,  tiers:[ {name:'영주',min:35},   {name:'대영주',min:43} ] },
-  { name:'귀족', icon:'👑', art:'noble',   color:'#a78bfa', c2:'#7c3aed', glow:.7,   tiers:[ {name:'준남작',min:50}, {name:'남작',min:55}, {name:'준자작',min:60}, {name:'자작',min:65}, {name:'준백작',min:70}, {name:'백작',min:75}, {name:'후작',min:80}, {name:'공작',min:85} ] },
-  { name:'왕',   icon:'🤴', art:'king',    color:'#fbbf24', c2:'#f59e0b', glow:.85,  tiers:[ {name:'왕',min:90} ] },
-  { name:'황제', icon:'🦅', art:'emperor', color:'#fb923c', c2:'#ef4444', glow:.95,  tiers:[ {name:'황제',min:110} ] },
-  { name:'전설', icon:'✨', art:'legend',  color:'#f472b6', c2:'#a78bfa', glow:1,    tiers:[ {name:'전설',min:120},  {name:'신화',min:150},    {name:'초월자',min:200} ] }
+  { name:'?��?', icon:'?��', art:'peasant', color:'#94a3b8', c2:'#cbd5e1', glow:0,    tiers:[ {name:'?�돌??,min:1},  {name:'?��?',min:4},      {name:'?�유�?,min:7} ] },
+  { name:'종자', icon:'?���?, art:'squire',  color:'#a3e635', c2:'#65a30d', glow:.3,   tiers:[ {name:'견습 종자',min:10},{name:'종자',min:13},   {name:'?�련 종자',min:17} ] },
+  { name:'기사', icon:'?�️', art:'knight',  color:'#38bdf8', c2:'#6366f1', glow:.45,  tiers:[ {name:'?�습 기사',min:20},{name:'기사',min:25},   {name:'?�예 기사',min:30} ] },
+  { name:'?�주', icon:'?��', art:'lord',    color:'#22d3ee', c2:'#0ea5e9', glow:.55,  tiers:[ {name:'?�주',min:35},   {name:'?�?�주',min:43} ] },
+  { name:'귀�?, icon:'?��', art:'noble',   color:'#a78bfa', c2:'#7c3aed', glow:.7,   tiers:[ {name:'준?�작',min:50}, {name:'?�작',min:55}, {name:'준?�작',min:60}, {name:'?�작',min:65}, {name:'준백작',min:70}, {name:'백작',min:75}, {name:'?�작',min:80}, {name:'공작',min:85} ] },
+  { name:'??,   icon:'?��', art:'king',    color:'#fbbf24', c2:'#f59e0b', glow:.85,  tiers:[ {name:'??,min:90} ] },
+  { name:'?�제', icon:'?��', art:'emperor', color:'#fb923c', c2:'#ef4444', glow:.95,  tiers:[ {name:'?�제',min:110} ] },
+  { name:'?�설', icon:'??, art:'legend',  color:'#f472b6', c2:'#a78bfa', glow:1,    tiers:[ {name:'?�설',min:120},  {name:'?�화',min:150},    {name:'초월??,min:200} ] }
 ];
 const RANK_FLAT = RANKS.flatMap(r => r.tiers.map(t => ({ rankName:r.name, icon:r.icon, art:r.art, color:r.color, c2:r.c2, glow:r.glow, title:t.name, min:t.min })));
 
-// 계급 보상 배경 — 메이저 8계급에 도달하면 해금, 코인 없이 업적으로 획득.
-const BACKGROUNDS = RANKS.map(r => ({ id:'bg_' + r.art, art:r.art, icon:r.icon, name:r.name + ' 세계', min:r.tiers[0].min, color:r.color }));
+// 계급 보상 배경 ??메이?�?8계급???�달?�면 ?�금, 코인 ?�이 ?�적?�로 ?�득.
+const BACKGROUNDS = RANKS.map(r => ({ id:'bg_' + r.art, art:r.art, icon:r.icon, name:r.name + ' ?�계', min:r.tiers[0].min, color:r.color }));
 function bgUnlocked(b) { return (state.level || 1) >= b.min; }
 
-// ── 상점 아이템 ──
-const AVATARS = [
+// ?�?�??�점 ?�이???�?�?const AVATARS = [
   { id:'av_lv',     emoji:'LV', name:'기본',     cost:0 },
-  { id:'av_sword',  emoji:'⚔️', name:'검사',     cost:30 },
-  { id:'av_fox',    emoji:'🦊', name:'여우',     cost:60 },
-  { id:'av_wizard', emoji:'🧙', name:'마법사',   cost:90 },
-  { id:'av_knight', emoji:'🛡️', name:'기사',     cost:120 },
-  { id:'av_robot',  emoji:'🤖', name:'로봇',     cost:150 },
-  { id:'av_ninja',  emoji:'🥷', name:'닌자',     cost:200 },
-  { id:'av_king',   emoji:'🤴', name:'왕',       cost:300 },
-  { id:'av_dragon', emoji:'🐉', name:'드래곤',   gem:true, gemCost:3 },
-  { id:'av_unicorn',emoji:'🦄', name:'유니콘',   gem:true, gemCost:5 }
+  { id:'av_sword',  emoji:'?�️', name:'검??,     cost:30 },
+  { id:'av_fox',    emoji:'?��', name:'?�우',     cost:60 },
+  { id:'av_wizard', emoji:'?��', name:'마법??,   cost:90 },
+  { id:'av_knight', emoji:'?���?, name:'기사',     cost:120 },
+  { id:'av_robot',  emoji:'?��', name:'로봇',     cost:150 },
+  { id:'av_ninja',  emoji:'?��', name:'?�자',     cost:200 },
+  { id:'av_king',   emoji:'?��', name:'??,       cost:300 },
+  { id:'av_dragon', emoji:'?��', name:'?�래�?,   gem:true, gemCost:3 },
+  { id:'av_unicorn',emoji:'?��', name:'?�니�?,   gem:true, gemCost:5 }
 ];
 const THEMES = [
-  { id:'th_default', name:'에메랄드(기본)', cost:0,   c1:'#10b981', c2:'#38bdf8', bg:'#0f172a' },
-  { id:'th_ocean',   name:'오션',          cost:60,  c1:'#38bdf8', c2:'#a78bfa', bg:'#0a1626' },
-  { id:'th_forest',  name:'포레스트',      cost:60,  c1:'#22c55e', c2:'#a3e635', bg:'#0d1a12' },
-  { id:'th_sunset',  name:'선셋',          cost:90,  c1:'#fb923c', c2:'#f472b6', bg:'#1a0f1a' },
-  { id:'th_crimson', name:'크림슨',        cost:120, c1:'#ef4444', c2:'#fb923c', bg:'#1a0d0d' },
+  { id:'th_default', name:'?�메?�드(기본)', cost:0,   c1:'#10b981', c2:'#38bdf8', bg:'#0f172a' },
+  { id:'th_ocean',   name:'?�션',          cost:60,  c1:'#38bdf8', c2:'#a78bfa', bg:'#0a1626' },
+  { id:'th_forest',  name:'?�레?�트',      cost:60,  c1:'#22c55e', c2:'#a3e635', bg:'#0d1a12' },
+  { id:'th_sunset',  name:'?�셋',          cost:90,  c1:'#fb923c', c2:'#f472b6', bg:'#1a0f1a' },
+  { id:'th_crimson', name:'?�림??,        cost:120, c1:'#ef4444', c2:'#fb923c', bg:'#1a0d0d' },
   { id:'th_royal',   name:'로열',          gem:true, gemCost:2, c1:'#a78bfa', c2:'#fbbf24', bg:'#14101f' }
 ];
 function shopItem(id) { return [...AVATARS, ...THEMES].find(i => i.id === id); }
@@ -657,77 +703,63 @@ function rankInfo(level) {
   return { rankName:cur.rankName, title:cur.title, icon:cur.icon, art:cur.art, color:cur.color, c2:cur.c2, glow:cur.glow, next };
 }
 
-// 계급 일러스트 경로 (성별별 1세트). 파일 없으면 호출부에서 이모지로 폴백.
+// 계급 ?�러?�트 경로 (?�별�?1?�트). ?�일 ?�으�??�출부?�서 ?�모지�??�백.
 function artSrc(slug, gender) { return `art/${slug}-${gender || 'm'}.webp`; }
-// 계급 옆 작은 원형 아이콘 (페인팅 그대로 축소). 로드 실패 시 이모지로 대체.
+// 계급 ???��? ?�형 ?�이�?(?�인??그�?�?축소). 로드 ?�패 ???�모지�??��?
 function rankIconHTML(ri) {
   return `<img class="rank-pic" src="${artSrc(ri.art, state.gender)}" data-emoji="${ri.icon}" alt="" onerror="rankImgFail(this)">`;
 }
 function rankImgFail(img) {
   const s = document.createElement('span');
-  s.className = 'rank-ico'; s.textContent = img.dataset.emoji || '🏅';
+  s.className = 'rank-ico'; s.textContent = img.dataset.emoji || '?��';
   img.replaceWith(s);
 }
 function levelArtFail(img) {
   const e = img.closest('#levelUpEmblem');
-  if (e && e._medal) e.innerHTML = e._medal; else if (e) e.innerHTML = '⚔️';
+  if (e && e._medal) e.innerHTML = e._medal; else if (e) e.innerHTML = '?�️';
 }
 
-// ─────────────────────────────────────────────
-//  STATE
-// ─────────────────────────────────────────────
-let state = {
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  STATE
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?let state = {
   level:1, currentXP:0, totalXP:0,
   categories: JSON.parse(JSON.stringify(DEFAULT_CATEGORIES)),
   routines: [],          // { id, text, catId, difficulty }
   days: {},              // dateKey -> { quests:[{id,text,catId,difficulty,xp,completed,routineId}] }
   legacyHistory: {},     // old aggregate counts (read-only fallback for timeline)
-  rewards: [],           // { id, level, text, claimed } — 셀프 리워드
-  coins: 0, gems: 0,     // 화폐 (완료 시 랜덤 드롭)
-  owned: [],             // 구매한 상점 아이템 id
+  rewards: [],           // { id, level, text, claimed } ???�??리워??  coins: 0, gems: 0,     // ?�폐 (?�료 ???�덤 ?�롭)
+  owned: [],             // 구매???�점 ?�이??id
   equipped: { avatar:null, theme:'th_default', bg:null },
-  celebratedStreak: 0,   // 마지막으로 축하한 스트릭 배지 단계
-  soundOn: true,         // 효과음
-  notifyOn: false, notifyTime: '21:00',   // 매일 알림
-  gender: 'm',           // 계급 일러스트 성별 'm' | 'f'
-  yearlyGoal:'', monthlyGoal:'', weeklyGoal:''
-};
+  celebratedStreak: 0, soundOn: true, notifyOn: false, notifyTime: '21:00', gender: 'm', yearlyGoal:'', monthlyGoal:'', weeklyGoal:'', pets: [], equippedPet: null
 const STREAK_BADGES = [
-  { d:100, icon:'👑', label:'100일 전설' },
-  { d:30,  icon:'💎', label:'30일' },
-  { d:14,  icon:'⭐', label:'14일' },
-  { d:7,   icon:'🔥', label:'7일' }
+  { d:100, icon:'?��', label:'100???�설' },
+  { d:30,  icon:'?��', label:'30?? },
+  { d:14,  icon:'�?, label:'14?? },
+  { d:7,   icon:'?��', label:'7?? }
 ];
 function streakBadge(s) { return STREAK_BADGES.find(b => s >= b.d) || null; }
 let currentTab = 'week';
 let viewDate   = null;   // dateKey currently viewed
 let repeatMode = 0;      // 0 = one-off, 1 = routine
 
-// ─────────────────────────────────────────────
-//  UTILS
-// ─────────────────────────────────────────────
-function dateKey(d) {
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  UTILS
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?function dateKey(d) {
   d = d || new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 function todayKey() { return dateKey(); }
 function parseKey(k) { const [y,m,d] = k.split('-').map(Number); return new Date(y, m-1, d); }
-// 이번 주 일요일(주의 끝) — 여기까지는 미리 계획(미래 퀘스트 등록) 가능
-function weekEndKey() {
-  const d = new Date(); const dow = d.getDay();          // 0=일
-  d.setDate(d.getDate() + (dow === 0 ? 0 : 7 - dow));    // 월~토면 이번 주 일요일로
+// ?�번 �??�요??주의 ?? ???�기까�???미리 계획(미래 ?�스???�록) 가??function weekEndKey() {
+  const d = new Date(); const dow = d.getDay();          // 0=??  d.setDate(d.getDate() + (dow === 0 ? 0 : 7 - dow));    // ???�면 ?�번 �??�요?�로
   return dateKey(d);
 }
 function isFutureKey(k) { return parseKey(k) > parseKey(todayKey()); }
 function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function debounce(fn, ms) { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); }; }
-function getCat(id) { return state.categories.find(c=>c.id===id) || { id:'_', name:'기타', icon:'📦', color:'#64748b', xp:0, level:1 }; }
+function getCat(id) { return state.categories.find(c=>c.id===id) || { id:'_', name:'기�?', icon:'?��', color:'#64748b', xp:0, level:1 }; }
 
-// ─────────────────────────────────────────────
-//  STORAGE
-// ─────────────────────────────────────────────
-function saveState() { localStorage.setItem('lifeRPG_v3', JSON.stringify(state)); }
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  STORAGE
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?function saveState() { localStorage.setItem('lifeRPG_v3', JSON.stringify(state)); }
 
 function loadState() {
   const v3 = localStorage.getItem('lifeRPG_v3');
@@ -748,6 +780,8 @@ function loadState() {
       if (typeof state.notifyOn !== 'boolean') state.notifyOn = false;
       if (!state.notifyTime) state.notifyTime = '21:00';
       if (state.gender !== 'f') state.gender = state.gender || 'm';
+      if (!state.pets) state.pets = [];
+      if (!state.equippedPet) state.equippedPet = null;
     } catch(e) {}
     return;
   }
@@ -778,10 +812,8 @@ function loadState() {
   } catch(e) {}
 }
 
-// ─────────────────────────────────────────────
-//  DAY HELPERS
-// ─────────────────────────────────────────────
-function getDay(k) {
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  DAY HELPERS
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?function getDay(k) {
   if (!state.days[k]) state.days[k] = { quests: [] };
   return state.days[k];
 }
@@ -820,10 +852,8 @@ function computeStreak() {
   return streak;
 }
 
-// ─────────────────────────────────────────────
-//  INIT
-// ─────────────────────────────────────────────
-function init() {
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  INIT
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?function init() {
   loadState();
   viewDate = todayKey();
   ensureRoutines(viewDate);
@@ -842,34 +872,36 @@ function init() {
   applyAvatar();
   scheduleNotify();
   initParticles();
+  applyPortrait();
+  initPets();
+  renderPetDisplay();
+  updateMood();
   document.getElementById('yearlyGoal').addEventListener('input', debounce(()=>{ saveGoals(); renderProgress(); }, 500));
   document.getElementById('monthlyGoal').addEventListener('input', debounce(saveGoals, 500));
   document.getElementById('weeklyGoal').addEventListener('input', debounce(saveGoals, 500));
 }
 
 function renderDate() {
-  const n = new Date(), days=['일','월','화','수','목','금','토'];
+  const n = new Date(), days=['??,'??,'??,'??,'�?,'�?,'??];
   document.getElementById('currentDate').textContent =
     `${n.getFullYear()}.${String(n.getMonth()+1).padStart(2,'0')}.${String(n.getDate()).padStart(2,'0')} (${days[n.getDay()]})`;
   document.getElementById('currentYear').textContent  = n.getFullYear();
   document.getElementById('currentMonth').textContent = n.getMonth()+1;
-  // 이번 주 범위 (월~일)
+  // ?�번 �?범위 (????
   const dow = n.getDay();
   const mon = new Date(n); mon.setDate(n.getDate() - (dow === 0 ? 6 : dow - 1));
   const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
   const fmt = d => `${d.getMonth()+1}/${d.getDate()}`;
-  document.getElementById('weekRangeLabel').textContent = `이번 주 · ${fmt(mon)} ~ ${fmt(sun)}`;
+  document.getElementById('weekRangeLabel').textContent = `?�번 �?· ${fmt(mon)} ~ ${fmt(sun)}`;
 }
 
-// ─────────────────────────────────────────────
-//  XP & LEVEL
-// ─────────────────────────────────────────────
-function renderXP() {
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  XP & LEVEL
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?function renderXP() {
   const pct = (state.currentXP / XP_PER_LEVEL) * 100;
   document.getElementById('levelDisplay').textContent = state.level;
   document.getElementById('currentXP').textContent    = state.currentXP;
   document.getElementById('xpBar').style.width        = pct + '%';
-  document.getElementById('xpToNext').textContent     = `다음 레벨까지 ${XP_PER_LEVEL - state.currentXP} XP`;
+  document.getElementById('xpToNext').textContent     = `?�음 ?�벨까�? ${XP_PER_LEVEL - state.currentXP} XP`;
   const s = computeStreak();
   document.getElementById('streakDisplay').textContent = s;
   const bd = document.getElementById('streakBadge');
@@ -879,6 +911,8 @@ function renderXP() {
   }
   renderRank();
   renderRewards();
+  applyPortrait();
+  updateMood();
 }
 
 function maybeCelebrateStreak() {
@@ -888,10 +922,9 @@ function maybeCelebrateStreak() {
   if (b && b.d > cs) {
     state.celebratedStreak = b.d;
     saveState();
-    setTimeout(() => { showToast(`${b.icon} ${b.label} 연속 달성! 대단해요`, '#fbbf24'); spawnParticleBurst(); }, 700);
+    setTimeout(() => { showToast(`${b.icon} ${b.label} ?�속 ?�성! ?�?�해??, '#fbbf24'); spawnParticleBurst(); }, 700);
   } else if (!b && cs > 0) {
-    state.celebratedStreak = 0;   // 스트릭이 끊기면 다음에 다시 축하 가능
-    saveState();
+    state.celebratedStreak = 0;   // ?�트�?�� ?�기�??�음???�시 축하 가??    saveState();
   }
 }
 
@@ -903,8 +936,8 @@ function renderRank() {
         ${rankIconHTML(ri)}<span>${ri.rankName}·${ri.title}</span></span>`;
   }
   const nx = document.getElementById('nextTitle');
-  if (nx) nx.textContent = ri.next ? `다음 칭호 ${ri.next.title} · Lv.${ri.next.min}` : '👑 최고 칭호 달성!';
-  // 레벨 원형 테두리에 계급 발광 더하기 (배경 그라데이션은 테마가 담당)
+  if (nx) nx.textContent = ri.next ? `?�음 �?�� ${ri.next.title} · Lv.${ri.next.min}` : '?�� 최고 �?�� ?�성!';
+  // ?�벨 ?�형 ?�두리에 계급 발광 ?�하�?(배경 그라?�이?��? ?�마가 ?�당)
   const circ = document.getElementById('levelCircle');
   if (circ) circ.style.boxShadow = ri.glow > 0 ? `0 0 ${8+ri.glow*18}px ${ri.color}` : '';
 }
@@ -927,6 +960,7 @@ function gainXP(amount, x, y, catId) {
     const ri = rankInfo(state.level);
     triggerLevelUp(ri, ri.title !== oldTitle, ri.rankName !== oldRank);
     checkRewardUnlocks(oldLevel, state.level);
+    checkPetUnlocks();
   }
   renderXP();
   saveState();
@@ -948,51 +982,41 @@ function triggerLevelUp(ri, titleChanged, rankChanged) {
   const tEl = document.getElementById('newTitleDisplay');
   const emb = document.getElementById('levelUpEmblem');
   if (titleChanged && ri) {
-    tEl.innerHTML = `<span style="color:${ri.color}">${ri.rankName} · ${ri.title}</span> 칭호 획득!`;
+    tEl.innerHTML = `<span style="color:${ri.color}">${ri.rankName} �� ${ri.title}</span> Īȣ ȹ��!`;
     tEl.style.display = 'block';
   } else {
     tEl.style.display = 'none';
   }
   if (emb) {
-    const medal = `<div class="rank-medal" style="background:linear-gradient(135deg,${ri.color},${ri.c2});box-shadow:0 0 ${20+ri.glow*30}px ${ri.color}">${ri.icon}</div>`;
-    if (rankChanged && ri) {
-      // 계급 진화: 풀 일러스트 등장 (없으면 메달로 폴백)
-      emb._medal = medal;
-      emb.innerHTML = `<img class="levelup-art" src="${artSrc(ri.art, state.gender)}" alt="" onerror="levelArtFail(this)" style="box-shadow:0 0 ${24+ri.glow*40}px ${ri.color};border-color:${ri.color}">`;
-    } else if (titleChanged) {
-      emb.innerHTML = medal;
-    } else {
-      emb.innerHTML = '⚔️';
-    }
+    const pet = getEquippedPet();
+    const petHtml = pet
+      ? `<div style="margin-top:-10px;font-size:.85rem;color:#94a3b8"><img src="art/pets/${pet.file}" style="width:32px;height:32px;border-radius:50%;vertical-align:middle;margin-right:4px">${pet.emoji} ${pet.name}</div>`
+      : '';
+    emb.innerHTML =
+      `<img class="levelup-art" src="art/${ri.art}-${state.gender}.webp" alt="" style="box-shadow:0 0 ${24+ri.glow*40}px ${ri.color};border-color:${ri.color}">` +
+      `<div style="margin-top:8px;font-size:2.5rem">${ri.icon}</div>` +
+      petHtml;
   }
   const ov = document.getElementById('levelUpOverlay');
-  if (rankChanged && ri) {
-    // 계급의 '세계' 배경을 전체에 깔기 (파일 없으면 그라데이션만 남아 기존 어두운 배경처럼 보임)
-    ov.style.backgroundImage = `linear-gradient(rgba(2,6,23,.72),rgba(2,6,23,.9)), url('art/bg-${ri.art}.webp')`;
-    ov.style.backgroundSize = 'cover';
-    ov.style.backgroundPosition = 'center';
-    ov._bgUnlocked = true;   // 새 계급 배경 해금 → 닫을 때 안내
-  } else {
-    ov.style.backgroundImage = '';
-  }
+  ov.style.backgroundImage = `linear-gradient(rgba(2,6,23,.72),rgba(2,6,23,.9)), url('art/bg-${ri.art}.webp')`;
+  ov.style.backgroundSize = 'cover';
+  ov.style.backgroundPosition = 'center';
+  if (rankChanged) ov._bgUnlocked = true;
   ov.classList.add('show');
   spawnParticleBurst();
   sfx('level');
-}
-function closeLevelUp() {
+}function closeLevelUp() {
   const ov = document.getElementById('levelUpOverlay');
   ov.classList.remove('show');
   ov.style.backgroundImage = '';
   if (ov._bgUnlocked) {
     ov._bgUnlocked = false;
-    setTimeout(() => showToast('새 배경 해금! 🖼️ 상점 배경 탭에서 적용하세요', '#38bdf8'), 400);
+    setTimeout(() => showToast('??배경 ?�금! ?���??�점 배경 ??��???�용?�세??, '#38bdf8'), 400);
   }
 }
 
-// ─────────────────────────────────────────────
-//  STAT / CATEGORY SYSTEM
-// ─────────────────────────────────────────────
-function gainStatXP(catId, amount, x, y) {
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  STAT / CATEGORY SYSTEM
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?function gainStatXP(catId, amount, x, y) {
   const c = getCat(catId);
   c.xp += amount;
   setTimeout(() => showXPFloat(c.icon + ' +' + c.name, x, y + 35, c.color), 150);
@@ -1046,15 +1070,13 @@ function triggerStatUp(catId) {
   document.getElementById('statUpTitle').style.color = c.color;
   document.getElementById('statUpIcon').textContent  = c.icon;
   document.getElementById('statUpLv').textContent    = c.level;
-  document.getElementById('statUpDesc').textContent  = c.name + ' 능력이 향상되었다!';
+  document.getElementById('statUpDesc').textContent  = c.name + ' ?�력???�상?�었??';
   document.getElementById('statUpOverlay').classList.add('show');
 }
 function closeStatUp() { document.getElementById('statUpOverlay').classList.remove('show'); }
 
-// ─────────────────────────────────────────────
-//  CATEGORY MANAGE MODAL
-// ─────────────────────────────────────────────
-function openCatModal()  { renderCatEditList(); document.getElementById('catModal').classList.add('show'); }
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  CATEGORY MANAGE MODAL
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?function openCatModal()  { renderCatEditList(); document.getElementById('catModal').classList.add('show'); }
 function closeCatModal() {
   document.getElementById('catModal').classList.remove('show');
   renderStats(); renderCatSelect(); renderQuests(); saveState();
@@ -1080,11 +1102,11 @@ function updateCat(id, field, val) {
 }
 function addCategory() {
   const color = PALETTE[state.categories.length % PALETTE.length];
-  state.categories.push({ id:uid(), name:'새 카테고리', icon:'✨', color, xp:0, level:1 });
+  state.categories.push({ id:uid(), name:'??카테고리', icon:'??, color, xp:0, level:1 });
   saveState(); renderCatEditList(); renderStats(); renderCatSelect();
 }
 function deleteCategory(id) {
-  if (state.categories.length <= 1) { showToast('카테고리는 최소 1개 필요해요', '#ef4444'); return; }
+  if (state.categories.length <= 1) { showToast('카테고리??최소 1�??�요?�요', '#ef4444'); return; }
   const fallback = state.categories.find(c=>c.id!==id).id;
   // reassign quests & routines using this category
   Object.values(state.days).forEach(day => day.quests.forEach(q => { if (q.catId===id) q.catId = fallback; }));
@@ -1093,10 +1115,8 @@ function deleteCategory(id) {
   saveState(); renderCatEditList(); renderStats(); renderCatSelect(); renderQuests();
 }
 
-// ─────────────────────────────────────────────
-//  ROUTINE MANAGE MODAL
-// ─────────────────────────────────────────────
-function openRoutineModal()  { renderRoutineList(); document.getElementById('routineModal').classList.add('show'); }
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  ROUTINE MANAGE MODAL
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?function openRoutineModal()  { renderRoutineList(); document.getElementById('routineModal').classList.add('show'); }
 function closeRoutineModal() { document.getElementById('routineModal').classList.remove('show'); }
 function renderRoutineList() {
   const wrap = document.getElementById('routineEditList');
@@ -1152,31 +1172,29 @@ function deleteRoutine(id) {
   const day = state.days[todayKey()];
   if (day) day.quests = day.quests.filter(q => !(q.routineId===id && !q.completed));
   saveState(); renderRoutineList(); renderQuests(); renderProgress();
-  showToast('반복 업무 삭제됨', '#64748b');
+  showToast('반복 ?�무 ??��??, '#64748b');
 }
 
-// ─────────────────────────────────────────────
-//  DATE NAVIGATION
-// ─────────────────────────────────────────────
-function renderDateNav() {
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  DATE NAVIGATION
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?function renderDateNav() {
   const isToday = viewDate === todayKey();
   const d = parseKey(viewDate);
-  const days = ['일','월','화','수','목','금','토'];
+  const days = ['??,'??,'??,'??,'�?,'�?,'??];
   const sub = `${d.getMonth()+1}.${String(d.getDate()).padStart(2,'0')} (${days[d.getDay()]})`;
-  let label = '오늘';
+  let label = '?�늘';
   const diff = Math.round((parseKey(viewDate) - parseKey(todayKey())) / 86400000);
-  if (diff === -1) label = '어제';
-  else if (diff === 1) label = '내일';
-  else if (diff < 0) label = `${-diff}일 전`;
-  else if (diff > 0) label = `${diff}일 후`;
+  if (diff === -1) label = '?�제';
+  else if (diff === 1) label = '?�일';
+  else if (diff < 0) label = `${-diff}????;
+  else if (diff > 0) label = `${diff}????;
   document.getElementById('viewDateLabel').textContent = label;
   document.getElementById('viewDateLabel').style.color = isToday ? '#10b981' : (diff > 0 ? '#a78bfa' : '#fbbf24');
-  document.getElementById('viewDateSub').textContent = diff > 0 ? sub + ' · 📝 미리 계획' : sub;
-  // 이번 주 일요일까지는 미래 계획 허용
+  document.getElementById('viewDateSub').textContent = diff > 0 ? sub + ' · ?�� 미리 계획' : sub;
+  // ?�번 �??�요?�까지??미래 계획 ?�용
   document.getElementById('nextDayBtn').disabled = parseKey(viewDate) >= parseKey(weekEndKey());
   document.getElementById('backToTodayBtn').style.display = isToday ? 'none' : 'block';
   const back = document.getElementById('backToTodayBtn');
-  if (back) back.textContent = diff > 0 ? '📅 미래 계획 보는 중 — 오늘로 돌아가기' : '📅 과거 기록 보는 중 — 오늘로 돌아가기';
+  if (back) back.textContent = diff > 0 ? '?�� 미래 계획 보는 �????�늘�??�아가�? : '?�� 과거 기록 보는 �????�늘�??�아가�?;
 }
 function setViewDate(k) {
   viewDate = k;
@@ -1186,17 +1204,15 @@ function setViewDate(k) {
 function shiftDay(delta) {
   const d = parseKey(viewDate); d.setDate(d.getDate() + delta);
   const k = dateKey(d);
-  if (delta > 0 && parseKey(k) > parseKey(weekEndKey())) {   // 이번 주 끝까지만 미리 계획
-    showToast('미리 계획은 이번 주까지만 가능해요 📝', '#a78bfa'); return;
+  if (delta > 0 && parseKey(k) > parseKey(weekEndKey())) {   // ?�번 �??�까지�?미리 계획
+    showToast('미리 계획?�??�번 주까지�?가?�해???��', '#a78bfa'); return;
   }
   setViewDate(k);
 }
 function goToday() { setViewDate(todayKey()); }
 
-// ─────────────────────────────────────────────
-//  PROGRESS TIMELINE
-// ─────────────────────────────────────────────
-function switchTab(tab) {
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  PROGRESS TIMELINE
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?function switchTab(tab) {
   currentTab = tab;
   ['week','month','year'].forEach(t => {
     document.getElementById('tab-' + t).classList.toggle('active', t === tab);
@@ -1215,7 +1231,7 @@ function renderWeek() {
   const today = new Date(), dow = today.getDay();
   const mon = new Date(today);
   mon.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1));
-  const lbls = ['월','화','수','목','금','토','일'];
+  const lbls = ['??,'??,'??,'�?,'�?,'??,'??];
   const tk = todayKey();
   let html = '', done = 0, tot = 0;
 
@@ -1229,8 +1245,7 @@ function renderWeek() {
     const pct = h.total > 0 ? Math.round((h.completed / h.total) * 100) : 0;
     done += h.completed; tot += h.total;
 
-    const planned  = isFuture && h.total > 0;   // 미래인데 이미 계획해둔 날
-    const fillColor = pct >= 100 ? '#10b981' : pct > 0 ? '#38bdf8' : 'rgba(30,41,59,.5)';
+    const planned  = isFuture && h.total > 0;   // 미래?�데 ?��? 계획?�둔 ??    const fillColor = pct >= 100 ? '#10b981' : pct > 0 ? '#38bdf8' : 'rgba(30,41,59,.5)';
     const txtColor  = isToday ? '#10b981' : isFuture ? (planned ? '#a78bfa' : '#475569') : '#94a3b8';
     const borderCol = isToday ? '#10b981' : planned ? 'rgba(167,139,250,.55)' : 'rgba(30,41,59,.8)';
 
@@ -1240,7 +1255,7 @@ function renderWeek() {
            style="border-color:${borderCol};${isFuture&&!planned?'opacity:.45':''}">
         ${planned ? '' : `<div class="day-fill" style="height:${pct}%;background:${fillColor}66"></div>`}
         <div class="day-lbl font-orbitron" style="color:${txtColor};font-size:.6rem">
-          ${isFuture ? (planned ? '📝' : '+') : (h.total > 0 ? h.completed : (isToday ? '·' : '-'))}
+          ${isFuture ? (planned ? '?��' : '+') : (h.total > 0 ? h.completed : (isToday ? '·' : '-'))}
         </div>
       </div>
       <div style="font-size:.5rem;color:${planned?'#a78bfa':'#334155'}">${planned ? '계획' : (!isFuture && h.total > 0 ? pct+'%' : '')}</div>
@@ -1248,7 +1263,7 @@ function renderWeek() {
   }
   document.getElementById('weekDays').innerHTML = html;
   document.getElementById('weekSummary').textContent =
-    tot > 0 ? `이번 주 ${done}/${tot} 퀘스트 완료` : '이번 주 퀘스트를 추가해보세요!';
+    tot > 0 ? `?�번 �?${done}/${tot} ?�스???�료` : '?�번 �??�스?��? 추�??�보?�요!';
 }
 
 function renderMonth() {
@@ -1265,7 +1280,7 @@ function renderMonth() {
   const pct = daysElapsed > 0 ? Math.round((active / daysElapsed) * 100) : 0;
 
   document.getElementById('monthPct').textContent  = pct + '%';
-  document.getElementById('monthLabel').textContent = `${active} / ${daysElapsed}일 활성`;
+  document.getElementById('monthLabel').textContent = `${active} / ${daysElapsed}???�성`;
   document.getElementById('monthRing').innerHTML    = svgRing(pct, '#a78bfa', 80);
 
   const firstDow = new Date(y, m, 1).getDay();
@@ -1301,10 +1316,10 @@ function renderYear() {
   }
   const pct = dayOfYear > 0 ? Math.round((active / dayOfYear) * 100) : 0;
   document.getElementById('yearPct').textContent   = pct + '%';
-  document.getElementById('yearLabel').textContent = `${active} / ${dayOfYear}일 활성 (${y})`;
+  document.getElementById('yearLabel').textContent = `${active} / ${dayOfYear}???�성 (${y})`;
   document.getElementById('yearRing').innerHTML    = svgRing(pct, '#38bdf8', 80);
   const yg = (state.yearlyGoal||'').trim();
-  document.getElementById('yearGoalPreview').textContent = yg ? '🎯 ' + (yg.length > 40 ? yg.slice(0,40)+'…' : yg) : '';
+  document.getElementById('yearGoalPreview').textContent = yg ? '?�� ' + (yg.length > 40 ? yg.slice(0,40)+'?? : yg) : '';
 }
 
 function svgRing(pct, color, size) {
@@ -1319,10 +1334,8 @@ function svgRing(pct, color, size) {
   </svg>`;
 }
 
-// ─────────────────────────────────────────────
-//  QUESTS
-// ─────────────────────────────────────────────
-function setRepeat(v) {
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  QUESTS
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?function setRepeat(v) {
   repeatMode = v;
   document.querySelectorAll('#repeatSeg .seg-btn').forEach(b =>
     b.classList.toggle('active', Number(b.dataset.rep) === v));
@@ -1346,12 +1359,11 @@ function addQuest() {
   inp.value = '';
   saveState(); renderQuests(); renderProgress();
   const c = getCat(catId);
-  showToast(`${repeatMode?'🔁 반복 ':''}퀘스트 등록! ${c.icon} ${c.name} ${DIFF_ICON[difficulty]} ${XP_MAP[difficulty]}XP`, '#38bdf8');
+  showToast(`${repeatMode?'?�� 반복 ':''}?�스???�록! ${c.icon} ${c.name} ${DIFF_ICON[difficulty]} ${XP_MAP[difficulty]}XP`, '#38bdf8');
 }
 
 function toggleQuest(id, event) {
-  if (isFutureKey(viewDate)) {            // 미래 퀘스트는 그날이 되어야 완료 가능
-    showToast('미래 퀘스트는 그날 완료할 수 있어요 ⏳', '#a78bfa'); return;
+  if (isFutureKey(viewDate)) {            // 미래 ?�스?�는 그날???�어???�료 가??    showToast('미래 ?�스?�는 그날 ?�료?????�어????, '#a78bfa'); return;
   }
   const day = getDay(viewDate);
   const q = day.quests.find(q => q.id === id);
@@ -1366,7 +1378,7 @@ function toggleQuest(id, event) {
     sfx('complete');
     gainXP(q.xp, x, y, q.catId);
     spawnBurstRing(x, y, getCat(q.catId).color);
-    const drop = coinRoll(q.difficulty);          // 랜덤 코인/젬 드롭
+    const drop = coinRoll(q.difficulty);          // ?�덤 코인/???�롭
     q.coinAward = drop.coins; q.gemAward = drop.gems;
     state.coins += drop.coins; state.gems += drop.gems;
     showCoinFloat(drop, x, y);
@@ -1375,7 +1387,7 @@ function toggleQuest(id, event) {
     maybeCelebrateStreak();
   } else {
     loseXP(q.xp, q.catId);
-    state.coins = Math.max(0, state.coins - (q.coinAward || 0));  // 체크 해제 시 회수
+    state.coins = Math.max(0, state.coins - (q.coinAward || 0));  // 체크 ?�제 ???�수
     state.gems  = Math.max(0, state.gems  - (q.gemAward  || 0));
     q.coinAward = 0; q.gemAward = 0;
     renderCurrency(); saveState();
@@ -1396,7 +1408,7 @@ function deleteQuest(id) {
   }
   day.quests = day.quests.filter(q => q.id !== id);
   saveState(); renderXP(); renderStats(); renderQuests(); renderProgress();
-  showToast(q.routineId ? '오늘 항목만 삭제 (루틴은 유지)' : '퀘스트 삭제됨', '#64748b');
+  showToast(q.routineId ? '?�늘 ??���???�� (루틴?�??��?)' : '?�스????��??, '#64748b');
 }
 
 function editQuest(id) {
@@ -1419,7 +1431,7 @@ function commitQuestEdit(id, inp) {
   const t = inp.value.trim();
   if (!inp.dataset.cancel && t && t !== q.text) {
     q.text = t;
-    // routine instance → keep the routine master in sync too
+    // routine instance ??keep the routine master in sync too
     if (q.routineId) { const r = state.routines.find(r => r.id === q.routineId); if (r) r.text = t; }
     saveState();
   }
@@ -1446,7 +1458,7 @@ function renderQuests() {
   // orphan quests (category deleted)
   const orphans = quests.filter(q => !state.categories.some(c=>c.id===q.catId));
   if (orphans.length) {
-    html += `<div class="cat-group-title" style="color:#64748b"><span>📦</span><span>기타</span></div>
+    html += `<div class="cat-group-title" style="color:#64748b"><span>?��</span><span>기�?</span></div>
       <div class="space-y-2">${orphans.map(q=>questHTML(q,getCat(q.catId))).join('')}</div>`;
   }
   list.innerHTML = html;
@@ -1464,7 +1476,7 @@ function questHTML(q, cat) {
       <div class="flex-1 min-w-0">
         <div class="quest-text text-sm font-medium leading-tight" id="qt-${q.id}" onclick="editQuest('${q.id}')" style="cursor:text">${esc(q.text)}</div>
         <div class="flex items-center gap-1 mt-1 flex-wrap">
-          ${q.routineId ? '<span class="stat-badge" style="background:rgba(56,189,248,.15);color:#38bdf8;border:1px solid rgba(56,189,248,.3)">🔁 반복</span>' : ''}
+          ${q.routineId ? '<span class="stat-badge" style="background:rgba(56,189,248,.15);color:#38bdf8;border:1px solid rgba(56,189,248,.3)">?�� 반복</span>' : ''}
           <span class="text-xs px-2 py-0.5 rounded-full badge-${q.difficulty}">${DIFF_ICON[q.difficulty]} ${DIFF_LBL[q.difficulty]}</span>
           <span class="text-xs text-slate-500">${q.xp} XP</span>
         </div>
@@ -1492,20 +1504,18 @@ function updateQuestStats() {
   document.getElementById('todayXP').textContent        = xp;
 }
 
-// ─────────────────────────────────────────────
-//  GOALS
-// ─────────────────────────────────────────────
-function saveGoals() {
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  GOALS
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?function saveGoals() {
   state.yearlyGoal  = document.getElementById('yearlyGoal').value;
   state.monthlyGoal = document.getElementById('monthlyGoal').value;
   state.weeklyGoal  = document.getElementById('weeklyGoal').value;
   saveState();
   const y = state.yearlyGoal.trim(), m = state.monthlyGoal.trim(), w = state.weeklyGoal.trim();
-  document.getElementById('yearlyPreview').textContent  = y ? (y.length>30?y.slice(0,30)+'…':y) : '목표를 입력하세요';
-  document.getElementById('monthlyPreview').textContent = m ? (m.length>30?m.slice(0,30)+'…':m) : '목표를 입력하세요';
-  // 중첩 미리보기: 월간 안에 이번 주 계획, 연간 안에 이번 달 계획
-  document.getElementById('monthlyWeekRef').textContent = w || '아직 비어 있어요';
-  document.getElementById('yearlyMonthRef').textContent = m || '아직 비어 있어요';
+  document.getElementById('yearlyPreview').textContent  = y ? (y.length>30?y.slice(0,30)+'??:y) : '목표�??�력?�세??;
+  document.getElementById('monthlyPreview').textContent = m ? (m.length>30?m.slice(0,30)+'??:m) : '목표�??�력?�세??;
+  // 중첩 미리보기: ?�간 ?�에 ?�번 �?계획, ?�간 ?�에 ?�번 ??계획
+  document.getElementById('monthlyWeekRef').textContent = w || '?�직 비어 ?�어??;
+  document.getElementById('yearlyMonthRef').textContent = m || '?�직 비어 ?�어??;
 }
 
 function loadGoalInputs() {
@@ -1520,12 +1530,10 @@ function toggleAccordion(id) {
   document.getElementById(id+'Icon').classList.toggle('open');
 }
 
-// ─────────────────────────────────────────────
-//  BACKUP / RESTORE
-// ─────────────────────────────────────────────
-function openSettingsModal() {
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  BACKUP / RESTORE
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?function openSettingsModal() {
   document.getElementById('lastBackupInfo').textContent =
-    state.lastBackup ? new Date(state.lastBackup).toLocaleString('ko-KR') : '기록 없음';
+    state.lastBackup ? new Date(state.lastBackup).toLocaleString('ko-KR') : '기록 ?�음';
   document.getElementById('notifyTimeInput').value = state.notifyTime || '21:00';
   renderSettings();
   document.getElementById('settingsModal').classList.add('show');
@@ -1560,6 +1568,7 @@ function setGender(g) {
   state.gender = (g === 'f') ? 'f' : 'm';
   saveState(); renderSettings(); renderRank();
   sfx('coin');
+  applyPortrait();
 }
 
 function toggleSound() {
@@ -1578,7 +1587,7 @@ function exportData() {
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
   document.getElementById('lastBackupInfo').textContent = new Date(state.lastBackup).toLocaleString('ko-KR');
-  showToast('백업 파일을 저장했어요 📤', '#10b981');
+  showToast('백업 ?�일???�?�했?�요 ?��', '#10b981');
 }
 
 function importData(event) {
@@ -1589,11 +1598,11 @@ function importData(event) {
   reader.onload = e => {
     let imported;
     try { imported = JSON.parse(e.target.result); }
-    catch (err) { showToast('파일을 읽을 수 없어요', '#ef4444'); return; }
+    catch (err) { showToast('?�일???�을 ???�어??, '#ef4444'); return; }
     if (!imported || typeof imported !== 'object' || typeof imported.level !== 'number') {
-      showToast('올바른 백업 파일이 아니에요', '#ef4444'); return;
+      showToast('?�바�?백업 ?�일???�니?�요', '#ef4444'); return;
     }
-    if (!confirm('현재 데이터를 백업 파일 내용으로 덮어씁니다.\n계속할까요?')) return;
+    if (!confirm('?�재 ?�이?��? 백업 ?�일 ?�용?�로 ??��?�니??\n계속?�까??')) return;
     state = { ...state, ...imported };
     if (!state.categories || !state.categories.length) state.categories = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
     if (!state.routines) state.routines = [];
@@ -1615,15 +1624,13 @@ function importData(event) {
     renderProgress(); renderDateNav(); renderQuests(); loadGoalInputs();
     renderCurrency(); applyTheme(); applyAvatar();
     closeSettingsModal();
-    showToast('복원 완료! 🎉', '#10b981');
+    showToast('복원 ?�료! ?��', '#10b981');
   };
   reader.readAsText(file);
 }
 
-// ─────────────────────────────────────────────
-//  SELF REWARDS
-// ─────────────────────────────────────────────
-function openRewardModal()  { renderRewardEditList(); document.getElementById('rewardModal').classList.add('show'); }
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  SELF REWARDS
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?function openRewardModal()  { renderRewardEditList(); document.getElementById('rewardModal').classList.add('show'); }
 function closeRewardModal() { document.getElementById('rewardModal').classList.remove('show'); renderRewards(); }
 
 function renderRewards() {
@@ -1636,20 +1643,20 @@ function renderRewards() {
     if (r.claimed) {
       return `<div class="quest-item p-3 mb-2" style="opacity:.55">
         <div class="flex items-center gap-3">
-          <div style="font-size:1.3rem">✅</div>
+          <div style="font-size:1.3rem">??/div>
           <div class="flex-1 min-w-0">
             <div class="text-sm font-medium line-through text-slate-500">${esc(r.text)}</div>
-            <div class="text-xs text-slate-600">Lv.${r.level} · 수령 완료 🎉</div>
+            <div class="text-xs text-slate-600">Lv.${r.level} · ?�령 ?�료 ?��</div>
           </div>
         </div></div>`;
     }
     if (state.level >= r.level) {
       return `<div class="quest-item p-3 mb-2" style="border-color:rgba(251,191,36,.5);box-shadow:0 0 14px rgba(251,191,36,.25)">
         <div class="flex items-center gap-3">
-          <div style="font-size:1.3rem">🎁</div>
+          <div style="font-size:1.3rem">?��</div>
           <div class="flex-1 min-w-0">
             <div class="text-sm font-bold" style="color:#fbbf24">${esc(r.text)}</div>
-            <div class="text-xs text-amber-500">Lv.${r.level} 달성 — 지금 받을 수 있어요!</div>
+            <div class="text-xs text-amber-500">Lv.${r.level} ?�성 ??지�?받을 ???�어??</div>
           </div>
           <button class="btn-primary px-3 py-1.5 text-xs flex-shrink-0" onclick="claimReward('${r.id}')">받기</button>
         </div></div>`;
@@ -1658,10 +1665,10 @@ function renderRewards() {
     const pct = Math.min(100, Math.round((state.level / r.level) * 100));
     return `<div class="quest-item p-3 mb-2">
       <div class="flex items-center gap-3">
-        <div style="font-size:1.3rem">🔒</div>
+        <div style="font-size:1.3rem">?��</div>
         <div class="flex-1 min-w-0">
           <div class="text-sm font-medium">${esc(r.text)}</div>
-          <div class="text-xs text-slate-500">Lv.${r.level} · 앞으로 ${left}레벨</div>
+          <div class="text-xs text-slate-500">Lv.${r.level} · ?�으�?${left}?�벨</div>
           <div class="stat-bar-track" style="margin-top:5px"><div class="stat-bar-fill" style="width:${pct}%;background:#fbbf24"></div></div>
         </div>
       </div></div>`;
@@ -1671,12 +1678,12 @@ function renderRewards() {
 function renderRewardEditList() {
   const wrap = document.getElementById('rewardEditList');
   const rs = (state.rewards || []).slice().sort((a,b) => a.level - b.level);
-  if (!rs.length) { wrap.innerHTML = '<div class="text-center text-slate-600 text-sm py-3">아직 등록한 보상이 없어요.</div>'; return; }
+  if (!rs.length) { wrap.innerHTML = '<div class="text-center text-slate-600 text-sm py-3">?�직 ?�록??보상???�어??</div>'; return; }
   wrap.innerHTML = rs.map(r => `<div class="cat-row">
-    <div style="font-size:1.05rem">${r.claimed ? '✅' : (state.level >= r.level ? '🎁' : '🔒')}</div>
+    <div style="font-size:1.05rem">${r.claimed ? '?? : (state.level >= r.level ? '?��' : '?��')}</div>
     <div class="flex-1 min-w-0">
       <div class="text-sm font-medium truncate">${esc(r.text)}</div>
-      <div class="text-xs text-slate-500">Lv.${r.level}${r.claimed ? ' · 수령 완료' : (state.level >= r.level ? ' · 달성!' : '')}</div>
+      <div class="text-xs text-slate-500">Lv.${r.level}${r.claimed ? ' · ?�령 ?�료' : (state.level >= r.level ? ' · ?�성!' : '')}</div>
     </div>
     <button class="btn-danger" onclick="deleteReward('${r.id}')">
       <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -1687,19 +1694,19 @@ function renderRewardEditList() {
 function addReward() {
   const t = document.getElementById('rewardText').value.trim();
   const lv = parseInt(document.getElementById('rewardLevel').value, 10);
-  if (!t) { showToast('보상 내용을 입력하세요', '#ef4444'); return; }
-  if (!lv || lv < 1) { showToast('목표 레벨을 확인하세요', '#ef4444'); return; }
+  if (!t) { showToast('보상 ?�용???�력?�세??, '#ef4444'); return; }
+  if (!lv || lv < 1) { showToast('목표 ?�벨???�인?�세??, '#ef4444'); return; }
   if (!state.rewards) state.rewards = [];
   state.rewards.push({ id:uid(), level:lv, text:t, claimed:false });
   document.getElementById('rewardText').value = '';
   saveState(); renderRewardEditList(); renderRewards();
-  showToast(`보상 등록! 🎁 Lv.${lv} 달성하면 받기`, '#fbbf24');
+  showToast(`보상 ?�록! ?�� Lv.${lv} ?�성?�면 받기`, '#fbbf24');
 }
 
 function deleteReward(id) {
   state.rewards = (state.rewards || []).filter(r => r.id !== id);
   saveState(); renderRewardEditList(); renderRewards();
-  showToast('보상 삭제됨', '#64748b');
+  showToast('보상 ??��??, '#64748b');
 }
 
 function claimReward(id) {
@@ -1707,39 +1714,37 @@ function claimReward(id) {
   if (!r) return;
   r.claimed = true;
   saveState(); renderRewards(); renderRewardEditList();
-  showToast('🎉 보상 획득! 스스로에게 선물하세요', '#fbbf24');
+  showToast('?�� 보상 ?�득! ?�스로에�??�물?�세??, '#fbbf24');
   spawnParticleBurst();
   sfx('reward');
 }
 
-// level-up 시 새로 잠금 풀린 보상 알림
+// level-up ???�로 ?�금 ?��?보상 ?�림
 function checkRewardUnlocks(oldLv, newLv) {
   (state.rewards || []).forEach(r => {
     if (!r.claimed && r.level > oldLv && r.level <= newLv) {
-      setTimeout(() => showToast(`🎁 보상 잠금해제! "${r.text}"`, '#fbbf24'), 1200);
+      setTimeout(() => showToast(`?�� 보상 ?�금?�제! "${r.text}"`, '#fbbf24'), 1200);
     }
   });
 }
 
-// ─────────────────────────────────────────────
-//  CURRENCY · COIN DROPS · COSMETICS
-// ─────────────────────────────────────────────
-function renderCurrency() {
-  const c = document.getElementById('coinDisplay'); if (c) c.textContent = `🪙 ${state.coins || 0}`;
-  const g = document.getElementById('gemDisplay'); if (g) g.textContent = `💎 ${state.gems || 0}`;
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  CURRENCY · COIN DROPS · COSMETICS
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?function renderCurrency() {
+  const c = document.getElementById('coinDisplay'); if (c) c.textContent = `?�� ${state.coins || 0}`;
+  const g = document.getElementById('gemDisplay'); if (g) g.textContent = `?�� ${state.gems || 0}`;
 }
 
 function coinRoll(diff) {
   const range = { easy:[1,5], medium:[3,10], hard:[6,18] }[diff] || [1,5];
   const coins = range[0] + Math.floor(Math.random() * (range[1] - range[0] + 1));
-  const gems  = Math.random() < 0.07 ? 1 : 0;   // 7% 잭팟
+  const gems  = Math.random() < 0.07 ? 1 : 0;   // 7% ??��
   return { coins, gems };
 }
 
 function showCoinFloat(drop, x, y) {
-  setTimeout(() => showXPFloat(`+${drop.coins} 🪙`, x + 28, y, '#fbbf24'), 250);
+  setTimeout(() => showXPFloat(`+${drop.coins} ?��`, x + 28, y, '#fbbf24'), 250);
   if (drop.gems) {
-    setTimeout(() => { showXPFloat(`💎 +${drop.gems} JACKPOT!`, x, y - 32, '#a78bfa'); spawnParticleBurst(); }, 450);
+    setTimeout(() => { showXPFloat(`?�� +${drop.gems} JACKPOT!`, x, y - 32, '#a78bfa'); spawnParticleBurst(); }, 450);
   }
 }
 
@@ -1747,7 +1752,7 @@ function applyTheme() {
   const t = THEMES.find(t => t.id === ((state.equipped && state.equipped.theme) || 'th_default')) || THEMES[0];
   document.documentElement.style.setProperty('--bg-primary', t.bg);
   document.body.style.backgroundColor = t.bg;
-  // 장착한 계급 배경이 있고 아직 해금 상태면 일러스트를 깔고, 가독성을 위해 어두운 막을 덮는다.
+  // ?�착??계급 배경???�고 ?�직 ?�금 ?�태�??�러?�트�?깔고, 가?�성???�해 ?�두??막을 ??��??
   const bgId = state.equipped && state.equipped.bg;
   const bg = bgId && BACKGROUNDS.find(b => b.id === bgId);
   if (bg && bgUnlocked(bg)) {
@@ -1775,12 +1780,11 @@ function applyAvatar() {
   const av = AVATARS.find(a => a.id === id);
   if (av && av.emoji !== 'LV') { span.textContent = av.emoji; span.style.fontSize = '1.5rem'; }
   else { span.textContent = 'LV'; span.style.fontSize = ''; }
+  applyPortrait();
 }
 
-// ─────────────────────────────────────────────
-//  SOUND (Web Audio — 파일 없이 합성, 완전 오프라인)
-// ─────────────────────────────────────────────
-let audioCtx = null;
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  SOUND (Web Audio ???�일 ?�이 ?�성, ?�전 ?�프?�인)
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?let audioCtx = null;
 function sfx(type) {
   if (!state.soundOn) return;
   try {
@@ -1808,19 +1812,17 @@ function sfx(type) {
   } catch (e) {}
 }
 
-// ─────────────────────────────────────────────
-//  DAILY NOTIFICATION
-// ─────────────────────────────────────────────
-let notifyTimer = null;
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  DAILY NOTIFICATION
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?let notifyTimer = null;
 function toggleNotify() {
   if (!state.notifyOn) {
-    if (!('Notification' in window)) { showToast('이 기기는 알림을 지원하지 않아요', '#ef4444'); return; }
+    if (!('Notification' in window)) { showToast('??기기???�림??지?�하지 ?�아??, '#ef4444'); return; }
     Notification.requestPermission().then(p => {
       if (p === 'granted') {
         state.notifyOn = true; saveState(); scheduleNotify();
-        showToast('매일 알림이 켜졌어요 🔔', '#10b981');
+        showToast('매일 ?�림??켜졌?�요 ?��', '#10b981');
       } else {
-        showToast('브라우저/폰 설정에서 알림을 허용해주세요', '#ef4444');
+        showToast('브라?��?/???�정?�서 ?�림???�용?�주?�요', '#ef4444');
       }
       renderSettings();
     });
@@ -1849,16 +1851,14 @@ function fireNotify() {
     const day = state.days[todayKey()];
     const remaining = day ? day.quests.filter(q => !q.completed).length : 0;
     const body = remaining > 0
-      ? `오늘 남은 퀘스트 ${remaining}개! 용사여, 모험을 이어가세요 ⚔️`
-      : '오늘의 퀘스트를 등록하고 성장을 이어가세요! 🔥';
+      ? `?�늘 ?��? ?�스??${remaining}�? ?�사?? 모험???�어가?�요 ?�️`
+      : '?�늘???�스?��? ?�록?�고 ?�장???�어가?�요! ?��';
     new Notification('LIFE RPG', { body, icon: 'icons/icon-192.png' });
   } catch (e) {}
 }
 
-// ─────────────────────────────────────────────
-//  SHOP
-// ─────────────────────────────────────────────
-let shopTab = 'avatar';
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  SHOP
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?let shopTab = 'avatar';
 function openShopModal()  { renderShop(); document.getElementById('shopModal').classList.add('show'); }
 function closeShopModal() { document.getElementById('shopModal').classList.remove('show'); }
 function switchShopTab(t) { shopTab = t; renderShop(); }
@@ -1871,7 +1871,7 @@ function isEquipped(it) {
 }
 
 function renderShop() {
-  document.getElementById('shopBalance').innerHTML = `🪙 ${state.coins || 0}　💎 ${state.gems || 0}`;
+  document.getElementById('shopBalance').innerHTML = `?�� ${state.coins || 0}?�?�� ${state.gems || 0}`;
   document.getElementById('shopTabAvatar').classList.toggle('active', shopTab === 'avatar');
   document.getElementById('shopTabTheme').classList.toggle('active', shopTab === 'theme');
   document.getElementById('shopTabBg').classList.toggle('active', shopTab === 'bg');
@@ -1880,15 +1880,15 @@ function renderShop() {
   document.getElementById('shopGrid').innerHTML = items.map(it => {
     const owned = isOwned(it), equipped = isEquipped(it);
     const preview = shopTab === 'avatar'
-      ? `<div style="font-size:1.6rem;line-height:1.2">${it.emoji === 'LV' ? '🔰' : it.emoji}</div>`
+      ? `<div style="font-size:1.6rem;line-height:1.2">${it.emoji === 'LV' ? '?��' : it.emoji}</div>`
       : `<div style="height:30px;border-radius:8px;background:linear-gradient(135deg,${it.c1},${it.c2})"></div>`;
     let btn;
     if (equipped) {
-      btn = `<button class="shop-buy" style="background:rgba(16,185,129,.2);color:#10b981">장착됨</button>`;
+      btn = `<button class="shop-buy" style="background:rgba(16,185,129,.2);color:#10b981">?�착??/button>`;
     } else if (owned) {
-      btn = `<button class="shop-buy" style="background:rgba(56,189,248,.18);color:#38bdf8" onclick="equipItem('${it.id}')">장착</button>`;
+      btn = `<button class="shop-buy" style="background:rgba(56,189,248,.18);color:#38bdf8" onclick="equipItem('${it.id}')">?�착</button>`;
     } else {
-      const price = it.gem ? `💎 ${it.gemCost}` : `🪙 ${it.cost}`;
+      const price = it.gem ? `?�� ${it.gemCost}` : `?�� ${it.cost}`;
       btn = `<button class="shop-buy" style="background:rgba(251,191,36,.18);color:#fbbf24" onclick="buyItem('${it.id}')">${price}</button>`;
     }
     return `<div class="shop-item ${equipped ? 'equipped' : ''}">
@@ -1899,28 +1899,28 @@ function renderShop() {
   }).join('');
 }
 
-// 계급 배경 컬렉션 — 도달한 계급은 해금(코인 없음), 미도달은 잠김.
+// 계급 배경 컬렉?????�달??계급?�??�금(코인 ?�음), 미도?��? ?��?.
 function renderBgShop() {
   const curBg = state.equipped && state.equipped.bg;
   const none = `<div class="shop-item ${!curBg ? 'equipped' : ''}">
-      <div style="height:30px;border-radius:8px;background:linear-gradient(135deg,#1e293b,#334155);display:flex;align-items:center;justify-content:center;font-size:.8rem">🚫</div>
-      <div class="text-xs mt-1 truncate" style="color:#cbd5e1">없음</div>
+      <div style="height:30px;border-radius:8px;background:linear-gradient(135deg,#1e293b,#334155);display:flex;align-items:center;justify-content:center;font-size:.8rem">?��</div>
+      <div class="text-xs mt-1 truncate" style="color:#cbd5e1">?�음</div>
       ${!curBg
-        ? `<button class="shop-buy" style="background:rgba(16,185,129,.2);color:#10b981">장착됨</button>`
-        : `<button class="shop-buy" style="background:rgba(56,189,248,.18);color:#38bdf8" onclick="equipBg('')">끄기</button>`}
+        ? `<button class="shop-buy" style="background:rgba(16,185,129,.2);color:#10b981">?�착??/button>`
+        : `<button class="shop-buy" style="background:rgba(56,189,248,.18);color:#38bdf8" onclick="equipBg('')">?�기</button>`}
     </div>`;
   const cards = BACKGROUNDS.map(b => {
     const unlocked = bgUnlocked(b), equipped = curBg === b.id;
     const preview = unlocked
       ? `<div style="height:48px;border-radius:8px;background-image:linear-gradient(rgba(2,6,23,.35),rgba(2,6,23,.55)),url('art/bg-${b.art}.webp');background-size:cover;background-position:center"></div>`
-      : `<div style="height:48px;border-radius:8px;background:linear-gradient(135deg,#0f172a,#1e293b);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#475569">🔒</div>`;
+      : `<div style="height:48px;border-radius:8px;background:linear-gradient(135deg,#0f172a,#1e293b);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#475569">?��</div>`;
     let btn;
     if (!unlocked) {
       btn = `<button class="shop-buy" style="background:rgba(71,85,105,.18);color:#94a3b8" disabled>Lv.${b.min}</button>`;
     } else if (equipped) {
-      btn = `<button class="shop-buy" style="background:rgba(16,185,129,.2);color:#10b981">장착됨</button>`;
+      btn = `<button class="shop-buy" style="background:rgba(16,185,129,.2);color:#10b981">?�착??/button>`;
     } else {
-      btn = `<button class="shop-buy" style="background:rgba(56,189,248,.18);color:#38bdf8" onclick="equipBg('${b.id}')">장착</button>`;
+      btn = `<button class="shop-buy" style="background:rgba(56,189,248,.18);color:#38bdf8" onclick="equipBg('${b.id}')">?�착</button>`;
     }
     return `<div class="shop-item ${equipped ? 'equipped' : ''}">
       ${preview}
@@ -1935,12 +1935,12 @@ function equipBg(id) {
   if (!state.equipped) state.equipped = { avatar:null, theme:'th_default' };
   if (id) {
     const b = BACKGROUNDS.find(x => x.id === id);
-    if (!b || !bgUnlocked(b)) { showToast('아직 잠긴 배경이에요 🔒', '#ef4444'); return; }
+    if (!b || !bgUnlocked(b)) { showToast('?�직 ?�긴 배경?�에???��', '#ef4444'); return; }
   }
   state.equipped.bg = id || null;
   saveState();
   applyTheme(); renderShop();
-  if (id) { showToast('배경 적용! 🖼️', '#38bdf8'); sfx('reward'); }
+  if (id) { showToast('배경 ?�용! ?���?, '#38bdf8'); sfx('reward'); }
 }
 
 function buyItem(id) {
@@ -1948,14 +1948,14 @@ function buyItem(id) {
   if (!it || isOwned(it)) { if (it) equipItem(id); return; }
   const useGem = !!it.gem, price = useGem ? it.gemCost : it.cost;
   const bal = useGem ? (state.gems || 0) : (state.coins || 0);
-  if (bal < price) { showToast(useGem ? '젬이 부족해요 💎' : '코인이 부족해요 🪙', '#ef4444'); return; }
+  if (bal < price) { showToast(useGem ? '?�이 부족해???��' : '코인??부족해???��', '#ef4444'); return; }
   if (useGem) state.gems -= price; else state.coins -= price;
   if (!state.owned) state.owned = [];
   state.owned.push(id);
-  showToast(`${it.name} 구매 완료! 🎉`, '#fbbf24');
+  showToast(`${it.name} 구매 ?�료! ?��`, '#fbbf24');
   spawnParticleBurst();
   sfx('reward');
-  equipItem(id);   // 구매 즉시 장착 (saveState 포함)
+  equipItem(id);   // 구매 즉시 ?�착 (saveState ?�함)
 }
 
 function equipItem(id) {
@@ -1964,12 +1964,11 @@ function equipItem(id) {
   if (isAvatar) state.equipped.avatar = id; else state.equipped.theme = id;
   saveState();
   applyAvatar(); applyTheme(); renderCurrency(); renderShop();
+  applyPortrait();
 }
 
-// ─────────────────────────────────────────────
-//  REPORT (월간 회고 · 연간 결산)
-// ─────────────────────────────────────────────
-let reportScope = 'month';
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  REPORT (?�간 ?�고 · ?�간 결산)
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?let reportScope = 'month';
 function openReportModal()  { renderReport(); document.getElementById('reportModal').classList.add('show'); }
 function closeReportModal() { document.getElementById('reportModal').classList.remove('show'); }
 function switchReportScope(s) { reportScope = s; renderReport(); }
@@ -2004,7 +2003,7 @@ function renderReport() {
   document.getElementById('reportTabYear').classList.toggle('active', reportScope === 'year');
   const r = computeReport(reportScope);
   const n = new Date();
-  const period = reportScope === 'month' ? `${n.getFullYear()}년 ${n.getMonth()+1}월` : `${n.getFullYear()}년`;
+  const period = reportScope === 'month' ? `${n.getFullYear()}??${n.getMonth()+1}?? : `${n.getFullYear()}??;
   const cat = r.topCat ? getCat(r.topCat) : null;
   const ri = rankInfo(state.level);
 
@@ -2015,60 +2014,58 @@ function renderReport() {
     </div>`;
 
   let html = `<div class="text-center mb-3">
-    <div class="text-xs text-slate-500">${period} ${reportScope === 'month' ? '회고' : '결산'}</div>
+    <div class="text-xs text-slate-500">${period} ${reportScope === 'month' ? '?�고' : '결산'}</div>
     <div class="font-orbitron text-2xl font-black" style="color:${ri.color}">${ri.icon} ${ri.title}</div>
-    <div class="text-xs text-slate-500">현재 Lv.${state.level}</div>
+    <div class="text-xs text-slate-500">?�재 Lv.${state.level}</div>
   </div>`;
 
   if (r.totalDone === 0) {
-    html += `<div class="text-center py-8 text-slate-600"><div class="text-4xl mb-2">📭</div>
-      <div class="text-sm">${period}에 완료한 퀘스트가 아직 없어요.<br>오늘 하나 완료해볼까요?</div></div>`;
+    html += `<div class="text-center py-8 text-slate-600"><div class="text-4xl mb-2">?��</div>
+      <div class="text-sm">${period}???�료???�스?��? ?�직 ?�어??<br>?�늘 ?�나 ?�료?�볼까요?</div></div>`;
     document.getElementById('reportBody').innerHTML = html;
     return;
   }
 
   html += `<div class="grid grid-cols-2 gap-2 mb-3">
-    ${statCard('완료한 퀘스트', r.totalDone + '개', '#10b981')}
-    ${statCard('활동한 날', r.activeDays + '일', '#38bdf8')}
-    ${statCard('완료율', r.rate + '%', '#fbbf24')}
-    ${statCard('획득 XP', r.xp, '#a78bfa')}
+    ${statCard('?�료???�스??, r.totalDone + '�?, '#10b981')}
+    ${statCard('?�동????, r.activeDays + '??, '#38bdf8')}
+    ${statCard('?�료??, r.rate + '%', '#fbbf24')}
+    ${statCard('?�득 XP', r.xp, '#a78bfa')}
   </div>`;
 
   if (cat) {
     html += `<div class="card p-3 mb-2" style="border-color:${cat.color}55">
-      <div class="text-xs text-slate-500 mb-1">🏆 가장 꾸준한 영역</div>
+      <div class="text-xs text-slate-500 mb-1">?�� 가??꾸�????�역</div>
       <div class="flex items-center gap-2">
         <span style="font-size:1.5rem">${cat.icon}</span>
         <div><div class="font-bold" style="color:${cat.color}">${esc(cat.name)}</div>
-        <div class="text-xs text-slate-500">${r.topN}개 완료</div></div>
+        <div class="text-xs text-slate-500">${r.topN}�??�료</div></div>
       </div>
     </div>`;
   }
 
   if (r.bestDayKey) {
-    const bd = parseKey(r.bestDayKey), days = ['일','월','화','수','목','금','토'];
+    const bd = parseKey(r.bestDayKey), days = ['??,'??,'??,'??,'�?,'�?,'??];
     html += `<div class="flex items-center justify-between text-xs px-1 mb-2">
-      <span class="text-slate-500">🔥 가장 열심히 한 날</span>
-      <span class="text-slate-300">${bd.getMonth()+1}.${bd.getDate()} (${days[bd.getDay()]}) · ${r.bestDayN}개</span></div>`;
+      <span class="text-slate-500">?�� 가???�심??????/span>
+      <span class="text-slate-300">${bd.getMonth()+1}.${bd.getDate()} (${days[bd.getDay()]}) · ${r.bestDayN}�?/span></div>`;
   }
 
   const dc = r.diffCount;
   html += `<div class="flex items-center justify-between text-xs px-1">
-    <span class="text-slate-500">난이도 분포</span>
-    <span><span class="text-emerald-400">⚡${dc.easy}</span> · <span class="text-amber-400">🔥${dc.medium}</span> · <span class="text-red-400">⚔️${dc.hard}</span></span></div>`;
+    <span class="text-slate-500">?�이??분포</span>
+    <span><span class="text-emerald-400">??{dc.easy}</span> · <span class="text-amber-400">?��${dc.medium}</span> · <span class="text-red-400">?�️${dc.hard}</span></span></div>`;
 
   if (reportScope === 'year') {
     html += `<div class="text-center text-xs text-slate-500 mt-4 pt-3 border-t border-slate-700">
-      🎉 올해도 ${r.activeDays}일이나 스스로를 성장시켰어요!<br>현재 🔥 연속 ${computeStreak()}일 진행 중 — 계속 이어가요!</div>`;
+      ?�� ?�해??${r.activeDays}?�이???�스로�? ?�장?�켰?�요!<br>?�재 ?�� ?�속 ${computeStreak()}??진행 �???계속 ?�어가??</div>`;
   }
 
   document.getElementById('reportBody').innerHTML = html;
 }
 
-// ─────────────────────────────────────────────
-//  VISUAL EFFECTS
-// ─────────────────────────────────────────────
-function showXPFloat(text, x, y, color) {
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?//  VISUAL EFFECTS
+// ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?function showXPFloat(text, x, y, color) {
   const el = document.createElement('div');
   el.className = 'xp-float'; el.textContent = text; el.style.color = color;
   el.style.left = (x-30)+'px'; el.style.top = (y-20)+'px';
@@ -2125,6 +2122,154 @@ function initParticles() {
     requestAnimationFrame(draw);
   }
   draw();
+}
+
+// ?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═??//  PET SYSTEM
+// ?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═??
+const PETS = [
+
+// Character sprite template 14x22 ??each symbol maps to a palette color
+  { id:'chick',   name:'���Ƹ�', emoji:'??', file:'chick.webp',   minLv:1   },
+  { id:'fox',     name:'����',   emoji:'??', file:'fox.webp',     minLv:10  },
+  { id:'cat',     name:'������', emoji:'??', file:'cat.webp',     minLv:20  },
+  { id:'eagle',   name:'������', emoji:'??', file:'eagle.webp',   minLv:35  },
+  { id:'lion',    name:'����',   emoji:'??', file:'lion.webp',    minLv:50  },
+  { id:'dragon',  name:'�巡��', emoji:'??', file:'dragon.webp',  minLv:90  },
+  { id:'unicorn', name:'������', emoji:'??', file:'unicorn.webp', minLv:110 },
+  { id:'phoenix', name:'�һ���', emoji:'?????',file:'phoenix.webp', minLv:120 },
+];
+
+function initPets() {
+  if (!state.pets) state.pets = [];
+  if (!state.equippedPet) state.equippedPet = null;
+  PETS.forEach(pet => {
+    const p = state.pets.find(x => x.id === pet.id);
+    if (!p) state.pets.push({ id:pet.id, unlocked:state.level >= pet.minLv });
+    else if (!p.unlocked && state.level >= pet.minLv) { p.unlocked = true; }
+  });
+}
+
+function checkPetUnlocks() {
+  let newUnlock = false;
+  PETS.forEach(pet => {
+    const p = state.pets.find(x => x.id === pet.id);
+    if (p && !p.unlocked && state.level >= pet.minLv) { p.unlocked = true; newUnlock = true; }
+  });
+  if (newUnlock) { saveState(); renderPetDisplay(); }
+}
+
+function getEquippedPet() {
+  if (!state.equippedPet) return null;
+  const pet = PETS.find(p => p.id === state.equippedPet);
+  if (pet && state.pets.some(p => p.id === state.equippedPet && p.unlocked)) return pet;
+  return null;
+}
+
+function renderPetDisplay() {
+  const el = document.getElementById('petDisplay');
+  if (!el) return;
+  const pet = getEquippedPet();
+  el.innerHTML = pet
+    ? `<span class="pet-badge"><img class="pet-badge-img" src="art/pets/${pet.file}" alt=""> ${pet.emoji} ${pet.name}</span>`
+    : `<span class="pet-badge" style="opacity:.5">?? �� ����</span>`;
+}
+
+function openPetModal() { renderPetCollection(); document.getElementById('petModal').classList.add('show'); }
+function closePetModal() { document.getElementById('petModal').classList.remove('show'); }
+
+function renderPetCollection() {
+  const grid = document.getElementById('petGrid');
+  if (!grid) return;
+  const unlocked = state.pets.filter(p => p.unlocked).length;
+  document.getElementById('petProgressFill').style.width = (unlocked / PETS.length * 100) + '%';
+  document.getElementById('petProgressText').textContent = unlocked + '/' + PETS.length;
+  grid.innerHTML = PETS.map(pet => {
+    const pState = state.pets.find(p => p.id === pet.id);
+    const ul = pState && pState.unlocked;
+    const eq = state.equippedPet === pet.id && ul;
+    return '<div class="pet-card ' + (ul?'unlocked':'') + ' ' + (eq?'equipped':'') + ' ' + (!ul?'locked':'') + '">' +
+      '<img class="pet-card-img" src="art/pets/' + pet.file + '" alt="' + pet.name + '" onerror="this.style.display=\'none\'">' +
+      '<div class="text-xs font-medium" style="color:' + (ul?'#e2e8f0':'#64748b') + '">' + pet.emoji + ' ' + pet.name + '</div>' +
+      '<div class="text-xs mb-1" style="color:' + (ul?'#10b981':'#475569') + '">' + (ul?'':('Lv.'+pet.minLv)) + '</div>' +
+      (ul ? (eq
+        ? '<button class="shop-buy" style="background:rgba(16,185,129,.2);color:#10b981;font-size:.6rem">\uC7A5\uC0C1\uB428</button>'
+        : '<button class="shop-buy" style="background:rgba(56,189,248,.18);color:#38bdf8;font-size:.6rem" onclick="equipPet(\'' + pet.id + '\')">\uC7A5\uCC29</button>')
+        : '<button class="shop-buy" style="background:rgba(71,85,105,.18);color:#94a3b8;font-size:.6rem" disabled>\uD83D\uDD12</button>') +
+      '</div>';
+  }).join('');
+}
+
+function equipPet(id) {
+  const p = state.pets.find(p => p.id === id);
+  if (!p || !p.unlocked) return;
+  state.equippedPet = id;
+  saveState(); renderPetCollection(); renderPetDisplay(); closePetModal();
+  showToast('\uD83D\uDC3E ' + PETS.find(x=>x.id===id).name + ' \uC7A5\uCC29!', '#10b981');
+}
+
+// ?????????????????????????????????????????????
+//  CHARACTER PORTRAIT & MOOD
+// ?????????????????????????????????????????????
+
+const MOODS = {
+  idle:   { emoji:'??', msg:['�� ���� ����غ����?','������ �� �ұ�?'] },
+  okay:   { emoji:'??', msg:['�� �ϰ� �־��?','������!'] },
+  happy:  { emoji:'??', msg:['���õ� ����ؿ�?','�ְ�����!','¥��!'] },
+  done:   { emoji:'??', msg:['���?����Ʈ �Ϸ�!','�Ϻ��� �Ϸ�!','�������� �Ϸ�!'] },
+  streak: { emoji:'??', msg:['���� ���?��!','�������� �� �Ƿ�!','�������� ������!'] },
+};
+
+let currentMood = 'idle', speechTimer = null;
+
+function applyPortrait(animating) {
+  const ri = rankInfo(state.level);
+  const img = document.getElementById('characterPortrait');
+  if (!img) return;
+  img.src = 'art/' + ri.art + '-' + state.gender + '.webp';
+  img.style.boxShadow = '0 0 ' + (12+ri.glow*24) + 'px ' + ri.color + '88, 0 0 ' + (4+ri.glow*10) + 'px ' + ri.color;
+  img.style.borderColor = ri.color;
+  if (animating) {
+    img.classList.remove('evolving');
+    void img.offsetWidth;
+    img.classList.add('evolving');
+  }
+}
+
+function updateMood() {
+  const day = state.days[todayKey()];
+  if (!day || !day.quests.length) { setMood('idle'); return; }
+  const done = day.quests.filter(q => q.completed).length;
+  const total = day.quests.length;
+  const pct = total > 0 ? done / total : 0;
+  const s = computeStreak();
+  if (done >= total && total > 0) setMood('done');
+  else if (s >= 7) setMood('streak');
+  else if (pct >= 0.8) setMood('happy');
+  else if (pct > 0) setMood('okay');
+  else setMood('idle');
+}
+
+function setMood(id) {
+  currentMood = id;
+  const b = document.getElementById('moodBubble');
+  if (!b) return;
+  b.textContent = (MOODS[id] || MOODS.idle).emoji;
+  b.style.display = 'block';
+  b.style.animation = 'none'; void b.offsetWidth;
+  b.style.animation = 'moodPop .4s cubic-bezier(.34,1.56,.64,1)';
+}
+
+function onCharacterClick() {
+  const msgs = (MOODS[currentMood] || MOODS.idle).msg;
+  const msg = msgs[Math.floor(Math.random() * msgs.length)];
+  const b = document.getElementById('speechBubble');
+  if (!b) return;
+  b.textContent = msg + ' \uD83D\uDCAC';
+  b.style.display = 'block';
+  b.style.animation = 'none'; void b.offsetWidth;
+  b.style.animation = 'speechPop .5s cubic-bezier(.34,1.56,.64,1) forwards';
+  clearTimeout(speechTimer);
+  speechTimer = setTimeout(function() { b.style.display = 'none'; }, 2500);
 }
 
 document.addEventListener('DOMContentLoaded', init);

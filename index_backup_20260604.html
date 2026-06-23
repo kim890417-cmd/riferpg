@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>LIFE RPG</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+  :root { --bg-primary:#0f172a; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+  body {
+    background-color:var(--bg-primary);
+    font-family:'Noto Sans KR',sans-serif;
+    color:#e2e8f0; min-height:100vh; overflow-x:hidden;
+    background-image:
+      radial-gradient(ellipse at 20% 20%,rgba(16,185,129,.06) 0%,transparent 50%),
+      radial-gradient(ellipse at 80% 80%,rgba(56,189,248,.06) 0%,transparent 50%);
+  }
+  .font-orbitron { font-family:'Orbitron',monospace; }
+  .glow-emerald { box-shadow:0 0 15px rgba(16,185,129,.4),0 0 30px rgba(16,185,129,.2); }
+  .text-glow-emerald { text-shadow:0 0 10px rgba(16,185,129,.8),0 0 20px rgba(16,185,129,.4); }
+  .text-glow-blue { text-shadow:0 0 10px rgba(56,189,248,.8),0 0 20px rgba(56,189,248,.4); }
+
+  .xp-bar-container { background:rgba(30,41,59,.8); border:1px solid rgba(16,185,129,.3); border-radius:999px; overflow:hidden; }
+  .xp-bar-fill { height:100%; background:linear-gradient(90deg,#10b981,#38bdf8); border-radius:999px; transition:width .6s cubic-bezier(.4,0,.2,1); position:relative; }
+  .xp-bar-fill::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent); animation:shimmer 2s infinite; }
+  @keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+
+  .card { background:linear-gradient(135deg,rgba(26,39,68,.9),rgba(15,23,42,.9)); border:1px solid rgba(16,185,129,.2); border-radius:16px; backdrop-filter:blur(10px); }
+
+  /* ── STAT CARDS ── */
+  .stat-card { background:rgba(15,23,42,.8); border-radius:12px; border:1px solid rgba(255,255,255,.08); padding:10px 8px; text-align:center; transition:all .3s ease; }
+  .stat-card.pulse-stat { animation:statPulse .5s ease; }
+  @keyframes statPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
+  .stat-bar-track { background:rgba(30,41,59,.8); border-radius:999px; overflow:hidden; height:4px; margin-top:4px; }
+  .stat-bar-fill { height:100%; border-radius:999px; transition:width .6s cubic-bezier(.4,0,.2,1); }
+
+  /* ── PROGRESS TABS ── */
+  .prog-tab { flex:1; padding:6px; text-align:center; border-radius:8px; cursor:pointer; font-family:'Orbitron',monospace; font-size:.6rem; letter-spacing:.1em; color:#64748b; transition:all .2s; border:1px solid transparent; }
+  .prog-tab.active { background:rgba(16,185,129,.15); color:#10b981; border-color:rgba(16,185,129,.3); }
+
+  /* ── DAY CIRCLES ── */
+  .day-circle { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.65rem; font-weight:600; border:2px solid rgba(30,41,59,.8); position:relative; overflow:hidden; }
+  .day-fill { position:absolute; bottom:0; left:0; right:0; transition:height .5s ease; }
+  .day-lbl { position:relative; z-index:1; }
+  .day-circle.today { border-color:#10b981; box-shadow:0 0 8px rgba(16,185,129,.5); }
+
+  /* ── ACCORDION ── */
+  .accordion-content { max-height:0; overflow:hidden; transition:max-height .4s cubic-bezier(.4,0,.2,1); }
+  .accordion-content.open { max-height:600px; }
+  .accordion-icon { transition:transform .3s ease; }
+  .accordion-icon.open { transform:rotate(180deg); }
+
+  /* ── QUESTS ── */
+  .quest-item { background:rgba(15,23,42,.7); border:1px solid rgba(56,189,248,.15); border-radius:12px; transition:all .3s ease; position:relative; overflow:hidden; }
+  .quest-item.completed { opacity:.5; }
+  .quest-item.completed .quest-text { text-decoration:line-through; color:#64748b; }
+
+  .badge-easy { background:rgba(16,185,129,.2); color:#10b981; border:1px solid rgba(16,185,129,.4); }
+  .badge-medium { background:rgba(251,191,36,.2); color:#fbbf24; border:1px solid rgba(251,191,36,.4); }
+  .badge-hard { background:rgba(239,68,68,.2); color:#ef4444; border:1px solid rgba(239,68,68,.4); }
+
+  .custom-check { width:24px; height:24px; border:2px solid rgba(16,185,129,.5); border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .3s ease; flex-shrink:0; }
+  .custom-check.checked { background:linear-gradient(135deg,#10b981,#38bdf8); border-color:transparent; box-shadow:0 0 12px rgba(16,185,129,.6); }
+  .custom-check svg { opacity:0; transform:scale(0); transition:all .2s ease; }
+  .custom-check.checked svg { opacity:1; transform:scale(1); }
+
+  .stat-badge { font-size:.65rem; padding:1px 6px; border-radius:4px; font-weight:700; font-family:'Orbitron',monospace; }
+
+  /* ── OVERLAYS ── */
+  .overlay { position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:9999; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .4s ease; }
+  .overlay.show { opacity:1; pointer-events:all; }
+  .overlay-card { text-align:center; animation:popIn .5s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes popIn { from{transform:scale(.5);opacity:0} to{transform:scale(1);opacity:1} }
+
+  /* ── FLOAT / BURST ── */
+  .xp-float { position:fixed; font-family:'Orbitron',monospace; font-weight:700; font-size:1rem; pointer-events:none; z-index:9997; animation:floatUp 1.2s ease forwards; }
+  @keyframes floatUp { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-80px) scale(1.3)} }
+  @keyframes burstRing { 0%{transform:scale(.5);opacity:1} 100%{transform:scale(2.5);opacity:0} }
+  .burst-ring { position:fixed; border-radius:50%; border:2px solid #10b981; pointer-events:none; z-index:9996; animation:burstRing .6s ease forwards; }
+
+  /* ── INPUTS ── */
+  .game-input { background:rgba(15,23,42,.8); border:1px solid rgba(56,189,248,.3); border-radius:10px; color:#e2e8f0; outline:none; transition:border-color .3s,box-shadow .3s; }
+  .game-input:focus { border-color:#10b981; box-shadow:0 0 0 3px rgba(16,185,129,.15); }
+  .game-input::placeholder { color:#475569; }
+  textarea.game-input { resize:vertical; min-height:80px; }
+  select.game-input { appearance:none; cursor:pointer; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2310b981' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; padding-right:32px; }
+  select.game-input option { background:#1e293b; }
+
+  .btn-primary { background:linear-gradient(135deg,#10b981,#0ea5e9); color:white; font-weight:700; border-radius:10px; transition:all .3s ease; border:none; cursor:pointer; }
+  .btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 20px rgba(16,185,129,.4); }
+  .btn-primary:active { transform:translateY(0); }
+  .btn-danger { background:rgba(239,68,68,.15); color:#f87171; border:1px solid rgba(239,68,68,.3); border-radius:8px; cursor:pointer; transition:all .2s; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .btn-danger:hover { background:rgba(239,68,68,.3); }
+
+  .section-title { font-family:'Orbitron',monospace; font-size:.65rem; letter-spacing:.2em; color:#64748b; text-transform:uppercase; margin-bottom:8px; }
+  .stat-chip { background:rgba(30,41,59,.8); border:1px solid rgba(56,189,248,.2); border-radius:8px; padding:4px 10px; font-size:.75rem; color:#38bdf8; }
+
+  .pulse-dot { width:8px; height:8px; border-radius:50%; background:#10b981; animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.7)} 50%{box-shadow:0 0 0 6px rgba(16,185,129,0)} }
+
+  input[type="time"].game-input::-webkit-calendar-picker-indicator { filter:invert(1) sepia(1) saturate(5) hue-rotate(120deg); cursor:pointer; }
+  ::-webkit-scrollbar { width:4px; }
+  ::-webkit-scrollbar-thumb { background:rgba(16,185,129,.4); border-radius:2px; }
+  #particles { position:fixed; inset:0; pointer-events:none; z-index:0; }
+
+  /* month mini grid */
+  .month-dot { aspect-ratio:1; border-radius:3px; }
+</style>
+</head>
+<body class="relative">
+
+<canvas id="particles"></canvas>
+
+<!-- LEVEL UP OVERLAY -->
+<div class="overlay" id="levelUpOverlay">
+  <div class="overlay-card px-8 py-10">
+    <div class="font-orbitron text-6xl font-black text-glow-emerald mb-4" style="color:#10b981">LEVEL UP!</div>
+    <div class="font-orbitron text-2xl text-white mb-2">LV <span id="newLevelDisplay" class="text-glow-blue" style="color:#38bdf8">1</span></div>
+    <div class="text-slate-400 text-sm mb-8">계속 나아가라, 용사여!</div>
+    <div class="text-6xl mb-6">⚔️</div>
+    <button onclick="closeLevelUp()" class="btn-primary px-8 py-3 text-sm font-orbitron tracking-wider">CONTINUE →</button>
+  </div>
+</div>
+
+<!-- STAT UP OVERLAY -->
+<div class="overlay" id="statUpOverlay" style="background:rgba(0,0,0,.8);">
+  <div class="overlay-card px-8 py-8">
+    <div class="font-orbitron text-3xl font-black mb-2" id="statUpTitle" style="color:#10b981">STR UP!</div>
+    <div class="text-6xl mb-3" id="statUpIcon">⚔️</div>
+    <div class="font-orbitron text-xl text-white mb-1">LEVEL <span id="statUpLv" style="color:#38bdf8">2</span></div>
+    <div class="text-slate-400 text-sm mb-6" id="statUpDesc">근력이 강해졌다!</div>
+    <button onclick="closeStatUp()" class="btn-primary px-6 py-2 text-xs font-orbitron tracking-wider">OK</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="relative z-10 max-w-lg mx-auto px-4 py-5 pb-24">
+
+  <!-- DATE & LEVEL -->
+  <div class="mb-4">
+    <div class="flex items-center justify-between mb-2">
+      <div>
+        <div class="section-title">SYSTEM STATUS</div>
+        <div class="text-slate-400 text-xs" id="currentDate"></div>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="pulse-dot"></div>
+        <span class="text-emerald-400 text-xs font-medium">ONLINE</span>
+      </div>
+    </div>
+    <div class="card p-4 glow-emerald">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-3">
+          <div style="width:48px;height:48px;background:linear-gradient(135deg,#10b981,#38bdf8);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+            <span class="font-orbitron font-black text-white text-xs">LV</span>
+          </div>
+          <div>
+            <div class="font-orbitron font-black text-3xl text-glow-emerald" id="levelDisplay" style="color:#10b981;line-height:1">1</div>
+            <div class="text-slate-500 text-xs">HERO LEVEL</div>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="stat-chip mb-1"><span id="currentXP">0</span> / <span id="maxXP">100</span> XP</div>
+          <div class="text-slate-500 text-xs">Total: <span id="totalXP" class="text-emerald-400">0</span> XP</div>
+        </div>
+      </div>
+      <div class="xp-bar-container h-4 w-full">
+        <div class="xp-bar-fill h-full" id="xpBar" style="width:0%"></div>
+      </div>
+      <div class="flex justify-between text-xs text-slate-500 mt-1">
+        <span>현재 XP</span>
+        <span id="xpToNext">다음 레벨까지 100 XP</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARACTER STATS -->
+  <div class="mb-4">
+    <div class="section-title">CHARACTER STATS</div>
+    <div class="card p-3">
+      <div class="grid grid-cols-3 gap-2" id="statsGrid"></div>
+    </div>
+  </div>
+
+  <!-- PROGRESS TIMELINE -->
+  <div class="mb-4">
+    <div class="section-title">PROGRESS TIMELINE</div>
+    <div class="card p-4">
+      <div class="flex gap-1 mb-4 p-1 rounded-lg" style="background:rgba(15,23,42,.6)">
+        <div class="prog-tab active" id="tab-week" onclick="switchTab('week')">WEEK</div>
+        <div class="prog-tab" id="tab-month" onclick="switchTab('month')">MONTH</div>
+        <div class="prog-tab" id="tab-year" onclick="switchTab('year')">YEAR</div>
+      </div>
+
+      <div id="view-week">
+        <div class="flex justify-between items-end" id="weekDays"></div>
+        <div class="text-center text-xs text-slate-500 mt-3" id="weekSummary"></div>
+      </div>
+
+      <div id="view-month" style="display:none">
+        <div class="flex items-start gap-4">
+          <div id="monthRing" class="flex-shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div class="font-orbitron text-sm font-bold" style="color:#a78bfa" id="monthPct">0%</div>
+            <div class="text-slate-500 text-xs mb-2" id="monthLabel">활성 일수</div>
+            <div class="grid gap-1" id="monthGrid" style="grid-template-columns:repeat(7,1fr)"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="view-year" style="display:none">
+        <div class="flex items-center gap-4">
+          <div id="yearRing" class="flex-shrink-0"></div>
+          <div>
+            <div class="font-orbitron text-sm font-bold" style="color:#38bdf8" id="yearPct">0%</div>
+            <div class="text-slate-500 text-xs mb-1" id="yearLabel">올해 활성 일수</div>
+            <div class="text-xs text-slate-600" id="yearGoalPreview"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAILY QUESTS -->
+  <div class="mb-4">
+    <div class="section-title">DAILY QUESTS</div>
+    <div class="card p-4">
+      <div class="flex gap-2 mb-4">
+        <div class="flex-1 text-center py-2 rounded-lg" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2)">
+          <div class="font-orbitron font-bold text-emerald-400 text-lg" id="completedCount">0</div>
+          <div class="text-xs text-slate-500">완료</div>
+        </div>
+        <div class="flex-1 text-center py-2 rounded-lg" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2)">
+          <div class="font-orbitron font-bold text-sky-400 text-lg" id="totalCount">0</div>
+          <div class="text-xs text-slate-500">전체</div>
+        </div>
+        <div class="flex-1 text-center py-2 rounded-lg" style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2)">
+          <div class="font-orbitron font-bold text-amber-400 text-lg" id="todayXP">0</div>
+          <div class="text-xs text-slate-500">오늘 XP</div>
+        </div>
+      </div>
+
+      <div class="space-y-2 mb-3">
+        <input type="text" class="game-input w-full px-3 py-2 text-sm" id="questInput"
+               placeholder="퀘스트를 입력하세요..." onkeydown="if(event.key==='Enter')addQuest()">
+        <div class="flex gap-2">
+          <select class="game-input flex-1 px-2 py-2 text-xs" id="statSelect"></select>
+          <select class="game-input w-20 px-2 py-2 text-xs" id="difficultySelect">
+            <option value="easy">하 ⚡</option>
+            <option value="medium" selected>중 🔥</option>
+            <option value="hard">상 ⚔️</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-primary w-full py-3 text-sm font-orbitron tracking-widest mb-4" onclick="addQuest()">+ ADD QUEST</button>
+
+      <div id="questList" class="space-y-2"></div>
+      <div id="emptyState" class="text-center py-8 text-slate-600">
+        <div class="text-4xl mb-2">⚔️</div>
+        <div class="text-sm">오늘의 퀘스트가 없습니다.<br>새로운 퀘스트를 추가하세요!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OBJECTIVES -->
+  <div class="mb-4">
+    <div class="section-title">OBJECTIVES</div>
+    <div class="card mb-3">
+      <button class="w-full flex items-center justify-between p-4 text-left" onclick="toggleAccordion('yearly')">
+        <div class="flex items-center gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <div class="font-orbitron text-xs font-bold" style="color:#38bdf8">YEARLY QUEST</div>
+            <div class="text-slate-500 text-xs" id="yearlyPreview">목표를 입력하세요</div>
+          </div>
+        </div>
+        <svg class="accordion-icon w-5 h-5 text-slate-400" id="yearlyIcon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      <div class="accordion-content" id="yearlyContent">
+        <div class="px-4 pb-4 border-t border-slate-700 pt-3">
+          <div class="text-xs text-slate-500 mb-2">📅 <span id="currentYear"></span>년의 목표</div>
+          <textarea class="game-input w-full p-3 text-sm" id="yearlyGoal"
+                    placeholder="예: 체중 10kg 감량, 토익 900점 달성..." oninput="saveGoals()"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="border-color:rgba(167,139,250,.2)">
+      <button class="w-full flex items-center justify-between p-4 text-left" onclick="toggleAccordion('monthly')">
+        <div class="flex items-center gap-3">
+          <span class="text-xl">📋</span>
+          <div>
+            <div class="font-orbitron text-xs font-bold" style="color:#a78bfa">MONTHLY QUEST</div>
+            <div class="text-slate-500 text-xs" id="monthlyPreview">목표를 입력하세요</div>
+          </div>
+        </div>
+        <svg class="accordion-icon w-5 h-5 text-slate-400" id="monthlyIcon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      <div class="accordion-content" id="monthlyContent">
+        <div class="px-4 pb-4 border-t border-slate-700 pt-3">
+          <div class="text-xs text-slate-500 mb-2">🗓️ <span id="currentMonth"></span>월의 목표</div>
+          <textarea class="game-input w-full p-3 text-sm" id="monthlyGoal"
+                    placeholder="예: 운동 20회, 독서 3권..." oninput="saveGoals()"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 opacity-0 pointer-events-none"
+     style="background:rgba(16,185,129,.9);color:white;backdrop-filter:blur(10px)"></div>
+
+<script>
+// ─────────────────────────────────────────────
+//  CONSTANTS
+// ─────────────────────────────────────────────
+const STATS_DEF = {
+  STR: { label:'근력', icon:'⚔️',  color:'#ef4444', desc:'운동·신체활동' },
+  INT: { label:'지능', icon:'📚',  color:'#38bdf8', desc:'학습·공부' },
+  AGI: { label:'민첩', icon:'⚡',  color:'#fbbf24', desc:'업무·효율' },
+  VIT: { label:'체력', icon:'💚',  color:'#10b981', desc:'건강·수면·식단' },
+  CHA: { label:'매력', icon:'✨',  color:'#f472b6', desc:'인맥·소통' },
+  WIS: { label:'지혜', icon:'🔮',  color:'#a78bfa', desc:'계획·마인드' }
+};
+const XP_PER_LEVEL   = 100;
+const STAT_XP_PER_LV = 100;
+const XP_MAP  = { easy:10, medium:30, hard:50 };
+const DIFF_LBL  = { easy:'하', medium:'중', hard:'상' };
+const DIFF_ICON = { easy:'⚡', medium:'🔥', hard:'⚔️' };
+
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+let state = {
+  level:1, currentXP:0, totalXP:0,
+  quests:[], yearlyGoal:'', monthlyGoal:'',
+  stats:{
+    STR:{xp:0,level:1}, INT:{xp:0,level:1}, AGI:{xp:0,level:1},
+    VIT:{xp:0,level:1}, CHA:{xp:0,level:1}, WIS:{xp:0,level:1}
+  },
+  history:{}
+};
+let currentTab = 'week';
+
+// ─────────────────────────────────────────────
+//  UTILS
+// ─────────────────────────────────────────────
+function dateKey(d) {
+  d = d || new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function todayKey() { return dateKey(); }
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function debounce(fn, ms) { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); }; }
+
+// ─────────────────────────────────────────────
+//  STORAGE
+// ─────────────────────────────────────────────
+function saveState() { localStorage.setItem('lifeRPG_v2', JSON.stringify(state)); }
+function loadState() {
+  const raw = localStorage.getItem('lifeRPG_v2') || localStorage.getItem('lifeRPG_state');
+  if (!raw) return;
+  try {
+    const p = JSON.parse(raw);
+    state = { ...state, ...p };
+    if (p.notif)   state.notif   = { ...state.notif,   ...p.notif };
+    if (!p.stats)  state.stats   = { STR:{xp:0,level:1},INT:{xp:0,level:1},AGI:{xp:0,level:1},VIT:{xp:0,level:1},CHA:{xp:0,level:1},WIS:{xp:0,level:1} };
+    if (!p.history) state.history = {};
+    // back-compat: quests without statKey default to STR
+    state.quests.forEach(q => { if (!q.statKey) q.statKey = 'STR'; });
+  } catch(e) {}
+}
+
+// ─────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────
+function init() {
+  loadState();
+  renderDate();
+  renderStatSelect();
+  renderXP();
+  renderStats();
+  renderProgress();
+  renderQuests();
+  loadGoalInputs();
+  initParticles();
+  recordHistory();
+  document.getElementById('yearlyGoal').addEventListener('input', debounce(()=>{ saveGoals(); renderProgress(); }, 500));
+  document.getElementById('monthlyGoal').addEventListener('input', debounce(saveGoals, 500));
+}
+
+function renderDate() {
+  const n = new Date(), days=['일','월','화','수','목','금','토'];
+  document.getElementById('currentDate').textContent =
+    `${n.getFullYear()}.${String(n.getMonth()+1).padStart(2,'0')}.${String(n.getDate()).padStart(2,'0')} (${days[n.getDay()]})`;
+  document.getElementById('currentYear').textContent  = n.getFullYear();
+  document.getElementById('currentMonth').textContent = n.getMonth()+1;
+}
+
+// ─────────────────────────────────────────────
+//  HISTORY
+// ─────────────────────────────────────────────
+function recordHistory() {
+  const k = todayKey();
+  if (!state.history) state.history = {};
+  state.history[k] = {
+    completed: state.quests.filter(q=>q.completed).length,
+    total:     state.quests.length
+  };
+  const keys = Object.keys(state.history).sort();
+  if (keys.length > 365) keys.slice(0, keys.length-365).forEach(k=>delete state.history[k]);
+  saveState();
+}
+
+// ─────────────────────────────────────────────
+//  XP & LEVEL
+// ─────────────────────────────────────────────
+function renderXP() {
+  const pct = (state.currentXP / XP_PER_LEVEL) * 100;
+  document.getElementById('levelDisplay').textContent = state.level;
+  document.getElementById('currentXP').textContent    = state.currentXP;
+  document.getElementById('totalXP').textContent      = state.totalXP;
+  document.getElementById('xpBar').style.width        = pct + '%';
+  document.getElementById('xpToNext').textContent     = `다음 레벨까지 ${XP_PER_LEVEL - state.currentXP} XP`;
+  updateQuestStats();
+}
+
+function gainXP(amount, x, y, statKey) {
+  state.currentXP += amount;
+  state.totalXP   += amount;
+  showXPFloat('+' + amount + ' XP', x, y, '#10b981');
+  if (statKey) gainStatXP(statKey, amount, x, y);
+  while (state.currentXP >= XP_PER_LEVEL) {
+    state.currentXP -= XP_PER_LEVEL;
+    state.level++;
+    triggerLevelUp();
+  }
+  renderXP();
+  saveState();
+}
+
+function loseXP(amount, statKey) {
+  state.currentXP -= amount;
+  state.totalXP   -= amount;
+  if (statKey) loseStatXP(statKey, amount);
+  while (state.currentXP < 0 && state.level > 1) { state.level--; state.currentXP += XP_PER_LEVEL; }
+  if (state.currentXP < 0) { state.currentXP = 0; state.totalXP = Math.max(0, state.totalXP); }
+  showToast('-' + amount + ' XP 감소', '#ef4444');
+  renderXP();
+  saveState();
+}
+
+function triggerLevelUp() {
+  document.getElementById('newLevelDisplay').textContent = state.level;
+  document.getElementById('levelUpOverlay').classList.add('show');
+  spawnParticleBurst();
+}
+function closeLevelUp() { document.getElementById('levelUpOverlay').classList.remove('show'); }
+
+// ─────────────────────────────────────────────
+//  STAT SYSTEM
+// ─────────────────────────────────────────────
+function gainStatXP(key, amount, x, y) {
+  const s = state.stats[key], def = STATS_DEF[key];
+  s.xp += amount;
+  setTimeout(() => showXPFloat(def.icon + ' +' + key, x, y + 35, def.color), 150);
+
+  // pulse card
+  const card = document.getElementById('sc-' + key);
+  if (card) {
+    card.classList.add('pulse-stat');
+    card.style.boxShadow = `0 0 18px ${def.color}88`;
+    setTimeout(() => { card.classList.remove('pulse-stat'); card.style.boxShadow = ''; }, 700);
+  }
+
+  let leveled = false;
+  while (s.xp >= STAT_XP_PER_LV) { s.xp -= STAT_XP_PER_LV; s.level++; leveled = true; }
+  if (leveled) setTimeout(() => triggerStatUp(key), 800);
+  renderStats();
+}
+
+function loseStatXP(key, amount) {
+  const s = state.stats[key];
+  s.xp -= amount;
+  while (s.xp < 0 && s.level > 1) { s.level--; s.xp += STAT_XP_PER_LV; }
+  if (s.xp < 0) s.xp = 0;
+  renderStats();
+}
+
+function renderStats() {
+  const g = document.getElementById('statsGrid');
+  if (!g) return;
+  g.innerHTML = Object.entries(STATS_DEF).map(([key, def]) => {
+    const s = state.stats[key] || { xp:0, level:1 };
+    const pct = (s.xp / STAT_XP_PER_LV) * 100;
+    return `<div class="stat-card" id="sc-${key}" style="border-color:${def.color}44">
+      <div style="font-size:1.3rem;line-height:1">${def.icon}</div>
+      <div class="font-orbitron text-xs font-bold mt-1" style="color:${def.color}">${key}</div>
+      <div style="font-size:.6rem;color:#64748b">${def.label}</div>
+      <div class="font-orbitron text-xs text-white mt-1">LV${s.level}</div>
+      <div class="stat-bar-track">
+        <div class="stat-bar-fill" style="width:${pct}%;background:${def.color}"></div>
+      </div>
+      <div style="font-size:.5rem;color:#475569;margin-top:2px">${s.xp}/${STAT_XP_PER_LV}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderStatSelect() {
+  document.getElementById('statSelect').innerHTML =
+    Object.entries(STATS_DEF).map(([k,d]) => `<option value="${k}">${d.icon} ${k} ${d.label}</option>`).join('');
+}
+
+function triggerStatUp(key) {
+  const def = STATS_DEF[key], s = state.stats[key];
+  document.getElementById('statUpTitle').textContent = key + ' LEVEL UP!';
+  document.getElementById('statUpTitle').style.color = def.color;
+  document.getElementById('statUpIcon').textContent  = def.icon;
+  document.getElementById('statUpLv').textContent    = s.level;
+  document.getElementById('statUpDesc').textContent  = def.label + ' 능력이 향상되었다!';
+  document.getElementById('statUpOverlay').classList.add('show');
+}
+function closeStatUp() { document.getElementById('statUpOverlay').classList.remove('show'); }
+
+// ─────────────────────────────────────────────
+//  PROGRESS TIMELINE
+// ─────────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  ['week','month','year'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+    document.getElementById('view-' + t).style.display = t === tab ? '' : 'none';
+  });
+  renderProgress();
+}
+
+function renderProgress() {
+  recordHistory();
+  if (currentTab === 'week')  renderWeek();
+  else if (currentTab === 'month') renderMonth();
+  else renderYear();
+}
+
+function renderWeek() {
+  const today = new Date(), dow = today.getDay();
+  const mon = new Date(today);
+  mon.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1));
+  const lbls = ['월','화','수','목','금','토','일'];
+  const tk = todayKey();
+  let html = '', done = 0, tot = 0;
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(mon); d.setDate(mon.getDate() + i);
+    const k = dateKey(d);
+    const isToday  = k === tk;
+    const isFuture = d > today && !isToday;
+    const h = state.history[k] || { completed:0, total:0 };
+    const pct = h.total > 0 ? Math.round((h.completed / h.total) * 100) : 0;
+    done += h.completed; tot += h.total;
+
+    const fillColor = pct >= 100 ? '#10b981' : pct > 0 ? '#38bdf8' : 'rgba(30,41,59,.5)';
+    const txtColor  = isToday ? '#10b981' : isFuture ? '#1e293b' : '#94a3b8';
+
+    html += `<div class="flex flex-col items-center gap-1">
+      <div style="font-size:.6rem;color:${isToday?'#10b981':'#475569'};font-weight:${isToday?700:400}">${lbls[i]}</div>
+      <div class="day-circle ${isToday?'today':''}" style="border-color:${isToday?'#10b981':'rgba(30,41,59,.8)'};${isFuture?'opacity:.2':''}">
+        <div class="day-fill" style="height:${pct}%;background:${fillColor}66"></div>
+        <div class="day-lbl font-orbitron" style="color:${txtColor};font-size:.6rem">
+          ${isFuture ? '' : (h.total > 0 ? h.completed : (isToday ? '·' : '-'))}
+        </div>
+      </div>
+      <div style="font-size:.5rem;color:#334155">${(!isFuture && h.total > 0) ? pct+'%' : ''}</div>
+    </div>`;
+  }
+  document.getElementById('weekDays').innerHTML = html;
+  document.getElementById('weekSummary').textContent =
+    tot > 0 ? `이번 주 ${done}/${tot} 퀘스트 완료` : '이번 주 퀘스트를 추가해보세요!';
+}
+
+function renderMonth() {
+  const n = new Date(), y = n.getFullYear(), m = n.getMonth();
+  const daysElapsed  = n.getDate();
+  const daysInMonth  = new Date(y, m+1, 0).getDate();
+  const tk = todayKey();
+  let active = 0;
+
+  for (let d = 1; d <= daysElapsed; d++) {
+    const k = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    if ((state.history[k] || {}).completed > 0) active++;
+  }
+  const pct = daysElapsed > 0 ? Math.round((active / daysElapsed) * 100) : 0;
+
+  document.getElementById('monthPct').textContent  = pct + '%';
+  document.getElementById('monthLabel').textContent = `${active} / ${daysElapsed}일 활성`;
+  document.getElementById('monthRing').innerHTML    = svgRing(pct, '#a78bfa', 80);
+
+  const firstDow = new Date(y, m, 1).getDay();
+  const offset   = firstDow === 0 ? 6 : firstDow - 1;
+  let g = '';
+  for (let i = 0; i < offset; i++) g += '<div></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const k = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const h = state.history[k] || { completed:0, total:0 };
+    const isToday  = k === tk;
+    const isFuture = d > daysElapsed;
+    let bg = 'rgba(30,41,59,.5)';
+    if (!isFuture) {
+      if (h.total > 0 && h.completed >= h.total) bg = '#10b981';
+      else if (h.completed > 0) bg = '#38bdf8';
+      else if (h.total > 0)     bg = '#ef444466';
+    }
+    g += `<div class="month-dot" style="background:${bg};${isToday?'outline:1.5px solid #10b981;':''}${isFuture?'opacity:.15;':''}"></div>`;
+  }
+  document.getElementById('monthGrid').innerHTML = g;
+}
+
+function renderYear() {
+  const n = new Date(), y = n.getFullYear();
+  const start = new Date(y, 0, 1);
+  const dayOfYear = Math.floor((n - start) / 86400000) + 1;
+  let active = 0;
+  for (let i = 0; i < dayOfYear; i++) {
+    const d = new Date(start); d.setDate(i + 1);
+    if ((state.history[dateKey(d)] || {}).completed > 0) active++;
+  }
+  const pct = dayOfYear > 0 ? Math.round((active / dayOfYear) * 100) : 0;
+  document.getElementById('yearPct').textContent   = pct + '%';
+  document.getElementById('yearLabel').textContent = `${active} / ${dayOfYear}일 활성 (${y})`;
+  document.getElementById('yearRing').innerHTML    = svgRing(pct, '#38bdf8', 80);
+  const yg = state.yearlyGoal?.trim();
+  document.getElementById('yearGoalPreview').textContent = yg ? '🎯 ' + (yg.length > 40 ? yg.slice(0,40)+'…' : yg) : '';
+}
+
+function svgRing(pct, color, size) {
+  const stroke = 8, r = (size - stroke) / 2, cx = size/2;
+  const circ = 2 * Math.PI * r, dash = (pct/100) * circ;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="rgba(30,41,59,.8)" stroke-width="${stroke}"/>
+    <circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}"
+      stroke-dasharray="${dash} ${circ}" stroke-dashoffset="${circ/4}" stroke-linecap="round"/>
+    <text x="${cx}" y="${cx}" text-anchor="middle" dominant-baseline="central"
+      font-family="Orbitron,monospace" font-size="11" font-weight="bold" fill="${color}">${pct}%</text>
+  </svg>`;
+}
+
+// ─────────────────────────────────────────────
+//  QUESTS
+// ─────────────────────────────────────────────
+function addQuest() {
+  const inp = document.getElementById('questInput');
+  const text = inp.value.trim();
+  if (!text) { inp.focus(); return; }
+  const difficulty = document.getElementById('difficultySelect').value;
+  const statKey    = document.getElementById('statSelect').value;
+  state.quests.unshift({ id:Date.now(), text, difficulty, statKey, xp:XP_MAP[difficulty], completed:false, createdAt:new Date().toISOString() });
+  inp.value = '';
+  saveState(); renderQuests(); recordHistory(); renderProgress();
+  showToast(`퀘스트 등록! ${STATS_DEF[statKey].icon} ${statKey} ${DIFF_ICON[difficulty]} ${XP_MAP[difficulty]}XP`, '#38bdf8');
+}
+
+function toggleQuest(id, event) {
+  const q = state.quests.find(q => q.id === id);
+  if (!q) return;
+  q.completed = !q.completed;
+  saveState();
+
+  let x = window.innerWidth/2, y = 300;
+  if (event) { const t = event.touches?event.touches[0]:event; x = t.clientX||x; y = t.clientY||y; }
+
+  if (q.completed) {
+    gainXP(q.xp, x, y, q.statKey);
+    spawnBurstRing(x, y, STATS_DEF[q.statKey]?.color || '#10b981');
+  } else {
+    loseXP(q.xp, q.statKey);
+  }
+  renderQuests(); recordHistory(); renderProgress();
+}
+
+function deleteQuest(id) {
+  const q = state.quests.find(q => q.id === id);
+  if (!q) return;
+  if (q.completed) {
+    state.currentXP -= q.xp; state.totalXP -= q.xp;
+    const s = state.stats[q.statKey];
+    if (s) { s.xp -= q.xp; while (s.xp < 0 && s.level > 1) { s.level--; s.xp += STAT_XP_PER_LV; } if (s.xp < 0) s.xp = 0; }
+    while (state.currentXP < 0 && state.level > 1) { state.level--; state.currentXP += XP_PER_LEVEL; }
+    if (state.currentXP < 0) state.currentXP = 0;
+  }
+  state.quests = state.quests.filter(q => q.id !== id);
+  saveState(); renderXP(); renderStats(); renderQuests(); recordHistory(); renderProgress();
+  showToast('퀘스트 삭제됨', '#64748b');
+}
+
+function renderQuests() {
+  const list = document.getElementById('questList'), empty = document.getElementById('emptyState');
+  if (!state.quests.length) { list.innerHTML = ''; empty.style.display = 'block'; updateQuestStats(); return; }
+  empty.style.display = 'none';
+  const sorted = [...state.quests].sort((a,b) => a.completed===b.completed ? 0 : a.completed ? 1 : -1);
+  list.innerHTML = sorted.map(q => {
+    const def = STATS_DEF[q.statKey] || STATS_DEF.STR;
+    return `<div class="quest-item ${q.completed?'completed':''} p-3" id="qi-${q.id}"
+      style="${q.completed?'':'border-left:3px solid '+def.color}">
+      <div class="flex items-center gap-3">
+        <div class="custom-check ${q.completed?'checked':''}" onclick="toggleQuest(${q.id},event)">
+          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="quest-text text-sm font-medium leading-tight">${esc(q.text)}</div>
+          <div class="flex items-center gap-1 mt-1 flex-wrap">
+            <span class="stat-badge" style="background:${def.color}22;color:${def.color};border:1px solid ${def.color}44">
+              ${def.icon} ${q.statKey}
+            </span>
+            <span class="text-xs px-2 py-0.5 rounded-full badge-${q.difficulty}">${DIFF_ICON[q.difficulty]} ${DIFF_LBL[q.difficulty]}</span>
+            <span class="text-xs text-slate-500">${q.xp} XP</span>
+          </div>
+        </div>
+        <button class="btn-danger" onclick="deleteQuest(${q.id})">
+          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+  updateQuestStats();
+}
+
+function updateQuestStats() {
+  const done = state.quests.filter(q=>q.completed).length;
+  const xp   = state.quests.filter(q=>q.completed).reduce((s,q)=>s+q.xp, 0);
+  document.getElementById('completedCount').textContent = done;
+  document.getElementById('totalCount').textContent     = state.quests.length;
+  document.getElementById('todayXP').textContent        = xp;
+}
+
+// ─────────────────────────────────────────────
+//  GOALS
+// ─────────────────────────────────────────────
+function saveGoals() {
+  state.yearlyGoal  = document.getElementById('yearlyGoal').value;
+  state.monthlyGoal = document.getElementById('monthlyGoal').value;
+  saveState();
+  const y = state.yearlyGoal.trim(), m = state.monthlyGoal.trim();
+  document.getElementById('yearlyPreview').textContent  = y ? (y.length>30?y.slice(0,30)+'…':y) : '목표를 입력하세요';
+  document.getElementById('monthlyPreview').textContent = m ? (m.length>30?m.slice(0,30)+'…':m) : '목표를 입력하세요';
+}
+
+function loadGoalInputs() {
+  document.getElementById('yearlyGoal').value  = state.yearlyGoal  || '';
+  document.getElementById('monthlyGoal').value = state.monthlyGoal || '';
+  saveGoals();
+}
+
+function toggleAccordion(id) {
+  document.getElementById(id+'Content').classList.toggle('open');
+  document.getElementById(id+'Icon').classList.toggle('open');
+}
+
+
+// ─────────────────────────────────────────────
+//  VISUAL EFFECTS
+// ─────────────────────────────────────────────
+function showXPFloat(text, x, y, color) {
+  const el = document.createElement('div');
+  el.className = 'xp-float'; el.textContent = text; el.style.color = color;
+  el.style.left = (x-30)+'px'; el.style.top = (y-20)+'px';
+  document.body.appendChild(el); setTimeout(()=>el.remove(), 1300);
+}
+
+function spawnBurstRing(x, y, color='#10b981') {
+  const r = document.createElement('div');
+  r.className = 'burst-ring';
+  r.style.cssText = `width:40px;height:40px;left:${x-20}px;top:${y-20}px;border-color:${color}`;
+  document.body.appendChild(r); setTimeout(()=>r.remove(), 700);
+}
+
+function spawnParticleBurst() {
+  const cv = document.getElementById('particles'), ctx = cv.getContext('2d');
+  const cx = cv.width/2, cy = cv.height/3;
+  const ps = Array.from({length:60}, ()=>({
+    x:cx, y:cy, vx:(Math.random()-.5)*12, vy:(Math.random()-.5)*12,
+    r:Math.random()*4+2, color:Math.random()>.5?'#10b981':'#38bdf8', life:1
+  }));
+  function anim() {
+    ps.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=.3; p.life-=.025;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.color+Math.floor(p.life*255).toString(16).padStart(2,'0'); ctx.fill(); });
+    if (ps.some(p=>p.life>0)) requestAnimationFrame(anim);
+  }
+  anim();
+}
+
+function showToast(msg, color='#10b981') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.background = color+'ee';
+  t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(window._tt);
+  window._tt = setTimeout(()=>{ t.style.opacity='0'; }, 2500);
+}
+
+function initParticles() {
+  const cv = document.getElementById('particles'), ctx = cv.getContext('2d');
+  const resize = ()=>{ cv.width=window.innerWidth; cv.height=window.innerHeight; };
+  resize(); window.addEventListener('resize', resize);
+  const dots = Array.from({length:40}, ()=>({
+    x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight,
+    r:Math.random()*1.5+.3, vx:(Math.random()-.5)*.3, vy:(Math.random()-.5)*.3,
+    color:Math.random()>.5?'#10b981':'#38bdf8'
+  }));
+  function draw() {
+    ctx.clearRect(0,0,cv.width,cv.height);
+    dots.forEach(d=>{ d.x+=d.vx; d.y+=d.vy;
+      if(d.x<0)d.x=cv.width; if(d.x>cv.width)d.x=0;
+      if(d.y<0)d.y=cv.height; if(d.y>cv.height)d.y=0;
+      ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
+      ctx.fillStyle=d.color+'55'; ctx.fill(); });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

@@ -43,6 +43,9 @@
 
   .card { background:linear-gradient(135deg,rgba(26,39,68,.9),rgba(15,23,42,.9)); border:1px solid rgba(16,185,129,.2); border-radius:16px; backdrop-filter:blur(10px); }
 
+  /* ── DOT PATTERN (top-right decoration) ── */
+  .dot-pattern-bg { position:fixed; top:0; right:0; width:200px; height:200px; background:url('art/dot-pattern.svg') repeat; opacity:.5; pointer-events:none; z-index:0; }
+
   /* ── RANK EMBLEM (계급 휘장) ── */
   .rank-emblem { display:inline-flex; align-items:center; gap:6px; padding:3px 11px 3px 7px; border-radius:999px; font-size:.72rem; font-weight:800; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,.18); color:#fff; }
   .rank-emblem .rank-ico { font-size:.95rem; line-height:1; filter:drop-shadow(0 1px 2px rgba(0,0,0,.4)); }
@@ -375,6 +378,7 @@
 </div>
 
 <!-- MAIN -->
+<div class="dot-pattern-bg"></div>
 <div class="relative z-10 max-w-lg mx-auto px-4 py-5 pb-24">
 
   <!-- DATE & LEVEL -->

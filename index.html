@@ -157,21 +157,33 @@
   ::-webkit-scrollbar-thumb { background:rgba(16,185,129,.4); border-radius:2px; }
   #particles { position:fixed; inset:0; pointer-events:none; z-index:0; }
 
-  /* ── CHARACTER PORTRAIT ── */
-  .portrait-wrap { flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:6px; }
-  .portrait-img { width:128px; height:176px; object-fit:cover; border-radius:14px; border:2px solid rgba(255,255,255,.25); transition:all .6s cubic-bezier(.4,0,.2,1); cursor:pointer; }
-  .portrait-img:hover { transform:scale(1.03); }
-  .portrait-img.evolving { animation:evoReveal .8s cubic-bezier(.34,1.56,.64,1); }
+  /* ── ANIMAL DISPLAY ── */
+  .animal-wrap { flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:6px; position:relative; }
+  .animal-img { width:128px; height:176px; object-fit:cover; border-radius:14px; border:2px solid rgba(255,255,255,.25); transition:all .6s cubic-bezier(.4,0,.2,1); cursor:pointer; }
+  .animal-img:hover { transform:scale(1.03); }
+  .animal-img.evolving { animation:evoReveal .8s cubic-bezier(.34,1.56,.64,1); }
   @keyframes evoReveal { 0%{opacity:0;transform:scale(.7) rotate(-3deg);filter:brightness(2)} 50%{filter:brightness(1.3)} 100%{opacity:1;transform:scale(1) rotate(0);filter:brightness(1)} }
-  .pet-badge { display:inline-flex; align-items:center; gap:4px; font-size:.7rem; background:rgba(15,23,42,.7); border:1px solid rgba(255,255,255,.12); border-radius:999px; padding:2px 10px 2px 4px; cursor:pointer; transition:all .2s; }
-  .pet-badge:hover { border-color:rgba(16,185,129,.4); }
-  .pet-badge-img { width:24px; height:24px; border-radius:50%; object-fit:cover; }
-  .pet-collection-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:8px; }
-  .pet-card { background:rgba(15,23,42,.7); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:10px 6px; text-align:center; transition:all .2s; }
-  .pet-card.unlocked { border-color:rgba(16,185,129,.35); }
-  .pet-card.equipped { border-color:rgba(16,185,129,.7); box-shadow:0 0 14px rgba(16,185,129,.25); }
-  .pet-card.locked { opacity:.4; filter:grayscale(.6); }
-  .pet-card-img { width:64px; height:64px; object-fit:cover; border-radius:10px; margin:0 auto 4px; display:block; }
+  /* 악세서리 오버레이 */
+  .acc-overlay { position:absolute; pointer-events:none; z-index:4; font-size:1.4rem; filter:drop-shadow(0 1px 3px rgba(0,0,0,.7)); }
+  .mood-bubble { position:absolute; top:-8px; right:-8px; font-size:1.2rem; filter:drop-shadow(0 2px 4px rgba(0,0,0,.6)); animation:moodPop .4s cubic-bezier(.34,1.56,.64,1); pointer-events:none; z-index:2; }
+  @keyframes moodPop { 0%{opacity:0;transform:scale(0) rotate(-20deg)} 100%{opacity:1;transform:scale(1) rotate(0)} }
+  .speech-bubble { position:absolute; top:-24px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.85); color:#e2e8f0; font-size:.65rem; padding:3px 10px; border-radius:999px; white-space:nowrap; border:1px solid rgba(16,185,129,.3); animation:speechPop .5s cubic-bezier(.34,1.56,.64,1) forwards; pointer-events:none; z-index:3; }
+  @keyframes speechPop { 0%{opacity:0;transform:translateX(-50%) translateY(8px) scale(.7)} 100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)} }
+  /* 도감 */
+  .encyclopedia-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr)); gap:8px; }
+  .encyclopedia-card { background:rgba(15,23,42,.7); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:10px 6px; text-align:center; transition:all .2s; }
+  .encyclopedia-card.complete { border-color:rgba(16,185,129,.6); box-shadow:0 0 12px rgba(16,185,129,.25); }
+  .encyclopedia-card .stage-dot { display:inline-block; width:12px; height:12px; border-radius:50%; margin:1px; font-size:.45rem; line-height:12px; text-align:center; }
+  .encyclopedia-card .stage-dot.locked { background:rgba(71,85,105,.4); color:#475569; }
+  .encyclopedia-card .stage-dot.unlocked { background:rgba(16,185,129,.3); color:#10b981; border:1px solid rgba(16,185,129,.4); }
+  /* 집 */
+  .house-room { position:relative; background:linear-gradient(135deg,#1a1a2e,#16213e); border-radius:16px; min-height:260px; overflow:hidden; border:1px solid rgba(255,255,255,.08); }
+  .house-animal { position:absolute; width:64px; height:88px; border-radius:8px; object-fit:cover; border:1px solid rgba(255,255,255,.15); transition:all .3s; cursor:pointer; }
+  .house-animal:hover { transform:scale(1.1); z-index:5; }
+  .house-furniture { position:absolute; font-size:2rem; filter:drop-shadow(0 2px 4px rgba(0,0,0,.5)); pointer-events:none; }
+  .animal-select-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:10px; }
+  .animal-select-card { background:rgba(15,23,42,.7); border:2px solid rgba(255,255,255,.08); border-radius:14px; padding:14px 8px; text-align:center; cursor:pointer; transition:all .2s; }
+  .animal-select-card:hover { border-color:rgba(56,189,248,.5); transform:translateY(-2px); }
   .mood-bubble { position:absolute; top:-8px; right:-8px; font-size:1.2rem; filter:drop-shadow(0 2px 4px rgba(0,0,0,.6)); animation:moodPop .4s cubic-bezier(.34,1.56,.64,1); pointer-events:none; z-index:2; }
   @keyframes moodPop { 0%{opacity:0;transform:scale(0) rotate(-20deg)} 100%{opacity:1;transform:scale(1) rotate(0)} }
   .speech-bubble { position:absolute; top:-24px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.85); color:#e2e8f0; font-size:.65rem; padding:3px 10px; border-radius:999px; white-space:nowrap; border:1px solid rgba(16,185,129,.3); animation:speechPop .5s cubic-bezier(.34,1.56,.64,1) forwards; pointer-events:none; z-index:3; }
@@ -261,19 +273,6 @@
       <button id="soundToggle" class="shop-buy" style="width:56px" onclick="toggleSound()">ON</button>
     </div>
 
-    <!-- 캐릭터 성별 -->
-    <div class="cat-row mb-2">
-      <div style="font-size:1.1rem">🧝</div>
-      <div class="flex-1 min-w-0">
-        <div class="text-sm font-medium">캐릭터</div>
-        <div class="text-xs text-slate-500">계급 일러스트 성별</div>
-      </div>
-      <div class="flex gap-1">
-        <button id="genderM" class="shop-buy" style="width:42px" onclick="setGender('m')">남</button>
-        <button id="genderF" class="shop-buy" style="width:42px" onclick="setGender('f')">여</button>
-      </div>
-    </div>
-
     <!-- 알림 -->
     <div class="cat-row mb-1" style="flex-wrap:wrap">
       <div style="font-size:1.1rem">🔔</div>
@@ -336,27 +335,56 @@
       <div class="seg-btn active" id="shopTabAvatar" onclick="switchShopTab('avatar')">🧙 아바타</div>
       <div class="seg-btn" id="shopTabTheme" onclick="switchShopTab('theme')">🎨 테마</div>
       <div class="seg-btn" id="shopTabBg" onclick="switchShopTab('bg')">🖼️ 배경</div>
+      <div class="seg-btn" id="shopTabHouse" onclick="switchShopTab('house')">🏠 집</div>
     </div>
     <div id="shopGrid" class="grid grid-cols-3 gap-2"></div>
     <div class="text-xs text-slate-600 text-center mt-3">할 일을 완료하면 🪙코인이 떨어져요. 가끔 💎젬도!</div>
   </div>
 </div>
 
-<!-- PET COLLECTION MODAL -->
-<div class="overlay" id="petModal">
+<!-- ANIMAL SELECT MODAL (첫 선택 / 새 동물) -->
+<div class="overlay" id="animalSelectModal">
   <div class="modal-card p-5">
     <div class="flex items-center justify-between mb-1">
-      <div class="font-orbitron text-sm font-bold" style="color:#10b981">🐾 펫 컬렉션</div>
-      <button onclick="closePetModal()" class="btn-danger" style="width:30px;height:30px">
+      <div class="font-orbitron text-sm font-bold" style="color:#10b981">🐾 키울 동물을 선택하세요</div>
+      <button onclick="closeAnimalSelect()" class="btn-danger" style="width:30px;height:30px">
         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
-    <div class="text-xs text-slate-500 mb-3">계급이 올라가면 새로운 펫을 만날 수 있어요. 펫은 캐릭터와 함께 다닙니다!</div>
-    <div class="flex items-center gap-2 mb-3">
-      <div class="flex-1 collection-progress"><div class="collection-progress-fill" id="petProgressFill" style="width:0%"></div></div>
-      <span class="font-orbitron text-xs" style="color:#10b981" id="petProgressText">0/8</span>
+    <div class="text-xs text-slate-500 mb-3">5가지 동물 중 하나를 골라 키워보세요! 레벨업하면 진화해요.</div>
+    <div class="animal-select-grid" id="animalSelectGrid"></div>
+  </div>
+</div>
+
+<!-- ENCYCLOPEDIA MODAL (도감) -->
+<div class="overlay" id="encyclopediaModal">
+  <div class="modal-card p-5">
+    <div class="flex items-center justify-between mb-1">
+      <div class="font-orbitron text-sm font-bold" style="color:#10b981">📖 도감</div>
+      <button onclick="closeEncyclopediaModal()" class="btn-danger" style="width:30px;height:30px">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
     </div>
-    <div class="pet-collection-grid" id="petGrid"></div>
+    <div class="text-xs text-slate-500 mb-3">키웠던 동물들의 진화 단계가 기록됩니다. 모든 단계를 모아보세요!</div>
+    <div class="flex items-center gap-2 mb-3">
+      <div class="flex-1 collection-progress"><div class="collection-progress-fill" id="encyclopediaProgressFill" style="width:0%"></div></div>
+      <span class="font-orbitron text-xs" style="color:#10b981" id="encyclopediaProgressText">0/25</span>
+    </div>
+    <div class="encyclopedia-grid" id="encyclopediaGrid"></div>
+  </div>
+</div>
+
+<!-- HOUSE MODAL (집) -->
+<div class="overlay" id="houseModal">
+  <div class="modal-card p-5">
+    <div class="flex items-center justify-between mb-1">
+      <div class="font-orbitron text-sm font-bold" style="color:#fbbf24">🏠 집</div>
+      <button onclick="closeHouseModal()" class="btn-danger" style="width:30px;height:30px">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="text-xs text-slate-500 mb-3">최종 형태까지 키운 동물들이 집에 모입니다. 가구도 꾸며보세요!</div>
+    <div class="house-room" id="houseRoom"></div>
   </div>
 </div>
 
@@ -390,8 +418,9 @@
       </div>
       <div class="flex items-center gap-2">
         <button onclick="openReportModal()" class="navbtn" title="회고 리포트" style="font-size:.85rem">📊</button>
-        <button onclick="openPetModal()" class="navbtn" title="펫 컬렉션" style="font-size:.85rem">🐾</button>
+        <button onclick="openEncyclopediaModal()" class="navbtn" title="도감" style="font-size:.85rem">📖</button>
         <button onclick="openShopModal()" class="navbtn" title="상점" style="font-size:.85rem">🛒</button>
+        <button onclick="openHouseModal()" class="navbtn" title="집" style="font-size:.85rem">🏠</button>
         <button onclick="openSettingsModal()" class="navbtn" title="설정" style="font-size:.85rem">⚙️</button>
         <div class="pulse-dot"></div>
         <span class="text-emerald-400 text-xs font-medium">ONLINE</span>
@@ -420,13 +449,14 @@
           <div class="text-xs mt-1"><span id="coinDisplay" style="color:#fbbf24">🪙 0</span><span id="gemDisplay" style="color:#c4b5fd" class="ml-2">💎 0</span></div>
           <div class="text-xs text-slate-600 mt-1" id="nextTitle">다음 칭호 평민 · Lv.4</div>
         </div>
-        <div class="portrait-wrap">
+        <div class="animal-wrap">
           <div class="relative">
-            <img id="characterPortrait" class="portrait-img" src="" alt="" onclick="onCharacterClick()">
+            <img id="animalDisplay" class="animal-img" src="" alt="" onclick="onAnimalClick()">
+            <div id="accOverlay" class="acc-overlay" style="display:none"></div>
             <div id="moodBubble" class="mood-bubble" style="display:none"></div>
             <div id="speechBubble" class="speech-bubble" style="display:none"></div>
           </div>
-          <div id="petDisplay" onclick="openPetModal()" style="cursor:pointer"></div>
+          <div id="animalInfo" class="text-xs text-slate-400 text-center" style="cursor:pointer" onclick="openEncyclopediaModal()"></div>
         </div>
       </div>
     </div>
@@ -701,7 +731,60 @@ const THEMES = [
   { id:'th_crimson', name:'크림슨',        cost:120, c1:'#ef4444', c2:'#fb923c', bg:'#1a0d0d' },
   { id:'th_royal',   name:'로열',          gem:true, gemCost:2, c1:'#a78bfa', c2:'#fbbf24', bg:'#14101f' }
 ];
-function shopItem(id) { return [...AVATARS, ...THEMES].find(i => i.id === id); }
+function shopItem(id) { return [...AVATARS, ...THEMES, ...HOUSE_FURNITURE].find(i => i.id === id); }
+
+// ── 동물 5종 × 5단계 ──
+const ANIMALS = [
+  { id:'fox',     name:'여우',   emoji:'🦊', color:'#f97316', stages:[
+    { id:'baby', name:'아기 여우',     minLv:1   },
+    { id:'child', name:'깡충 여우',     minLv:10  },
+    { id:'teen',  name:'청년 여우',     minLv:25  },
+    { id:'adult', name:'성체 여우',     minLv:50  },
+    { id:'legendary', name:'구미호',    minLv:90  }
+  ]},
+  { id:'hamster', name:'햄스터', emoji:'🐹', color:'#a3e635', stages:[
+    { id:'baby', name:'아기 햄스터',     minLv:1   },
+    { id:'child', name:'통통 햄스터',     minLv:10  },
+    { id:'teen',  name:'모험가 햄스터',   minLv:25  },
+    { id:'adult', name:'햄스터 기사',     minLv:50  },
+    { id:'legendary', name:'킹 햄스터',   minLv:90  }
+  ]},
+  { id:'cat',     name:'고양이', emoji:'🐱', color:'#8b5cf6', stages:[
+    { id:'baby', name:'아기 고양이',     minLv:1   },
+    { id:'child', name:'호기심 고양이',   minLv:10  },
+    { id:'teen',  name:'우아한 고양이',   minLv:25  },
+    { id:'adult', name:'마법 고양이',     minLv:50  },
+    { id:'legendary', name:'나인 라이프', minLv:90  }
+  ]},
+  { id:'dog',     name:'강아지', emoji:'🐶', color:'#60a5fa', stages:[
+    { id:'baby', name:'아기 강아지',     minLv:1   },
+    { id:'child', name:'쫑긋 강아지',     minLv:10  },
+    { id:'teen',  name:'늑대소년',       minLv:25  },
+    { id:'adult', name:'늑대 전사',       minLv:50  },
+    { id:'legendary', name:'월광 늑대신', minLv:90  }
+  ]},
+  { id:'fish',    name:'코이',   emoji:'🐠', color:'#f472b6', stages:[
+    { id:'baby', name:'아기 코이',     minLv:1   },
+    { id:'child', name:'성장 코이',     minLv:10  },
+    { id:'teen',  name:'비단 코이',     minLv:25  },
+    { id:'adult', name:'황금 코이',     minLv:50  },
+    { id:'legendary', name:'용',        minLv:90  }
+  ]}
+];
+
+// ── 집 가구 ──
+const HOUSE_FURNITURE = [
+  { id:'fur_bed',     name:'침대',     emoji:'🛏️', cost:30  },
+  { id:'fur_table',   name:'탁자',     emoji:'🪑', cost:20  },
+  { id:'fur_rug',     name:'러그',     emoji:'🟫', cost:15  },
+  { id:'fur_lamp',    name:'램프',     emoji:'💡', cost:25  },
+  { id:'fur_plant',   name:'화분',     emoji:'🌱', cost:18  },
+  { id:'fur_shelf',   name:'선반',     emoji:'📚', cost:35  },
+  { id:'fur_picture', name:'액자',     emoji:'🖼️', cost:40  },
+  { id:'fur_clock',   name:'시계',     emoji:'⏰', cost:22  },
+  { id:'fur_tv',      name:'TV',       emoji:'📺', cost:50  },
+  { id:'fur_cushion', name:'쿠션',     emoji:'🟣', cost:12  }
+];
 
 function rankInfo(level) {
   let cur = RANK_FLAT[0], idx = 0;
@@ -710,21 +793,17 @@ function rankInfo(level) {
   return { rankName:cur.rankName, title:cur.title, icon:cur.icon, art:cur.art, color:cur.color, c2:cur.c2, glow:cur.glow, next };
 }
 
-// 계급 일러스트 경로 (성별별 1세트). 파일 없으면 호출부에서 이모지로 폴백.
-function artSrc(slug, gender) { return `art/${slug}-${gender || 'm'}.webp`; }
-// 계급 옆 작은 원형 아이콘 (페인팅 그대로 축소). 로드 실패 시 이모지로 대체.
-function rankIconHTML(ri) {
-  return `<img class="rank-pic" src="${artSrc(ri.art, state.gender)}" data-emoji="${ri.icon}" alt="" onerror="rankImgFail(this)">`;
+function getAnimal(animalId) { return ANIMALS.find(a => a.id === animalId); }
+function getAnimalStage(animalId, level) {
+  const a = getAnimal(animalId);
+  if (!a) return null;
+  let cur = a.stages[0];
+  for (const s of a.stages) { if (level >= s.minLv) cur = s; else break; }
+  return cur;
 }
-function rankImgFail(img) {
-  const s = document.createElement('span');
-  s.className = 'rank-ico'; s.textContent = img.dataset.emoji || '🏅';
-  img.replaceWith(s);
-}
-function levelArtFail(img) {
-  const e = img.closest('#levelUpEmblem');
-  if (e && e._medal) e.innerHTML = e._medal; else if (e) e.innerHTML = '⚔️';
-}
+function getActiveAnimal() { return getAnimal(state.activeAnimal); }
+function getActiveStage() { return getAnimalStage(state.activeAnimal, state.level); }
+function animalImgSrc(animalId, stageId) { return `art/char_${animalId}_${stageId}.webp`; }
 
 // ─────────────────────────────────────────────
 //  STATE
@@ -742,9 +821,11 @@ let state = {
   celebratedStreak: 0,   // 마지막으로 축하한 스트릭 배지 단계
   soundOn: true,         // 효과음
   notifyOn: false, notifyTime: '21:00',   // 매일 알림
-  gender: 'm',           // 계급 일러스트 성별 'm' | 'f'
   yearlyGoal:'', monthlyGoal:'', weeklyGoal:'',
-  pets: [], equippedPet: null
+  activeAnimal: null,    // 현재 키우는 동물 id (fox, hamster, cat, dog, fish)
+  encyclopedia: {},      // { fox:['baby','child'], ... } 진화한 단계 기록
+  houseAnimals: [],      // ['fox','cat'] 최종형태까지 키워 집에 배치된 동물
+  houseFurniture: [],    // ['fur_bed','fur_lamp'] 구매한 가구
 };
 const STREAK_BADGES = [
   { d:100, icon:'👑', label:'100일 전설' },
@@ -801,9 +882,9 @@ function loadState() {
       if (typeof state.soundOn !== 'boolean') state.soundOn = true;
       if (typeof state.notifyOn !== 'boolean') state.notifyOn = false;
       if (!state.notifyTime) state.notifyTime = '21:00';
-      if (state.gender !== 'f') state.gender = state.gender || 'm';
-      if (!state.pets) state.pets = [];
-      if (!state.equippedPet) state.equippedPet = null;
+      if (!state.encyclopedia) state.encyclopedia = {};
+      if (!state.houseAnimals) state.houseAnimals = [];
+      if (!state.houseFurniture) state.houseFurniture = [];
     } catch(e) {}
     return;
   }
@@ -898,9 +979,8 @@ function init() {
   applyAvatar();
   scheduleNotify();
   initParticles();
-  applyPortrait();
-  initPets();
-  renderPetDisplay();
+  initAnimal();
+  applyAnimal();
   updateMood();
   document.getElementById('yearlyGoal').addEventListener('input', debounce(()=>{ saveGoals(); renderProgress(); }, 500));
   document.getElementById('monthlyGoal').addEventListener('input', debounce(saveGoals, 500));
@@ -939,7 +1019,7 @@ function renderXP() {
   }
   renderRank();
   renderRewards();
-  applyPortrait();
+  applyAnimal();
   updateMood();
 }
 
@@ -962,7 +1042,7 @@ function renderRank() {
   const el = document.getElementById('rankTitle');
   if (el) {
     el.innerHTML = `<span class="rank-emblem" style="background:linear-gradient(135deg,${ri.color},${ri.c2});box-shadow:0 0 ${6+ri.glow*16}px ${ri.color}${ri.glow>0?'aa':'55'}">
-        ${rankIconHTML(ri)}<span>${ri.rankName}·${ri.title}</span></span>`;
+        <span class="rank-ico">${ri.icon}</span><span>${ri.rankName}·${ri.title}</span></span>`;
   }
   const nx = document.getElementById('nextTitle');
   if (nx) nx.textContent = ri.next ? `다음 칭호 ${ri.next.title} · Lv.${ri.next.min}` : '👑 최고 칭호 달성!';
@@ -989,7 +1069,7 @@ function gainXP(amount, x, y, catId) {
     const ri = rankInfo(state.level);
     triggerLevelUp(ri, ri.title !== oldTitle, ri.rankName !== oldRank);
     checkRewardUnlocks(oldLevel, state.level);
-    checkPetUnlocks();
+    checkAnimalEvolution();
   }
   renderXP();
   saveState();
@@ -1017,14 +1097,15 @@ function triggerLevelUp(ri, titleChanged, rankChanged) {
     tEl.style.display = 'none';
   }
   if (emb) {
-    const pet = getEquippedPet();
-    const petHtml = pet
-      ? `<div style="margin-top:-10px;font-size:.85rem;color:#94a3b8"><img src="art/pets/${pet.file}" style="width:32px;height:32px;border-radius:50%;vertical-align:middle;margin-right:4px">${pet.emoji} ${pet.name}</div>`
+    const a = getActiveAnimal();
+    const s = getActiveStage();
+    const animalHtml = a && s
+      ? `<div style="margin-top:8px;font-size:.85rem;color:#94a3b8">${a.emoji} ${a.name} · ${s.name}</div>`
       : '';
     emb.innerHTML =
-      `<img class="levelup-art" src="art/${ri.art}-${state.gender}.webp" alt="" style="box-shadow:0 0 ${24+ri.glow*40}px ${ri.color};border-color:${ri.color}">` +
+      `<img class="levelup-art" src="${animalImgSrc(state.activeAnimal, s ? s.id : 'baby')}" alt="" style="border-radius:14px;box-shadow:0 0 ${24+ri.glow*40}px ${ri.color};border-color:${ri.color}">` +
       `<div style="margin-top:8px;font-size:2.5rem">${ri.icon}</div>` +
-      petHtml;
+      animalHtml;
   }
   const ov = document.getElementById('levelUpOverlay');
   ov.style.backgroundImage = `linear-gradient(rgba(2,6,23,.72),rgba(2,6,23,.9)), url('art/bg-${ri.art}.webp')`;
@@ -1602,21 +1683,6 @@ function renderSettings() {
     nt.style.background = on ? 'rgba(16,185,129,.2)' : 'rgba(100,116,139,.2)';
     nt.style.color = on ? '#10b981' : '#94a3b8';
   }
-  const gm = document.getElementById('genderM'), gf = document.getElementById('genderF');
-  if (gm && gf) {
-    const m = state.gender !== 'f';
-    gm.style.background = m ? 'rgba(16,185,129,.2)' : 'rgba(100,116,139,.2)';
-    gm.style.color      = m ? '#10b981' : '#94a3b8';
-    gf.style.background = !m ? 'rgba(16,185,129,.2)' : 'rgba(100,116,139,.2)';
-    gf.style.color      = !m ? '#10b981' : '#94a3b8';
-  }
-}
-
-function setGender(g) {
-  state.gender = (g === 'f') ? 'f' : 'm';
-  saveState(); renderSettings(); renderRank();
-  sfx('coin');
-  applyPortrait();
 }
 
 function toggleSound() {
@@ -1664,7 +1730,9 @@ function importData(event) {
     if (typeof state.soundOn !== 'boolean') state.soundOn = true;
     if (typeof state.notifyOn !== 'boolean') state.notifyOn = false;
     if (!state.notifyTime) state.notifyTime = '21:00';
-    if (state.gender !== 'f') state.gender = state.gender || 'm';
+    if (!state.encyclopedia) state.encyclopedia = {};
+    if (!state.houseAnimals) state.houseAnimals = [];
+    if (!state.houseFurniture) state.houseFurniture = [];
     viewDate = todayKey();
     ensureRoutines(viewDate);
     saveState();
@@ -1832,7 +1900,7 @@ function applyAvatar() {
   const av = AVATARS.find(a => a.id === id);
   if (av && av.emoji !== 'LV') { span.textContent = av.emoji; span.style.fontSize = '1.5rem'; }
   else { span.textContent = 'LV'; span.style.fontSize = ''; }
-  applyPortrait();
+  applyAnimal();
 }
 
 // ─────────────────────────────────────────────
@@ -1933,7 +2001,9 @@ function renderShop() {
   document.getElementById('shopTabAvatar').classList.toggle('active', shopTab === 'avatar');
   document.getElementById('shopTabTheme').classList.toggle('active', shopTab === 'theme');
   document.getElementById('shopTabBg').classList.toggle('active', shopTab === 'bg');
+  document.getElementById('shopTabHouse').classList.toggle('active', shopTab === 'house');
   if (shopTab === 'bg') { renderBgShop(); return; }
+  if (shopTab === 'house') { renderHouseShop(); return; }
   const items = shopTab === 'avatar' ? AVATARS : THEMES;
   document.getElementById('shopGrid').innerHTML = items.map(it => {
     const owned = isOwned(it), equipped = isEquipped(it);
@@ -2018,11 +2088,45 @@ function buyItem(id) {
 
 function equipItem(id) {
   const isAvatar = AVATARS.some(a => a.id === id);
+  const isFurniture = HOUSE_FURNITURE.some(f => f.id === id);
   if (!state.equipped) state.equipped = { avatar:null, theme:'th_default' };
-  if (isAvatar) state.equipped.avatar = id; else state.equipped.theme = id;
+  if (isAvatar) state.equipped.avatar = id;
+  else if (!isFurniture) state.equipped.theme = id;
   saveState();
   applyAvatar(); applyTheme(); renderCurrency(); renderShop();
-  applyPortrait();
+}
+
+function renderHouseShop() {
+  const items = HOUSE_FURNITURE;
+  document.getElementById('shopGrid').innerHTML = items.map(it => {
+    const owned = (state.houseFurniture || []).includes(it.id);
+    let btn;
+    if (owned) {
+      btn = `<button class="shop-buy" style="background:rgba(16,185,129,.2);color:#10b981">보유중</button>`;
+    } else {
+      btn = `<button class="shop-buy" style="background:rgba(251,191,36,.18);color:#fbbf24" onclick="buyHouseFurniture('${it.id}')">🪙 ${it.cost}</button>`;
+    }
+    return `<div class="shop-item ${owned ? 'equipped' : ''}">
+      <div style="font-size:2rem;line-height:1.2">${it.emoji}</div>
+      <div class="text-xs mt-1 truncate" style="color:#cbd5e1">${esc(it.name)}</div>
+      ${btn}
+    </div>`;
+  }).join('');
+}
+
+function buyHouseFurniture(id) {
+  const it = HOUSE_FURNITURE.find(f => f.id === id);
+  if (!it) return;
+  if ((state.houseFurniture || []).includes(id)) { showToast('이미 보유한 가구예요', '#64748b'); return; }
+  if ((state.coins || 0) < it.cost) { showToast('코인이 부족해요 🪙', '#ef4444'); return; }
+  state.coins -= it.cost;
+  if (!state.houseFurniture) state.houseFurniture = [];
+  state.houseFurniture.push(id);
+  saveState();
+  renderShop();
+  renderCurrency();
+  showToast(`${it.emoji} ${it.name} 구매 완료!`, '#fbbf24');
+  sfx('reward');
 }
 
 // ─────────────────────────────────────────────
@@ -2187,90 +2291,221 @@ function initParticles() {
 }
 
 // ═════════════════════════════════════════════
-//  PET SYSTEM
+//  ANIMAL SYSTEM (동물키우기)
 // ═════════════════════════════════════════════
 
-const PETS = [
-  { id:'chick',   name:'병아리', emoji:'🐣', file:'chick.webp',   minLv:1   },
-  { id:'fox',     name:'여우',   emoji:'🦊', file:'fox.webp',     minLv:10  },
-  { id:'cat',     name:'고양이', emoji:'🐱', file:'cat.webp',     minLv:20  },
-  { id:'eagle',   name:'독수리', emoji:'🦅', file:'eagle.webp',   minLv:35  },
-  { id:'lion',    name:'사자',   emoji:'🦁', file:'lion.webp',    minLv:50  },
-  { id:'dragon',  name:'드래곤', emoji:'🐉', file:'dragon.webp',  minLv:90  },
-  { id:'unicorn', name:'유니콘', emoji:'🦄', file:'unicorn.webp', minLv:110 },
-  { id:'phoenix', name:'불사조', emoji:'🐦‍🔥',file:'phoenix.webp', minLv:120 },
-];
-
-function initPets() {
-  if (!state.pets) state.pets = [];
-  if (!state.equippedPet) state.equippedPet = null;
-  PETS.forEach(pet => {
-    const p = state.pets.find(x => x.id === pet.id);
-    if (!p) state.pets.push({ id:pet.id, unlocked:state.level >= pet.minLv });
-    else if (!p.unlocked && state.level >= pet.minLv) { p.unlocked = true; }
-  });
+function initAnimal() {
+  if (!state.encyclopedia) state.encyclopedia = {};
+  if (!state.houseAnimals) state.houseAnimals = [];
+  if (!state.houseFurniture) state.houseFurniture = [];
+  if (!state.activeAnimal) {
+    openAnimalSelect();
+  }
 }
 
-function checkPetUnlocks() {
-  let newUnlock = false;
-  PETS.forEach(pet => {
-    const p = state.pets.find(x => x.id === pet.id);
-    if (p && !p.unlocked && state.level >= pet.minLv) { p.unlocked = true; newUnlock = true; }
-  });
-  if (newUnlock) { saveState(); renderPetDisplay(); }
+function checkAnimalEvolution() {
+  if (!state.activeAnimal) return;
+  const a = getActiveAnimal();
+  const s = getActiveStage();
+  if (!a || !s) return;
+  // 도감 등록 (아직 등록 안 된 단계면 등록)
+  if (!state.encyclopedia[a.id]) state.encyclopedia[a.id] = [];
+  if (!state.encyclopedia[a.id].includes(s.id)) {
+    state.encyclopedia[a.id].push(s.id);
+    saveState();
+    showToast(`${a.emoji} ${a.name} → ${s.name} 도감 등록!`, a.color);
+  }
+  // 최종 진화 도달 시 완료 처리
+  if (s.id === 'legendary' && !state.houseAnimals.includes(a.id)) {
+    setTimeout(() => showAnimalComplete(a), 600);
+  }
 }
 
-function getEquippedPet() {
-  if (!state.equippedPet) return null;
-  const pet = PETS.find(p => p.id === state.equippedPet);
-  if (pet && state.pets.some(p => p.id === state.equippedPet && p.unlocked)) return pet;
-  return null;
+function showAnimalComplete(a) {
+  showToast(`🎉 ${a.emoji} ${a.name} 최종 진화 완료! 집에 배치하세요!`, '#fbbf24');
+  // 자동으로 집에 배치 + 도감 완료
+  if (!state.houseAnimals.includes(a.id)) {
+    state.houseAnimals.push(a.id);
+    saveState();
+  }
+  // 새 동물 시작 선택
+  setTimeout(() => {
+    if (confirm(`🎉 ${a.emoji} ${a.name}이(가) 최종 형태까지 성장했습니다!\n\n도감에 등록되고 집에 배치됩니다.\n\n새로운 동물을 키워볼까요?`)) {
+      startNewAnimal();
+    }
+  }, 1500);
 }
 
-function renderPetDisplay() {
-  const el = document.getElementById('petDisplay');
-  if (!el) return;
-  const pet = getEquippedPet();
-  el.innerHTML = pet
-    ? `<span class="pet-badge"><img class="pet-badge-img" src="art/pets/${pet.file}" alt=""> ${pet.emoji} ${pet.name}</span>`
-    : `<span class="pet-badge" style="opacity:.5">🐾 펫 없음</span>`;
+function startNewAnimal() {
+  state.level = 1;
+  state.currentXP = 0;
+  state.activeAnimal = null;
+  saveState();
+  openAnimalSelect();
 }
 
-function openPetModal() { renderPetCollection(); document.getElementById('petModal').classList.add('show'); }
-function closePetModal() { document.getElementById('petModal').classList.remove('show'); }
+function selectAnimal(id) {
+  if (!getAnimal(id)) return;
+  state.activeAnimal = id;
+  // baby 단계 도감 등록
+  if (!state.encyclopedia[id]) state.encyclopedia[id] = [];
+  if (!state.encyclopedia[id].includes('baby')) {
+    state.encyclopedia[id].push('baby');
+  }
+  saveState();
+  closeAnimalSelect();
+  applyAnimal(true);
+  renderXP();
+  showToast(`${getAnimal(id).emoji} ${getAnimal(id).name} 키우기 시작!`, getAnimal(id).color);
+}
 
-function renderPetCollection() {
-  const grid = document.getElementById('petGrid');
+function openAnimalSelect() {
+  renderAnimalSelect();
+  document.getElementById('animalSelectModal').classList.add('show');
+}
+function closeAnimalSelect() {
+  document.getElementById('animalSelectModal').classList.remove('show');
+  if (!state.activeAnimal) {
+    // 강제 선택 (취소 불가)
+    openAnimalSelect();
+  }
+}
+
+function renderAnimalSelect() {
+  const grid = document.getElementById('animalSelectGrid');
   if (!grid) return;
-  const unlocked = state.pets.filter(p => p.unlocked).length;
-  document.getElementById('petProgressFill').style.width = (unlocked / PETS.length * 100) + '%';
-  document.getElementById('petProgressText').textContent = unlocked + '/' + PETS.length;
-  grid.innerHTML = PETS.map(pet => {
-    const pState = state.pets.find(p => p.id === pet.id);
-    const ul = pState && pState.unlocked;
-    const eq = state.equippedPet === pet.id && ul;
-    return '<div class="pet-card ' + (ul?'unlocked':'') + ' ' + (eq?'equipped':'') + ' ' + (!ul?'locked':'') + '">' +
-      '<img class="pet-card-img" src="art/pets/' + pet.file + '" alt="' + pet.name + '" onerror="this.style.display=\'none\'">' +
-      '<div class="text-xs font-medium" style="color:' + (ul?'#e2e8f0':'#64748b') + '">' + pet.emoji + ' ' + pet.name + '</div>' +
-      '<div class="text-xs mb-1" style="color:' + (ul?'#10b981':'#475569') + '">' + (ul?'':('Lv.'+pet.minLv)) + '</div>' +
-      (ul ? (eq
-        ? '<button class="shop-buy" style="background:rgba(16,185,129,.2);color:#10b981;font-size:.6rem">장착됨</button>'
-        : '<button class="shop-buy" style="background:rgba(56,189,248,.18);color:#38bdf8;font-size:.6rem" onclick="equipPet(\'' + pet.id + '\')">장착</button>')
-        : '<button class="shop-buy" style="background:rgba(71,85,105,.18);color:#94a3b8;font-size:.6rem" disabled>🔒</button>') +
-      '</div>';
+  grid.innerHTML = ANIMALS.map(a => {
+    const completed = state.houseAnimals && state.houseAnimals.includes(a.id);
+    return `<div class="animal-select-card" onclick="selectAnimal('${a.id}')" style="border-color:${completed ? 'rgba(16,185,129,.5)' : 'rgba(255,255,255,.08)'}">
+      <img src="art/char_${a.id}_baby.webp" alt="${a.name}" style="width:80px;height:100px;object-fit:cover;border-radius:10px;margin:0 auto 6px;display:block" onerror="this.style.display='none'">
+      <div class="text-sm font-bold" style="color:#e2e8f0">${a.emoji} ${a.name}</div>
+      <div class="text-xs" style="color:${completed ? '#10b981' : '#64748b'}">${completed ? '✅ 키운 경험 있음' : '🐣 키워보세요!'}</div>
+    </div>`;
   }).join('');
 }
 
-function equipPet(id) {
-  const p = state.pets.find(p => p.id === id);
-  if (!p || !p.unlocked) return;
-  state.equippedPet = id;
-  saveState(); renderPetCollection(); renderPetDisplay(); closePetModal();
-  showToast('🐾 ' + PETS.find(x=>x.id===id).name + ' 장착!', '#10b981');
+// ── 동물 표시 ──
+
+function applyAnimal(animating) {
+  const img = document.getElementById('animalDisplay');
+  if (!img) return;
+  const a = getActiveAnimal();
+  const s = getActiveStage();
+  if (!a || !s) { img.src = ''; return; }
+  img.src = animalImgSrc(a.id, s.id);
+  img.style.boxShadow = '0 0 12px ' + a.color + '66, 0 0 4px ' + a.color;
+  img.style.borderColor = a.color;
+  if (animating) {
+    img.classList.remove('evolving');
+    void img.offsetWidth;
+    img.classList.add('evolving');
+  }
+  // 동물 정보 표시
+  const info = document.getElementById('animalInfo');
+  if (info) {
+    const total = a.stages.length;
+    const curIdx = a.stages.findIndex(s2 => s2.id === s.id);
+    info.innerHTML = `${a.emoji} ${a.name} · ${s.name} <span style="color:${a.color}">${'⬤'.repeat(curIdx+1)}${'○'.repeat(total-curIdx-1)}</span>`;
+  }
+  // 악세서리 오버레이 (추후 확장)
 }
 
 // ═════════════════════════════════════════════
-//  CHARACTER PORTRAIT & MOOD
+//  ENCYCLOPEDIA (도감)
+// ═════════════════════════════════════════════
+
+function openEncyclopediaModal() {
+  renderEncyclopedia();
+  document.getElementById('encyclopediaModal').classList.add('show');
+}
+function closeEncyclopediaModal() {
+  document.getElementById('encyclopediaModal').classList.remove('show');
+}
+
+function renderEncyclopedia() {
+  const grid = document.getElementById('encyclopediaGrid');
+  if (!grid) return;
+  const totalStages = ANIMALS.reduce((sum, a) => sum + a.stages.length, 0);
+  let unlockedCount = 0;
+  grid.innerHTML = ANIMALS.map(a => {
+    const reg = (state.encyclopedia && state.encyclopedia[a.id]) || [];
+    const stages = a.stages.map(s => {
+      const ul = reg.includes(s.id);
+      if (ul) unlockedCount++;
+      return `<span class="stage-dot ${ul ? 'unlocked' : 'locked'}" title="${s.name}">${ul ? '✅' : '🔒'}</span>`;
+    }).join('');
+    const complete = reg.length >= a.stages.length;
+    return `<div class="encyclopedia-card ${complete ? 'complete' : ''}">
+      <img src="art/char_${a.id}_${complete ? 'legendary' : 'baby'}.webp" alt="${a.name}" style="width:64px;height:80px;object-fit:cover;border-radius:8px;margin:0 auto 4px;display:block" onerror="this.style.display='none'">
+      <div class="text-xs font-bold" style="color:#e2e8f0">${a.emoji} ${a.name}</div>
+      <div class="mt-1">${stages}</div>
+      <div class="text-xs mt-1" style="color:${complete ? '#10b981' : '#64748b'}">${reg.length}/${a.stages.length}</div>
+    </div>`;
+  }).join('');
+  const pct = totalStages > 0 ? (unlockedCount / totalStages * 100) : 0;
+  document.getElementById('encyclopediaProgressFill').style.width = pct + '%';
+  document.getElementById('encyclopediaProgressText').textContent = unlockedCount + '/' + totalStages;
+}
+
+// ═════════════════════════════════════════════
+//  HOUSE (집)
+// ═════════════════════════════════════════════
+
+function openHouseModal() {
+  renderHouse();
+  document.getElementById('houseModal').classList.add('show');
+}
+function closeHouseModal() {
+  document.getElementById('houseModal').classList.remove('show');
+}
+
+function renderHouse() {
+  const room = document.getElementById('houseRoom');
+  if (!room) return;
+  const animals = (state.houseAnimals || []).map(id => getAnimal(id)).filter(Boolean);
+  const furniture = (state.houseFurniture || []).map(id => HOUSE_FURNITURE.find(f => f.id === id)).filter(Boolean);
+  
+  let html = '';
+  
+  // 가구 먼저 배치 (뒷배경)
+  const furPositions = [
+    { left:'5%', top:'55%', emoji:'🛏️', size:'2.8rem' },
+    { left:'50%', top:'60%', emoji:'🪑', size:'2rem' },
+    { left:'25%', top:'65%', emoji:'🟫', size:'3.5rem' },
+    { left:'70%', top:'35%', emoji:'💡', size:'2rem' },
+    { left:'10%', top:'30%', emoji:'🌱', size:'2.2rem' },
+    { left:'40%', top:'15%', emoji:'📚', size:'2.5rem' },
+    { left:'65%', top:'20%', emoji:'🖼️', size:'2rem' },
+    { left:'80%', top:'55%', emoji:'⏰', size:'1.8rem' },
+    { left:'55%', top:'45%', emoji:'📺', size:'2.5rem' },
+    { left:'15%', top:'50%', emoji:'🟣', size:'1.8rem' }
+  ];
+  
+  let furHtml = '';
+  furniture.forEach((f, i) => {
+    const pos = furPositions[i % furPositions.length];
+    if (f) {
+      furHtml += `<div class="house-furniture" style="left:${pos.left};top:${pos.top};font-size:${pos.size}">${f.emoji}</div>`;
+    }
+  });
+  html += furHtml;
+  
+  // 동물 배치
+  animals.forEach((a, i) => {
+    const x = 10 + (i * 20) % 80;
+    const y = 55 + (Math.floor(i / 4) * 20);
+    html += `<img class="house-animal" src="art/char_${a.id}_legendary.webp" alt="${a.name}" style="left:${x}%;top:${y}%;" title="${a.emoji} ${a.name}" onerror="this.style.display='none'">`;
+  });
+  
+  if (!animals.length && !furniture.length) {
+    html += `<div class="text-center text-slate-600 text-sm py-10">아직 집이 비어 있어요.<br>동물을 최종 진화시키고 가구를 꾸며보세요!</div>`;
+  }
+  
+  room.innerHTML = html;
+}
+
+// ═════════════════════════════════════════════
+//  MOOD
 // ═════════════════════════════════════════════
 
 const MOODS = {
@@ -2282,20 +2517,6 @@ const MOODS = {
 };
 
 let currentMood = 'idle', speechTimer = null;
-
-function applyPortrait(animating) {
-  const ri = rankInfo(state.level);
-  const img = document.getElementById('characterPortrait');
-  if (!img) return;
-  img.src = 'art/' + ri.art + '-' + state.gender + '.webp';
-  img.style.boxShadow = '0 0 ' + (12+ri.glow*24) + 'px ' + ri.color + '88, 0 0 ' + (4+ri.glow*10) + 'px ' + ri.color;
-  img.style.borderColor = ri.color;
-  if (animating) {
-    img.classList.remove('evolving');
-    void img.offsetWidth;
-    img.classList.add('evolving');
-  }
-}
 
 function updateMood() {
   const day = state.days[todayKey()];
@@ -2321,7 +2542,7 @@ function setMood(id) {
   b.style.animation = 'moodPop .4s cubic-bezier(.34,1.56,.64,1)';
 }
 
-function onCharacterClick() {
+function onAnimalClick() {
   const msgs = (MOODS[currentMood] || MOODS.idle).msg;
   const msg = msgs[Math.floor(Math.random() * msgs.length)];
   const b = document.getElementById('speechBubble');

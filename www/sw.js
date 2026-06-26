@@ -1,6 +1,6 @@
 // LIFE RPG service worker — makes the app installable and offline-capable.
 // Bump CACHE when you change cached assets to force an update.
-const CACHE = 'liferpg-v5';
+const CACHE = 'liferpg-v6';
 // 계급 일러스트(art/*.webp)는 런타임 fetch 캐싱으로 저장됨 — 파일이 아직 없을 수 있어
 // ASSETS(addAll)에는 넣지 않는다 (없는 파일이 있으면 설치가 통째로 실패하므로).
 const ASSETS = [

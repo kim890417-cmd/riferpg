@@ -779,35 +779,35 @@ function shopItem(id) { return [...AVATARS, ...THEMES, ...HOUSE_FURNITURE].find(
 
 // ── 동물 5종 × 5단계 ──
 const ANIMALS = [
-  { id:'fox',     name:'여우',   emoji:'🦊', color:'#f97316', stages:[
+  { id:'fox',     name:'여우',   emoji:'🦊', color:'#f97316', c2:'#ea580c', stages:[
     { id:'baby', name:'아기 여우',     minLv:1   },
     { id:'child', name:'깡충 여우',     minLv:10  },
     { id:'teen',  name:'청년 여우',     minLv:25  },
     { id:'adult', name:'성체 여우',     minLv:50  },
     { id:'legendary', name:'구미호',    minLv:90  }
   ]},
-  { id:'hamster', name:'햄스터', emoji:'🐹', color:'#a3e635', stages:[
+  { id:'hamster', name:'햄스터', emoji:'🐹', color:'#a3e635', c2:'#65a30d', stages:[
     { id:'baby', name:'아기 햄스터',     minLv:1   },
     { id:'child', name:'통통 햄스터',     minLv:10  },
     { id:'teen',  name:'모험가 햄스터',   minLv:25  },
     { id:'adult', name:'햄스터 기사',     minLv:50  },
     { id:'legendary', name:'킹 햄스터',   minLv:90  }
   ]},
-  { id:'cat',     name:'고양이', emoji:'🐱', color:'#8b5cf6', stages:[
+  { id:'cat',     name:'고양이', emoji:'🐱', color:'#8b5cf6', c2:'#6d28d9', stages:[
     { id:'baby', name:'아기 고양이',     minLv:1   },
     { id:'child', name:'호기심 고양이',   minLv:10  },
     { id:'teen',  name:'우아한 고양이',   minLv:25  },
     { id:'adult', name:'마법 고양이',     minLv:50  },
     { id:'legendary', name:'나인 라이프', minLv:90  }
   ]},
-  { id:'dog',     name:'강아지', emoji:'🐶', color:'#60a5fa', stages:[
+  { id:'dog',     name:'강아지', emoji:'🐶', color:'#60a5fa', c2:'#2563eb', stages:[
     { id:'baby', name:'아기 강아지',     minLv:1   },
     { id:'child', name:'쫑긋 강아지',     minLv:10  },
     { id:'teen',  name:'늑대소년',       minLv:25  },
     { id:'adult', name:'늑대 전사',       minLv:50  },
     { id:'legendary', name:'월광 늑대신', minLv:90  }
   ]},
-  { id:'fish',    name:'코이',   emoji:'🐠', color:'#f472b6', stages:[
+  { id:'fish',    name:'코이',   emoji:'🐠', color:'#f472b6', c2:'#db2777', stages:[
     { id:'baby', name:'아기 코이',     minLv:1   },
     { id:'child', name:'성장 코이',     minLv:10  },
     { id:'teen',  name:'비단 코이',     minLv:25  },
@@ -831,6 +831,42 @@ const HOUSE_FURNITURE = [
 ];
 
 function rankInfo(level) {
+  if (state.activeAnimal) {
+    const a = getAnimal(state.activeAnimal);
+    if (a) {
+      let cur = a.stages[0], idx = 0;
+      for (let i = 0; i < a.stages.length; i++) {
+        if (level >= a.stages[i].minLv) {
+          cur = a.stages[i];
+          idx = i;
+        } else break;
+      }
+      const next = a.stages[idx + 1] || null;
+      const glowValues = [0, 0.3, 0.5, 0.75, 1.0];
+      const glow = glowValues[idx] || 0;
+      
+      let art = 'peasant';
+      if (level >= 120) art = 'legend';
+      else if (level >= 110) art = 'emperor';
+      else if (level >= 90) art = 'king';
+      else if (level >= 50) art = 'noble';
+      else if (level >= 35) art = 'lord';
+      else if (level >= 20) art = 'knight';
+      else if (level >= 10) art = 'squire';
+
+      return {
+        rankName: a.name,
+        title: cur.name,
+        icon: a.emoji,
+        art: art,
+        color: a.color,
+        c2: a.c2 || '#475569',
+        glow: glow,
+        next: next ? { title: next.name, min: next.minLv } : null
+      };
+    }
+  }
+
   let cur = RANK_FLAT[0], idx = 0;
   for (let i = 0; i < RANK_FLAT.length; i++) { if (level >= RANK_FLAT[i].min) { cur = RANK_FLAT[i]; idx = i; } else break; }
   const next = RANK_FLAT[idx + 1] || null;
@@ -1121,11 +1157,15 @@ function renderRank() {
   const ri = rankInfo(state.level);
   const el = document.getElementById('rankTitle');
   if (el) {
+    const displayName = state.activeAnimal ? ri.title : `${ri.rankName}·${ri.title}`;
     el.innerHTML = `<span class="rank-emblem" style="background:linear-gradient(135deg,${ri.color},${ri.c2});box-shadow:0 0 ${6+ri.glow*16}px ${ri.color}${ri.glow>0?'aa':'55'}">
-        <span class="rank-ico">${ri.icon}</span><span>${ri.rankName}·${ri.title}</span></span>`;
+        <span class="rank-ico">${ri.icon}</span><span>${displayName}</span></span>`;
   }
   const nx = document.getElementById('nextTitle');
-  if (nx) nx.textContent = ri.next ? `다음 칭호 ${ri.next.title} · Lv.${ri.next.min}` : '👑 최고 칭호 달성!';
+  if (nx) {
+    const label = state.activeAnimal ? '다음 단계' : '다음 칭호';
+    nx.textContent = ri.next ? `${label} ${ri.next.title} · Lv.${ri.next.min}` : '👑 최고 단계 달성!';
+  }
   // 레벨 원형 테두리에 계급 발광 더하기 (배경 그라데이션은 테마가 담당)
   const circ = document.getElementById('levelCircle');
   if (circ) circ.style.boxShadow = ri.glow > 0 ? `0 0 ${8+ri.glow*18}px ${ri.color}` : '';
@@ -1171,7 +1211,9 @@ function triggerLevelUp(ri, titleChanged, rankChanged) {
   const tEl = document.getElementById('newTitleDisplay');
   const emb = document.getElementById('levelUpEmblem');
   if (titleChanged && ri) {
-    tEl.innerHTML = `<span style="color:${ri.color}">${ri.rankName} · ${ri.title}</span> 칭호 획득!`;
+    const displayName = state.activeAnimal ? ri.title : `${ri.rankName} · ${ri.title}`;
+    const suffix = state.activeAnimal ? '단계 도달!' : '칭호 획득!';
+    tEl.innerHTML = `<span style="color:${ri.color}">${displayName}</span> ${suffix}`;
     tEl.style.display = 'block';
   } else {
     tEl.style.display = 'none';

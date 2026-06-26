@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -336,6 +336,7 @@
       <div class="seg-btn" id="shopTabTheme" onclick="switchShopTab('theme')">🎨 테마</div>
       <div class="seg-btn" id="shopTabBg" onclick="switchShopTab('bg')">🖼️ 배경</div>
       <div class="seg-btn" id="shopTabHouse" onclick="switchShopTab('house')">🏠 집</div>
+      <div class="seg-btn" id="shopTabPet" onclick="switchShopTab('pet')">🍖 펫</div>
     </div>
     <div id="shopGrid" class="grid grid-cols-3 gap-2"></div>
     <div class="text-xs text-slate-600 text-center mt-3">할 일을 완료하면 🪙코인이 떨어져요. 가끔 💎젬도!</div>
@@ -353,6 +354,38 @@
     </div>
     <div class="text-xs text-slate-500 mb-3">5가지 동물 중 하나를 골라 키워보세요! 레벨업하면 진화해요.</div>
     <div class="animal-select-grid" id="animalSelectGrid"></div>
+  </div>
+</div>
+
+<!-- PET INTERACTION MODAL -->
+<div class="overlay" id="petModal">
+  <div class="modal-card p-5">
+    <div class="flex items-center justify-between mb-1">
+      <div class="font-orbitron text-sm font-bold" style="color:#10b981">🍖 펫 교감하기</div>
+      <button onclick="closePetModal()" class="btn-danger" style="width:30px;height:30px">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="text-xs text-slate-500 mb-3">아이템을 사용해 펫을 돌보고 교감하세요. 친밀도가 100%가 되면 특별한 보상을 얻을 수 있어요!</div>
+    
+    <!-- Active Pet Info Card -->
+    <div class="flex items-center gap-4 p-3 rounded-lg mb-4" style="background:rgba(15,23,42,0.6); border:1px solid rgba(16,185,129,0.2);">
+      <div class="w-16 h-16 flex items-center justify-center rounded-lg" style="background:rgba(30,41,59,0.8); overflow:hidden;">
+        <img id="petModalImg" src="" alt="" style="max-width:100%; max-height:100%; object-fit:contain;">
+      </div>
+      <div class="flex-1">
+        <div id="petModalName" class="font-bold text-sm text-slate-200">동물 이름</div>
+        <div class="text-xs text-slate-400 mt-1">포만도: <span id="petModalHunger" class="text-amber-400 font-bold">100</span>%</div>
+        <div class="text-xs text-slate-400 mt-0.5">친밀도: <span id="petModalAffection" class="text-rose-400 font-bold">0</span>%</div>
+      </div>
+    </div>
+
+    <!-- Items Grid -->
+    <div class="font-bold text-xs text-slate-400 mb-2">교감 아이템 사용</div>
+    <div id="petModalInventory" class="grid grid-cols-3 gap-2 mb-3">
+      <!-- Items will be injected dynamically -->
+    </div>
+    <div class="text-xs text-center text-slate-500 mt-2">친밀도 100% 달성 시: 💎 보석 5개 획득 (친밀도는 0%로 리셋됩니다)</div>
   </div>
 </div>
 
@@ -442,7 +475,10 @@
             <div class="xp-bar-fill h-full" id="xpBar" style="width:0%"></div>
           </div>
           <div class="flex justify-between text-xs text-slate-500 mb-2">
-            <span><span id="currentXP">0</span> / <span id="maxXP">100</span> XP</span>
+            <span>
+              <span id="currentXP">0</span> / <span id="maxXP">100</span> XP
+              <span id="petXpBuffIndicator" style="display:none; margin-left:6px; background:rgba(251,191,36,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.3); padding:1px 4px; border-radius:4px; font-weight:bold; font-size:0.65rem;" title="포만도 50% 이상 버프: 경험치 +10%">⚡ XP +10%</span>
+            </span>
             <span id="xpToNext">다음까지 100 XP</span>
           </div>
           <div class="text-xs text-slate-500">🔥 연속 <span id="streakDisplay" class="text-amber-400">0</span>일 <span id="streakBadge"></span></div>
@@ -458,6 +494,14 @@
           </div>
           <div id="animalInfo" class="text-xs text-slate-400 text-center" style="cursor:pointer" onclick="openEncyclopediaModal()"></div>
         </div>
+      </div>
+      <!-- 펫 상시 정보 UI -->
+      <div id="petInteractUI" class="mt-3 pt-3 border-t border-slate-700/50 flex justify-between items-center text-xs text-slate-400" style="display:none">
+        <div class="flex gap-3">
+          <span>🍗 포만도: <span id="petHungerDisplay" class="font-bold text-amber-400">100</span>%</span>
+          <span>❤️ 친밀도: <span id="petAffectionDisplay" class="font-bold text-rose-400">0</span>%</span>
+        </div>
+        <div class="cursor-pointer hover:underline text-emerald-400 font-semibold" onclick="openPetModal()">👉 교감하기</div>
       </div>
     </div>
   </div>
@@ -822,10 +866,16 @@ let state = {
   soundOn: true,         // 효과음
   notifyOn: false, notifyTime: '21:00',   // 매일 알림
   yearlyGoal:'', monthlyGoal:'', weeklyGoal:'',
-  activeAnimal: null,    // 현재 키우는 동물 id (fox, hamster, cat, dog, fish)
+  activeAnimal: null,    // 현재 키우는 동물 id (fox, hamster, cat, dog_husky, dog_pomeranian, dog_retriever)
   encyclopedia: {},      // { fox:['baby','child'], ... } 진화한 단계 기록
   houseAnimals: [],      // ['fox','cat'] 최종형태까지 키워 집에 배치된 동물
   houseFurniture: [],    // ['fur_bed','fur_lamp'] 구매한 가구
+  petFood: 0,            // 🍖 일반 사료 보유 수량
+  petSnack: 0,           // 🍪 맛있는 간식 보유 수량
+  petToy: 0,             // 🥎 딸랑이 공 보유 수량
+  petHunger: 100,        // 🍗 포만도 (0 ~ 100)
+  petAffection: 0,       // ❤️ 친밀도 (0 ~ 100)
+  lastActiveDate: null,  // 직전 접속 날짜
 };
 const STREAK_BADGES = [
   { d:100, icon:'👑', label:'100일 전설' },
@@ -885,6 +935,12 @@ function loadState() {
       if (!state.encyclopedia) state.encyclopedia = {};
       if (!state.houseAnimals) state.houseAnimals = [];
       if (!state.houseFurniture) state.houseFurniture = [];
+      if (typeof state.petFood !== 'number') state.petFood = 0;
+      if (typeof state.petSnack !== 'number') state.petSnack = 0;
+      if (typeof state.petToy !== 'number') state.petToy = 0;
+      if (typeof state.petHunger !== 'number') state.petHunger = 100;
+      if (typeof state.petAffection !== 'number') state.petAffection = 0;
+      if (!state.lastActiveDate) state.lastActiveDate = null;
     } catch(e) {}
     return;
   }
@@ -962,6 +1018,29 @@ function computeStreak() {
 // ─────────────────────────────────────────────
 function init() {
   loadState();
+  
+  // 날짜 변경 감지 -> 포만도/친밀도 차감
+  const today = todayKey();
+  if (state.lastActiveDate && state.lastActiveDate !== today) {
+    try {
+      const lastDate = parseKey(state.lastActiveDate);
+      const currDate = parseKey(today);
+      const diffTime = Math.abs(currDate - lastDate);
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays > 0 && state.activeAnimal) {
+        state.petHunger = Math.max(0, (state.petHunger || 100) - (15 * diffDays));
+        if (state.petHunger === 0) {
+          state.petAffection = Math.max(0, (state.petAffection || 0) - (5 * diffDays));
+        }
+      }
+    } catch (e) {
+      console.error('Failed to calculate day difference for pet update:', e);
+    }
+  }
+  state.lastActiveDate = today;
+  saveState();
+
   viewDate = todayKey();
   ensureRoutines(viewDate);
   saveState();
@@ -982,6 +1061,7 @@ function init() {
   initAnimal();
   applyAnimal();
   updateMood();
+  updatePetUI();
   document.getElementById('yearlyGoal').addEventListener('input', debounce(()=>{ saveGoals(); renderProgress(); }, 500));
   document.getElementById('monthlyGoal').addEventListener('input', debounce(saveGoals, 500));
   document.getElementById('weeklyGoal').addEventListener('input', debounce(saveGoals, 500));
@@ -1051,13 +1131,13 @@ function renderRank() {
   if (circ) circ.style.boxShadow = ri.glow > 0 ? `0 0 ${8+ri.glow*18}px ${ri.color}` : '';
 }
 
-function gainXP(amount, x, y, catId) {
+function gainXP(amount, x, y, catId, isBuffed) {
   const oldLevel = state.level;
   const oldRI = rankInfo(state.level);
   const oldTitle = oldRI.title, oldRank = oldRI.rankName;
   state.currentXP += amount;
   state.totalXP   += amount;
-  showXPFloat('+' + amount + ' XP', x, y, '#10b981');
+  showXPFloat('+' + amount + ' XP' + (isBuffed ? ' (⚡+10%)' : ''), x, y, isBuffed ? '#fbbf24' : '#10b981');
   if (catId) gainStatXP(catId, amount, x, y);
   let leveled = false;
   while (state.currentXP >= XP_PER_LEVEL) {
@@ -1501,21 +1581,51 @@ function toggleQuest(id, event) {
 
   if (q.completed) {
     sfx('complete');
-    gainXP(q.xp, x, y, q.catId);
+    
+    // XP Buff Check
+    let actualXP = q.xp;
+    let isBuffed = false;
+    if (state.activeAnimal && (state.petHunger ?? 100) >= 50) {
+      actualXP = Math.round(q.xp * 1.1);
+      isBuffed = true;
+    }
+    q.xpAwarded = actualXP;
+    
+    gainXP(actualXP, x, y, q.catId, isBuffed);
     spawnBurstRing(x, y, getCat(q.catId).color);
+    
     const drop = coinRoll(q.difficulty);          // 랜덤 코인/젬 드롭
     q.coinAward = drop.coins; q.gemAward = drop.gems;
     state.coins += drop.coins; state.gems += drop.gems;
     showCoinFloat(drop, x, y);
+    
+    // 30% chance to drop basic pet food
+    if (Math.random() < 0.30) {
+      q.petFoodAward = 1;
+      state.petFood = (state.petFood || 0) + 1;
+      setTimeout(() => {
+        showToast('🍖 펫 사료를 발견했습니다! (+1)', '#10b981');
+        if (shopTab === 'pet') renderShop();
+        updatePetUI();
+      }, 500);
+    } else {
+      q.petFoodAward = 0;
+    }
+    
     if (drop.gems) setTimeout(() => sfx('gem'), 300); else setTimeout(() => sfx('coin'), 150);
     renderCurrency(); saveState();
     maybeCelebrateStreak();
   } else {
-    loseXP(q.xp, q.catId);
+    const xpToDeduct = q.xpAwarded !== undefined ? q.xpAwarded : q.xp;
+    loseXP(xpToDeduct, q.catId);
     state.coins = Math.max(0, state.coins - (q.coinAward || 0));  // 체크 해제 시 회수
     state.gems  = Math.max(0, state.gems  - (q.gemAward  || 0));
-    q.coinAward = 0; q.gemAward = 0;
-    renderCurrency(); saveState();
+    state.petFood = Math.max(0, (state.petFood || 0) - (q.petFoodAward || 0));
+    q.coinAward = 0; q.gemAward = 0; q.petFoodAward = 0; q.xpAwarded = 0;
+    renderCurrency();
+    if (shopTab === 'pet') renderShop();
+    updatePetUI();
+    saveState();
   }
   renderQuests(); renderProgress();
 }
@@ -1525,9 +1635,10 @@ function deleteQuest(id) {
   const q = day.quests.find(q => q.id === id);
   if (!q) return;
   if (q.completed) {
-    state.currentXP -= q.xp; state.totalXP -= q.xp;
+    const xpToDeduct = q.xpAwarded !== undefined ? q.xpAwarded : q.xp;
+    state.currentXP -= xpToDeduct; state.totalXP -= xpToDeduct;
     const c = getCat(q.catId);
-    c.xp -= q.xp; while (c.xp < 0 && c.level > 1) { c.level--; c.xp += STAT_XP_PER_LV; } if (c.xp < 0) c.xp = 0;
+    c.xp -= xpToDeduct; while (c.xp < 0 && c.level > 1) { c.level--; c.xp += STAT_XP_PER_LV; } if (c.xp < 0) c.xp = 0;
     while (state.currentXP < 0 && state.level > 1) { state.level--; state.currentXP += XP_PER_LEVEL; }
     if (state.currentXP < 0) state.currentXP = 0;
   }
@@ -2002,8 +2113,13 @@ function renderShop() {
   document.getElementById('shopTabTheme').classList.toggle('active', shopTab === 'theme');
   document.getElementById('shopTabBg').classList.toggle('active', shopTab === 'bg');
   document.getElementById('shopTabHouse').classList.toggle('active', shopTab === 'house');
+  const shopTabPetBtn = document.getElementById('shopTabPet');
+  if (shopTabPetBtn) shopTabPetBtn.classList.toggle('active', shopTab === 'pet');
+  
   if (shopTab === 'bg') { renderBgShop(); return; }
   if (shopTab === 'house') { renderHouseShop(); return; }
+  if (shopTab === 'pet') { renderPetShop(); return; }
+  
   const items = shopTab === 'avatar' ? AVATARS : THEMES;
   document.getElementById('shopGrid').innerHTML = items.map(it => {
     const owned = isOwned(it), equipped = isEquipped(it);
@@ -2025,6 +2141,54 @@ function renderShop() {
       ${btn}
     </div>`;
   }).join('');
+}
+
+function renderPetShop() {
+  const items = [
+    { id: 'petFood', name: '일반 사료', icon: '🍖', desc: '포만도 +25 / 친밀도 +5', cost: 10 },
+    { id: 'petSnack', name: '맛있는 간식', icon: '🍪', desc: '포만도 +40 / 친밀도 +15', cost: 30 },
+    { id: 'petToy', name: '딸랑이 공', icon: '🥎', desc: '포만도 +0 / 친밀도 +35', cost: 80 }
+  ];
+  
+  document.getElementById('shopGrid').innerHTML = items.map(it => {
+    let count = 0;
+    if (it.id === 'petFood') count = state.petFood || 0;
+    if (it.id === 'petSnack') count = state.petSnack || 0;
+    if (it.id === 'petToy') count = state.petToy || 0;
+
+    const preview = `<div style="font-size:1.6rem;line-height:1.2;position:relative;display:inline-block;">
+      ${it.icon}
+      <span style="position:absolute;bottom:-4px;right:-4px;background:#3b82f6;color:white;font-size:0.6rem;padding:1px 4px;border-radius:4px;font-weight:bold;line-height:1;">${count}개</span>
+    </div>`;
+
+    const btn = `<button class="shop-buy" style="background:rgba(251,191,36,.18);color:#fbbf24" onclick="buyPetItem('${it.id}', ${it.cost})">🪙 ${it.cost}</button>`;
+
+    return `<div class="shop-item flex flex-col justify-between" style="padding: 10px 4px;">
+      <div class="flex flex-col items-center">
+        ${preview}
+        <div class="text-[0.7rem] font-bold mt-1 truncate" style="color:#cbd5e1">${esc(it.name)}</div>
+        <div style="font-size:0.6rem;color:#64748b;margin:2px 0 4px;text-align:center;line-height:1.2;">${it.desc}</div>
+      </div>
+      ${btn}
+    </div>`;
+  }).join('');
+}
+
+function buyPetItem(id, cost) {
+  if (state.coins < cost) {
+    showToast("코인이 부족합니다! 🪙", "#ef4444");
+    return;
+  }
+  state.coins -= cost;
+  if (id === 'petFood') state.petFood = (state.petFood || 0) + 1;
+  else if (id === 'petSnack') state.petSnack = (state.petSnack || 0) + 1;
+  else if (id === 'petToy') state.petToy = (state.petToy || 0) + 1;
+  
+  saveState();
+  renderCurrency();
+  renderPetShop();
+  updatePetUI();
+  showToast("아이템을 구매했습니다! 🛍️", "#10b981");
 }
 
 // 계급 배경 컬렉션 — 도달한 계급은 해금(코인 없음), 미도달은 잠김.
@@ -2356,6 +2520,7 @@ function selectAnimal(id) {
   closeAnimalSelect();
   applyAnimal(true);
   renderXP();
+  updatePetUI();
   showToast(`${getAnimal(id).emoji} ${getAnimal(id).name} 키우기 시작!`, getAnimal(id).color);
 }
 
@@ -2543,16 +2708,156 @@ function setMood(id) {
 }
 
 function onAnimalClick() {
-  const msgs = (MOODS[currentMood] || MOODS.idle).msg;
-  const msg = msgs[Math.floor(Math.random() * msgs.length)];
-  const b = document.getElementById('speechBubble');
-  if (!b) return;
-  b.textContent = msg + ' 💬';
-  b.style.display = 'block';
-  b.style.animation = 'none'; void b.offsetWidth;
-  b.style.animation = 'speechPop .5s cubic-bezier(.34,1.56,.64,1) forwards';
-  clearTimeout(speechTimer);
-  speechTimer = setTimeout(function() { b.style.display = 'none'; }, 2500);
+  openPetModal();
+}
+
+// ═════════════════════════════════════════════
+//  PET INTERACTION & BUFF SYSTEM
+// ═════════════════════════════════════════════
+
+function openPetModal() {
+  if (!state.activeAnimal) {
+    showToast("먼저 키울 동물을 선택해 주세요!", "#ef4444");
+    return;
+  }
+  const modal = document.getElementById('petModal');
+  if (!modal) return;
+  
+  // Set animal display
+  const a = getActiveAnimal();
+  const s = getActiveStage();
+  if (a && s) {
+    const modalImg = document.getElementById('petModalImg');
+    const modalName = document.getElementById('petModalName');
+    if (modalImg) modalImg.src = animalImgSrc(a.id, s.id);
+    if (modalName) modalName.textContent = `${a.emoji} ${a.name} (${s.name})`;
+  }
+  
+  renderPetModalContent();
+  modal.classList.add('show');
+}
+
+function closePetModal() {
+  const modal = document.getElementById('petModal');
+  if (modal) modal.classList.remove('show');
+}
+
+function renderPetModalContent() {
+  const hunger = state.petHunger ?? 100;
+  const affection = state.petAffection ?? 0;
+  
+  const mHunger = document.getElementById('petModalHunger');
+  const mAffection = document.getElementById('petModalAffection');
+  if (mHunger) mHunger.textContent = hunger;
+  if (mAffection) mAffection.textContent = affection;
+  
+  const items = [
+    { id: 'petFood', name: '일반 사료', icon: '🍖', desc: '포만도 +25 / 친밀도 +5', count: state.petFood || 0 },
+    { id: 'petSnack', name: '맛있는 간식', icon: '🍪', desc: '포만도 +40 / 친밀도 +15', count: state.petSnack || 0 },
+    { id: 'petToy', name: '딸랑이 공', icon: '🥎', desc: '포만도 +0 / 친밀도 +35', count: state.petToy || 0 }
+  ];
+  
+  const inv = document.getElementById('petModalInventory');
+  if (!inv) return;
+  inv.innerHTML = items.map(it => {
+    const disabled = it.count <= 0;
+    const btnStyle = disabled 
+      ? `background:rgba(71,85,105,0.18); color:#64748b; cursor:not-allowed;`
+      : `background:rgba(16,185,129,0.18); color:#10b981;`;
+    
+    return `<div class="shop-item flex flex-col justify-between p-2" style="border:1px solid rgba(255,255,255,0.1); border-radius:8px; background:rgba(30,41,59,0.5);">
+      <div class="text-center font-bold text-2xl">${it.icon}</div>
+      <div class="text-center font-bold text-xs mt-1" style="color:#e2e8f0;">${it.name}</div>
+      <div class="text-center text-xs font-semibold text-blue-400">${it.count}개 보유</div>
+      <div class="text-center text-[0.6rem] text-slate-500 my-1">${it.desc}</div>
+      <button class="shop-buy text-xs mt-1 py-1" style="${btnStyle}" ${disabled ? 'disabled' : ''} onclick="usePetItem('${it.id}')">사용하기</button>
+    </div>`;
+  }).join('');
+}
+
+function usePetItem(key) {
+  if (!state.activeAnimal) return;
+  
+  let count = 0;
+  if (key === 'petFood') count = state.petFood || 0;
+  else if (key === 'petSnack') count = state.petSnack || 0;
+  else if (key === 'petToy') count = state.petToy || 0;
+  
+  if (count <= 0) {
+    showToast("아이템이 부족합니다!", "#ef4444");
+    return;
+  }
+  
+  let hungerGain = 0;
+  let affectionGain = 0;
+  
+  if (key === 'petFood') {
+    state.petFood--;
+    hungerGain = 25;
+    affectionGain = 5;
+  } else if (key === 'petSnack') {
+    state.petSnack--;
+    hungerGain = 40;
+    affectionGain = 15;
+  } else if (key === 'petToy') {
+    state.petToy--;
+    hungerGain = 0;
+    affectionGain = 35;
+  }
+  
+  const oldHunger = state.petHunger ?? 100;
+  const oldAffection = state.petAffection ?? 0;
+  
+  state.petHunger = Math.min(100, oldHunger + hungerGain);
+  state.petAffection = Math.min(100, oldAffection + affectionGain);
+  
+  let toastMsg = `${key === 'petFood' ? '🍖 사료' : key === 'petSnack' ? '🍪 간식' : '🥎 장난감'}을 사용했습니다!`;
+  if (hungerGain > 0) toastMsg += ` 포만도 +${hungerGain}`;
+  if (affectionGain > 0) toastMsg += ` 친밀도 +${affectionGain}`;
+  showToast(toastMsg, '#10b981');
+  
+  if (state.petAffection >= 100) {
+    state.petAffection = 0;
+    state.gems = (state.gems || 0) + 5;
+    setTimeout(() => {
+      showToast("💖 친밀도 100% 달성! 💎 보석 5개 획득! 💖", "#ec4899");
+      renderCurrency();
+    }, 800);
+  }
+  
+  saveState();
+  updatePetUI();
+  renderCurrency();
+}
+
+function updatePetUI() {
+  const ui = document.getElementById('petInteractUI');
+  if (!ui) return;
+  if (!state.activeAnimal) {
+    ui.style.display = 'none';
+    return;
+  }
+  
+  ui.style.display = 'flex';
+  
+  const hungerDisplay = document.getElementById('petHungerDisplay');
+  const affectionDisplay = document.getElementById('petAffectionDisplay');
+  if (hungerDisplay) hungerDisplay.textContent = state.petHunger ?? 100;
+  if (affectionDisplay) affectionDisplay.textContent = state.petAffection ?? 0;
+  
+  const xpBuffIndicator = document.getElementById('petXpBuffIndicator');
+  if (xpBuffIndicator) {
+    if ((state.petHunger ?? 100) >= 50) {
+      xpBuffIndicator.style.display = 'inline-flex';
+    } else {
+      xpBuffIndicator.style.display = 'none';
+    }
+  }
+
+  const petModal = document.getElementById('petModal');
+  if (petModal && petModal.classList.contains('show')) {
+    renderPetModalContent();
+  }
 }
 
 document.addEventListener('DOMContentLoaded', init);

@@ -555,7 +555,7 @@
     <div class="card p-4">
 
       <!-- DATE NAVIGATOR -->
-      <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center justify-between mb-3">
         <button class="navbtn" id="prevDayBtn" onclick="shiftDay(-1)">
           <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
         </button>
@@ -567,6 +567,17 @@
           <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
         </button>
       </div>
+
+      <!-- QUICK NAVIGATION -->
+      <div class="flex justify-center gap-1.5 mb-4">
+        <button class="px-2 py-1 text-[11px] font-medium rounded bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition" onclick="shiftDateUnit('week', -1)">-1주</button>
+        <button class="px-2 py-1 text-[11px] font-medium rounded bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition" onclick="shiftDateUnit('week', 1)">+1주</button>
+        <button class="px-2 py-1 text-[11px] font-medium rounded bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition" onclick="shiftDateUnit('month', -1)">-1달</button>
+        <button class="px-2 py-1 text-[11px] font-medium rounded bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition" onclick="shiftDateUnit('month', 1)">+1달</button>
+        <button class="px-2 py-1 text-[11px] font-medium rounded bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition" onclick="shiftDateUnit('year', -1)">-1년</button>
+        <button class="px-2 py-1 text-[11px] font-medium rounded bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition" onclick="shiftDateUnit('year', 1)">+1년</button>
+      </div>
+
       <button id="backToTodayBtn" onclick="goToday()" class="w-full mb-4 py-2 text-xs rounded-lg" style="display:none;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.3);color:#fbbf24;cursor:pointer">📅 과거 기록 보는 중 — 오늘로 돌아가기</button>
 
       <div class="flex gap-2 mb-4">
@@ -902,6 +913,7 @@ let state = {
   soundOn: true,         // 효과음
   notifyOn: false, notifyTime: '21:00',   // 매일 알림
   yearlyGoal:'', monthlyGoal:'', weeklyGoal:'',
+  weeklyGoals: {}, monthlyGoals: {}, yearlyGoals: {},
   activeAnimal: null,    // 현재 키우는 동물 id (fox, hamster, cat, dog_husky, dog_pomeranian, dog_retriever)
   encyclopedia: {},      // { fox:['baby','child'], ... } 진화한 단계 기록
   houseAnimals: [],      // ['fox','cat'] 최종형태까지 키워 집에 배치된 동물
@@ -938,6 +950,20 @@ function weekEndKey() {
   const d = new Date(); const dow = d.getDay();          // 0=일
   d.setDate(d.getDate() + (dow === 0 ? 0 : 7 - dow));    // 월~토면 이번 주 일요일로
   return dateKey(d);
+}
+function getWeekKey(d) {
+  const date = new Date(d);
+  const dow = date.getDay();
+  date.setDate(date.getDate() - (dow === 0 ? 6 : dow - 1));
+  return dateKey(date);
+}
+function getMonthKey(d) {
+  const date = new Date(d);
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}`;
+}
+function getYearKey(d) {
+  const date = new Date(d);
+  return `${date.getFullYear()}`;
 }
 function isFutureKey(k) { return parseKey(k) > parseKey(todayKey()); }
 function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -977,6 +1003,20 @@ function loadState() {
       if (typeof state.petHunger !== 'number') state.petHunger = 100;
       if (typeof state.petAffection !== 'number') state.petAffection = 0;
       if (!state.lastActiveDate) state.lastActiveDate = null;
+      if (!state.weeklyGoals) state.weeklyGoals = {};
+      if (!state.monthlyGoals) state.monthlyGoals = {};
+      if (!state.yearlyGoals) state.yearlyGoals = {};
+      
+      // Auto-migrate single properties if exist
+      if (state.weeklyGoal && Object.keys(state.weeklyGoals).length === 0) {
+        state.weeklyGoals[getWeekKey(new Date())] = state.weeklyGoal;
+      }
+      if (state.monthlyGoal && Object.keys(state.monthlyGoals).length === 0) {
+        state.monthlyGoals[getMonthKey(new Date())] = state.monthlyGoal;
+      }
+      if (state.yearlyGoal && Object.keys(state.yearlyGoals).length === 0) {
+        state.yearlyGoals[getYearKey(new Date())] = state.yearlyGoal;
+      }
     } catch(e) {}
     return;
   }
@@ -995,6 +1035,12 @@ function loadState() {
     state.routines    = [];
     state.days        = {};
     state.legacyHistory = p.history || {};
+    state.weeklyGoals = {};
+    state.monthlyGoals = {};
+    state.yearlyGoals = {};
+    if (state.weeklyGoal)  state.weeklyGoals[getWeekKey(new Date())] = state.weeklyGoal;
+    if (state.monthlyGoal) state.monthlyGoals[getMonthKey(new Date())] = state.monthlyGoal;
+    if (state.yearlyGoal)  state.yearlyGoals[getYearKey(new Date())] = state.yearlyGoal;
     // move old flat quests into today's log, default category = first
     if (Array.isArray(p.quests) && p.quests.length) {
       const k = todayKey();
@@ -1431,8 +1477,8 @@ function renderDateNav() {
   document.getElementById('viewDateLabel').textContent = label;
   document.getElementById('viewDateLabel').style.color = isToday ? '#10b981' : (diff > 0 ? '#a78bfa' : '#fbbf24');
   document.getElementById('viewDateSub').textContent = diff > 0 ? sub + ' · 📝 미리 계획' : sub;
-  // 이번 주 일요일까지는 미래 계획 허용
-  document.getElementById('nextDayBtn').disabled = parseKey(viewDate) >= parseKey(weekEndKey());
+  // 미래 계획 제한 해제
+  document.getElementById('nextDayBtn').disabled = false;
   document.getElementById('backToTodayBtn').style.display = isToday ? 'none' : 'block';
   const back = document.getElementById('backToTodayBtn');
   if (back) back.textContent = diff > 0 ? '📅 미래 계획 보는 중 — 오늘로 돌아가기' : '📅 과거 기록 보는 중 — 오늘로 돌아가기';
@@ -1440,15 +1486,23 @@ function renderDateNav() {
 function setViewDate(k) {
   viewDate = k;
   if (k === todayKey()) { ensureRoutines(k); saveState(); }
-  renderDateNav(); renderQuests(); renderProgress();
+  renderDateNav(); renderQuests(); renderProgress(); loadGoalInputs();
 }
 function shiftDay(delta) {
   const d = parseKey(viewDate); d.setDate(d.getDate() + delta);
   const k = dateKey(d);
-  if (delta > 0 && parseKey(k) > parseKey(weekEndKey())) {   // 이번 주 끝까지만 미리 계획
-    showToast('미리 계획은 이번 주까지만 가능해요 📝', '#a78bfa'); return;
-  }
   setViewDate(k);
+}
+function shiftDateUnit(unit, delta) {
+  const d = parseKey(viewDate);
+  if (unit === 'week') {
+    d.setDate(d.getDate() + delta * 7);
+  } else if (unit === 'month') {
+    d.setMonth(d.getMonth() + delta);
+  } else if (unit === 'year') {
+    d.setFullYear(d.getFullYear() + delta);
+  }
+  setViewDate(dateKey(d));
 }
 function goToday() { setViewDate(todayKey()); }
 
@@ -1471,9 +1525,11 @@ function renderProgress() {
 }
 
 function renderWeek() {
-  const today = new Date(), dow = today.getDay();
-  const mon = new Date(today);
-  mon.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1));
+  const today = new Date();
+  const viewD = parseKey(viewDate);
+  const dow = viewD.getDay();
+  const mon = new Date(viewD);
+  mon.setDate(viewD.getDate() - (dow === 0 ? 6 : dow - 1));
   const lbls = ['월','화','수','목','금','토','일'];
   const tk = todayKey();
   let html = '', done = 0, tot = 0;
@@ -1506,13 +1562,21 @@ function renderWeek() {
     </div>`;
   }
   document.getElementById('weekDays').innerHTML = html;
+  
+  const todayWeekKey = getWeekKey(today);
+  const viewWeekKey = getWeekKey(viewD);
+  const isThisWeek = todayWeekKey === viewWeekKey;
+  
   document.getElementById('weekSummary').textContent =
-    tot > 0 ? `이번 주 ${done}/${tot} 퀘스트 완료` : '이번 주 퀘스트를 추가해보세요!';
+    tot > 0 ? `${isThisWeek ? '이번 주' : '선택된 주'} ${done}/${tot} 퀘스트 완료` : `${isThisWeek ? '이번 주' : '선택된 주'} 퀘스트를 추가해보세요!`;
 }
 
 function renderMonth() {
-  const n = new Date(), y = n.getFullYear(), m = n.getMonth();
-  const daysElapsed  = n.getDate();
+  const n = parseKey(viewDate);
+  const y = n.getFullYear(), m = n.getMonth();
+  const today = new Date();
+  const isCurrentMonth = y === today.getFullYear() && m === today.getMonth();
+  const daysElapsed  = isCurrentMonth ? today.getDate() : new Date(y, m+1, 0).getDate();
   const daysInMonth  = new Date(y, m+1, 0).getDate();
   const tk = todayKey();
   let active = 0;
@@ -1536,23 +1600,26 @@ function renderMonth() {
     const h = dayStats(k);
     const isToday  = k === tk;
     const isView   = k === viewDate;
-    const isFuture = d > daysElapsed;
+    const isFuture = parseKey(k) > today;
     let bg = 'rgba(30,41,59,.5)';
     if (!isFuture) {
       if (h.total > 0 && h.completed >= h.total) bg = '#10b981';
       else if (h.completed > 0) bg = '#38bdf8';
       else if (h.total > 0)     bg = '#ef444466';
     }
-    g += `<div class="month-dot" onclick="${isFuture?'':`setViewDate('${k}')`}" title="${k}"
-          style="background:${bg};${isToday?'outline:1.5px solid #10b981;':isView?'outline:1.5px solid #fbbf24;':''}${isFuture?'opacity:.15;cursor:default;':''}"></div>`;
+    g += `<div class="month-dot" onclick="setViewDate('${k}')" title="${k}"
+          style="background:${bg};${isToday?'outline:1.5px solid #10b981;':isView?'outline:1.5px solid #fbbf24;':''}${isFuture?'opacity:.45;':''}"></div>`;
   }
   document.getElementById('monthGrid').innerHTML = g;
 }
 
 function renderYear() {
-  const n = new Date(), y = n.getFullYear();
+  const n = parseKey(viewDate);
+  const y = n.getFullYear();
+  const today = new Date();
+  const isCurrentYear = y === today.getFullYear();
   const start = new Date(y, 0, 1);
-  const dayOfYear = Math.floor((n - start) / 86400000) + 1;
+  const dayOfYear = isCurrentYear ? (Math.floor((today - start) / 86400000) + 1) : (Math.floor((new Date(y, 11, 31) - start) / 86400000) + 1);
   let active = 0;
   for (let i = 0; i < dayOfYear; i++) {
     const d = new Date(start); d.setDate(i + 1);
@@ -1562,7 +1629,9 @@ function renderYear() {
   document.getElementById('yearPct').textContent   = pct + '%';
   document.getElementById('yearLabel').textContent = `${active} / ${dayOfYear}일 활성 (${y})`;
   document.getElementById('yearRing').innerHTML    = svgRing(pct, '#38bdf8', 80);
-  const yg = (state.yearlyGoal||'').trim();
+  
+  const yk = String(y);
+  const yg = ((state.yearlyGoals && state.yearlyGoals[yk]) || '').trim();
   document.getElementById('yearGoalPreview').textContent = yg ? '🎯 ' + (yg.length > 40 ? yg.slice(0,40)+'…' : yg) : '';
 }
 
@@ -1786,23 +1855,80 @@ function updateQuestStats() {
 //  GOALS
 // ─────────────────────────────────────────────
 function saveGoals() {
-  state.yearlyGoal  = document.getElementById('yearlyGoal').value;
-  state.monthlyGoal = document.getElementById('monthlyGoal').value;
-  state.weeklyGoal  = document.getElementById('weeklyGoal').value;
+  const d = parseKey(viewDate);
+  const wk = getWeekKey(d);
+  const mk = getMonthKey(d);
+  const yk = getYearKey(d);
+
+  if (!state.weeklyGoals) state.weeklyGoals = {};
+  if (!state.monthlyGoals) state.monthlyGoals = {};
+  if (!state.yearlyGoals) state.yearlyGoals = {};
+
+  state.weeklyGoals[wk]  = document.getElementById('weeklyGoal').value;
+  state.monthlyGoals[mk] = document.getElementById('monthlyGoal').value;
+  state.yearlyGoals[yk]  = document.getElementById('yearlyGoal').value;
+
+  // Sync legacy fields
+  state.weeklyGoal  = state.weeklyGoals[getWeekKey(new Date())] || '';
+  state.monthlyGoal = state.monthlyGoals[getMonthKey(new Date())] || '';
+  state.yearlyGoal  = state.yearlyGoals[getYearKey(new Date())] || '';
+
   saveState();
-  const y = state.yearlyGoal.trim(), m = state.monthlyGoal.trim(), w = state.weeklyGoal.trim();
+
+  const y = state.yearlyGoals[yk].trim(), m = state.monthlyGoals[mk].trim(), w = state.weeklyGoals[wk].trim();
   document.getElementById('yearlyPreview').textContent  = y ? (y.length>30?y.slice(0,30)+'…':y) : '목표를 입력하세요';
   document.getElementById('monthlyPreview').textContent = m ? (m.length>30?m.slice(0,30)+'…':m) : '목표를 입력하세요';
-  // 중첩 미리보기: 월간 안에 이번 주 계획, 연간 안에 이번 달 계획
   document.getElementById('monthlyWeekRef').textContent = w || '아직 비어 있어요';
   document.getElementById('yearlyMonthRef').textContent = m || '아직 비어 있어요';
 }
 
 function loadGoalInputs() {
-  document.getElementById('yearlyGoal').value  = state.yearlyGoal  || '';
-  document.getElementById('monthlyGoal').value = state.monthlyGoal || '';
-  document.getElementById('weeklyGoal').value  = state.weeklyGoal  || '';
-  saveGoals();
+  const d = parseKey(viewDate);
+  const wk = getWeekKey(d);
+  const mk = getMonthKey(d);
+  const yk = getYearKey(d);
+
+  if (!state.weeklyGoals) state.weeklyGoals = {};
+  if (!state.monthlyGoals) state.monthlyGoals = {};
+  if (!state.yearlyGoals) state.yearlyGoals = {};
+
+  document.getElementById('weeklyGoal').value  = state.weeklyGoals[wk] || '';
+  document.getElementById('monthlyGoal').value = state.monthlyGoals[mk] || '';
+  document.getElementById('yearlyGoal').value  = state.yearlyGoals[yk] || '';
+
+  updateGoalLabels(d);
+
+  const y = (state.yearlyGoals[yk] || '').trim(), m = (state.monthlyGoals[mk] || '').trim(), w = (state.weeklyGoals[wk] || '').trim();
+  document.getElementById('yearlyPreview').textContent  = y ? (y.length>30?y.slice(0,30)+'…':y) : '목표를 입력하세요';
+  document.getElementById('monthlyPreview').textContent = m ? (m.length>30?m.slice(0,30)+'…':m) : '목표를 입력하세요';
+  document.getElementById('monthlyWeekRef').textContent = w || '아직 비어 있어요';
+  document.getElementById('yearlyMonthRef').textContent = m || '아직 비어 있어요';
+}
+
+function updateGoalLabels(d) {
+  const dow = d.getDay();
+  const mon = new Date(d); mon.setDate(d.getDate() - (dow === 0 ? 6 : dow - 1));
+  const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+  const fmt = date => `${date.getMonth()+1}/${date.getDate()}`;
+  
+  const today = new Date();
+  const isThisWeek = getWeekKey(d) === getWeekKey(today);
+  const isThisMonth = getMonthKey(d) === getMonthKey(today);
+  
+  document.getElementById('weekRangeLabel').textContent = 
+    (isThisWeek ? '이번 주' : '선택된 주') + ` · ${fmt(mon)} ~ ${fmt(sun)}`;
+    
+  document.getElementById('currentMonth').textContent = d.getMonth() + 1;
+  document.getElementById('currentYear').textContent = d.getFullYear();
+
+  const weeklyHeader = document.querySelector('#monthlyWeekRef').previousElementSibling;
+  if (weeklyHeader) {
+    weeklyHeader.textContent = isThisWeek ? '🗓️ 이번 주 계획' : '🗓️ 선택된 주 계획';
+  }
+  const monthlyHeader = document.querySelector('#yearlyMonthRef').previousElementSibling;
+  if (monthlyHeader) {
+    monthlyHeader.textContent = isThisMonth ? '📋 이번 달 계획' : '📋 선택된 달 계획';
+  }
 }
 
 function toggleAccordion(id) {

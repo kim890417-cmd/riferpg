@@ -3080,8 +3080,14 @@ function cancelDateNav() {
 }
 
 // 📺 오늘 이외의 날짜에서 수정 시 광고
+let hasWatchedAdForEdit = false; // 세션 내 광고 시청 완료 여부 (앱 재시작 전까지 유지)
 let pendingModCallback = null;
+
 function confirmModAd(onComplete) {
+  if (hasWatchedAdForEdit) {
+    onComplete();
+    return;
+  }
   if (document.getElementById('modAdOverlay')) return;
   pendingModCallback = onComplete;
   const overlay = document.createElement('div');
@@ -3109,6 +3115,7 @@ async function showModAd() {
   if (overlay) overlay.remove();
   if (!window.Capacitor || !window.Capacitor.Plugins.AdMob) {
     showToast("웹 브라우저 테스트: 광고 시청 완료! ✅", "#10b981");
+    hasWatchedAdForEdit = true;
     setTimeout(() => { if (pendingModCallback) { pendingModCallback(); pendingModCallback = null; } }, 1000);
     return;
   }
@@ -3117,7 +3124,10 @@ async function showModAd() {
     showToast("동영상 광고를 불러오는 중... ⏳", "#38bdf8");
     await AdMob.prepareRewardVideoAd({ adId: TEST_REWARDED_ID, isTesting: true });
     const reward = await AdMob.showRewardVideoAd();
-    if (reward && pendingModCallback) { pendingModCallback(); pendingModCallback = null; }
+    if (reward) {
+      hasWatchedAdForEdit = true;
+      if (pendingModCallback) { pendingModCallback(); pendingModCallback = null; }
+    }
   } catch (e) {
     console.error("Modification ad failed", e);
     showToast("광고를 불러올 수 없습니다. 다시 시도해 주세요.", "#ef4444");
@@ -3135,6 +3145,10 @@ let pendingGoalKey = null;
 function editPlanBoardGoal(type, key) {
   pendingGoalType = type;
   pendingGoalKey = key;
+  if (hasWatchedAdForEdit) {
+    openPlanEditDialog();
+    return;
+  }
   confirmPlanBoardAd();
 }
 function confirmPlanBoardAd() {
@@ -3164,6 +3178,7 @@ async function showPlanAd() {
   if (overlay) overlay.remove();
   if (!window.Capacitor || !window.Capacitor.Plugins.AdMob) {
     showToast("웹 브라우저 테스트: 광고 시청 완료! ✅", "#10b981");
+    hasWatchedAdForEdit = true;
     setTimeout(() => { openPlanEditDialog(); }, 1000);
     return;
   }
@@ -3172,7 +3187,10 @@ async function showPlanAd() {
     showToast("동영상 광고를 불러오는 중... ⏳", "#38bdf8");
     await AdMob.prepareRewardVideoAd({ adId: TEST_REWARDED_ID, isTesting: true });
     const reward = await AdMob.showRewardVideoAd();
-    if (reward) { openPlanEditDialog(); }
+    if (reward) {
+      hasWatchedAdForEdit = true;
+      openPlanEditDialog();
+    }
   } catch (e) {
     console.error("Plan edit ad failed", e);
     showToast("광고를 불러올 수 없습니다. 다시 시도해 주세요.", "#ef4444");

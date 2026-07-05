@@ -758,7 +758,10 @@
 
     <!-- Yearly Goal Card -->
     <div class="card p-3 mb-3 border-emerald-500/30" style="background:rgba(16,185,129,0.05)">
-      <div class="text-xs font-bold text-emerald-400 mb-1">🎯 연간 목표</div>
+      <div class="flex justify-between items-center mb-1">
+        <div class="text-xs font-bold text-emerald-400">🎯 연간 목표</div>
+        <button onclick="editPlanBoardGoal('yearly', String(planBoardYear))" class="text-[10px] text-slate-400 hover:text-white underline" style="cursor:pointer">수정</button>
+      </div>
       <div class="text-sm text-slate-200" id="planBoardYearlyGoalText" style="white-space:pre-wrap">목표가 없습니다.</div>
     </div>
 
@@ -1876,12 +1879,7 @@ function setViewDate(k) {
 }
 function shiftDay(delta) {
   const d = parseKey(viewDate); d.setDate(d.getDate() + delta);
-  const k = dateKey(d);
-  if (viewDate === todayKey() && k !== todayKey()) {
-    confirmDateNavAd(k);
-    return;
-  }
-  setViewDate(k);
+  setViewDate(dateKey(d));
 }
 function shiftDateUnit(unit, delta) {
   const d = parseKey(viewDate);
@@ -1892,12 +1890,7 @@ function shiftDateUnit(unit, delta) {
   } else if (unit === 'year') {
     d.setFullYear(d.getFullYear() + delta);
   }
-  const k = dateKey(d);
-  if (viewDate === todayKey() && k !== todayKey()) {
-    confirmDateNavAd(k);
-    return;
-  }
-  setViewDate(k);
+  setViewDate(dateKey(d));
 }
 function goToday() { setViewDate(todayKey()); }
 
@@ -2055,115 +2048,149 @@ function addQuest() {
   const inp = document.getElementById('questInput');
   const text = inp.value.trim();
   if (!text) { inp.focus(); return; }
-  const difficulty = document.getElementById('difficultySelect').value;
-  const catId      = document.getElementById('statSelect').value;
-  const day = getDay(viewDate);
 
-  if (repeatMode === 1) {
-    const rid = uid();
-    state.routines.push({ id:rid, text, catId, difficulty });
-    day.quests.unshift({ id:uid(), text, catId, difficulty, xp:XP_MAP[difficulty], completed:false, routineId:rid });
+  const runLogic = () => {
+    const difficulty = document.getElementById('difficultySelect').value;
+    const catId      = document.getElementById('statSelect').value;
+    const day = getDay(viewDate);
+
+    if (repeatMode === 1) {
+      const rid = uid();
+      state.routines.push({ id:rid, text, catId, difficulty });
+      day.quests.unshift({ id:uid(), text, catId, difficulty, xp:XP_MAP[difficulty], completed:false, routineId:rid });
+    } else {
+      day.quests.unshift({ id:uid(), text, catId, difficulty, xp:XP_MAP[difficulty], completed:false, routineId:null });
+    }
+    inp.value = '';
+    saveState(); renderQuests(); renderProgress();
+    const c = getCat(catId);
+    showToast(`${repeatMode?'🔁 반복 ':''}퀘스트 등록! ${c.icon} ${c.name} ${DIFF_ICON[difficulty]} ${XP_MAP[difficulty]}XP`, '#38bdf8');
+  };
+
+  if (viewDate !== todayKey()) {
+    confirmModAd(runLogic);
   } else {
-    day.quests.unshift({ id:uid(), text, catId, difficulty, xp:XP_MAP[difficulty], completed:false, routineId:null });
+    runLogic();
   }
-  inp.value = '';
-  saveState(); renderQuests(); renderProgress();
-  const c = getCat(catId);
-  showToast(`${repeatMode?'🔁 반복 ':''}퀘스트 등록! ${c.icon} ${c.name} ${DIFF_ICON[difficulty]} ${XP_MAP[difficulty]}XP`, '#38bdf8');
 }
 
 function toggleQuest(id, event) {
   if (isFutureKey(viewDate)) {            // 미래 퀘스트는 그날이 되어야 완료 가능
     showToast('미래 퀘스트는 그날 완료할 수 있어요 ⏳', '#a78bfa'); return;
   }
-  const day = getDay(viewDate);
-  const q = day.quests.find(q => q.id === id);
-  if (!q) return;
-  q.completed = !q.completed;
-  saveState();
-
-  let x = window.innerWidth/2, y = 300;
-  if (event) { const t = event.touches?event.touches[0]:event; x = t.clientX||x; y = t.clientY||y; }
-
-  if (q.completed) {
-    sfx('complete');
-    
-    // XP Buff Check
-    let actualXP = q.xp;
-    let isBuffed = false;
-    if (state.activeAnimal && (state.petHunger ?? 100) >= 50) {
-      actualXP = Math.round(q.xp * 1.1);
-      isBuffed = true;
-    }
-    q.xpAwarded = actualXP;
-    
-    gainXP(actualXP, x, y, q.catId, isBuffed);
-    spawnBurstRing(x, y, getCat(q.catId).color);
-    
-    const drop = coinRoll(q.difficulty);          // 랜덤 코인/젬 드롭
-    q.coinAward = drop.coins; q.gemAward = drop.gems;
-    state.coins += drop.coins; state.gems += drop.gems;
-    showCoinFloat(drop, x, y);
-    
-    // 30% chance to drop basic pet food
-    if (Math.random() < 0.30) {
-      q.petFoodAward = 1;
-      state.petFood = (state.petFood || 0) + 1;
-      setTimeout(() => {
-        showToast('🍖 펫 사료를 발견했습니다! (+1)', '#10b981');
-        if (shopTab === 'pet') renderShop();
-        updatePetUI();
-      }, 500);
-    } else {
-      q.petFoodAward = 0;
-    }
-    
-    if (drop.gems) setTimeout(() => sfx('gem'), 300); else setTimeout(() => sfx('coin'), 150);
-    renderCurrency(); saveState();
-    maybeCelebrateStreak();
-  } else {
-    const xpToDeduct = q.xpAwarded !== undefined ? q.xpAwarded : q.xp;
-    loseXP(xpToDeduct, q.catId);
-    state.coins = Math.max(0, state.coins - (q.coinAward || 0));  // 체크 해제 시 회수
-    state.gems  = Math.max(0, state.gems  - (q.gemAward  || 0));
-    state.petFood = Math.max(0, (state.petFood || 0) - (q.petFoodAward || 0));
-    q.coinAward = 0; q.gemAward = 0; q.petFoodAward = 0; q.xpAwarded = 0;
-    renderCurrency();
-    if (shopTab === 'pet') renderShop();
-    updatePetUI();
+  
+  const runLogic = () => {
+    const day = getDay(viewDate);
+    const q = day.quests.find(q => q.id === id);
+    if (!q) return;
+    q.completed = !q.completed;
     saveState();
+
+    let x = window.innerWidth/2, y = 300;
+    if (event) { const t = event.touches?event.touches[0]:event; x = t.clientX||x; y = t.clientY||y; }
+
+    if (q.completed) {
+      sfx('complete');
+      
+      // XP Buff Check
+      let actualXP = q.xp;
+      let isBuffed = false;
+      if (state.activeAnimal && (state.petHunger ?? 100) >= 50) {
+        actualXP = Math.round(q.xp * 1.1);
+        isBuffed = true;
+      }
+      q.xpAwarded = actualXP;
+      
+      gainXP(actualXP, x, y, q.catId, isBuffed);
+      spawnBurstRing(x, y, getCat(q.catId).color);
+      
+      const drop = coinRoll(q.difficulty);          // 랜덤 코인/젬 드롭
+      q.coinAward = drop.coins; q.gemAward = drop.gems;
+      state.coins += drop.coins; state.gems += drop.gems;
+      showCoinFloat(drop, x, y);
+      
+      // 30% chance to drop basic pet food
+      if (Math.random() < 0.30) {
+        q.petFoodAward = 1;
+        state.petFood = (state.petFood || 0) + 1;
+        setTimeout(() => {
+          showToast('🍖 펫 사료를 발견했습니다! (+1)', '#10b981');
+          if (shopTab === 'pet') renderShop();
+          updatePetUI();
+        }, 500);
+      } else {
+        q.petFoodAward = 0;
+      }
+      
+      if (drop.gems) setTimeout(() => sfx('gem'), 300); else setTimeout(() => sfx('coin'), 150);
+      renderCurrency(); saveState();
+      maybeCelebrateStreak();
+    } else {
+      const xpToDeduct = q.xpAwarded !== undefined ? q.xpAwarded : q.xp;
+      loseXP(xpToDeduct, q.catId);
+      state.coins = Math.max(0, state.coins - (q.coinAward || 0));  // 체크 해제 시 회수
+      state.gems  = Math.max(0, state.gems  - (q.gemAward  || 0));
+      state.petFood = Math.max(0, (state.petFood || 0) - (q.petFoodAward || 0));
+      q.coinAward = 0; q.gemAward = 0; q.petFoodAward = 0; q.xpAwarded = 0;
+      renderCurrency();
+      if (shopTab === 'pet') renderShop();
+      updatePetUI();
+      saveState();
+    }
+    renderQuests(); renderProgress();
+  };
+
+  if (viewDate !== todayKey()) {
+    confirmModAd(runLogic);
+  } else {
+    runLogic();
   }
-  renderQuests(); renderProgress();
 }
 
 function deleteQuest(id) {
-  const day = getDay(viewDate);
-  const q = day.quests.find(q => q.id === id);
-  if (!q) return;
-  if (q.completed) {
-    const xpToDeduct = q.xpAwarded !== undefined ? q.xpAwarded : q.xp;
-    state.currentXP -= xpToDeduct; state.totalXP -= xpToDeduct;
-    const c = getCat(q.catId);
-    c.xp -= xpToDeduct; while (c.xp < 0 && c.level > 1) { c.level--; c.xp += STAT_XP_PER_LV; } if (c.xp < 0) c.xp = 0;
-    while (state.currentXP < 0 && state.level > 1) { state.level--; state.currentXP += XP_PER_LEVEL; }
-    if (state.currentXP < 0) state.currentXP = 0;
+  const runLogic = () => {
+    const day = getDay(viewDate);
+    const q = day.quests.find(q => q.id === id);
+    if (!q) return;
+    if (q.completed) {
+      const xpToDeduct = q.xpAwarded !== undefined ? q.xpAwarded : q.xp;
+      state.currentXP -= xpToDeduct; state.totalXP -= xpToDeduct;
+      const c = getCat(q.catId);
+      c.xp -= xpToDeduct; while (c.xp < 0 && c.level > 1) { c.level--; c.xp += STAT_XP_PER_LV; } if (c.xp < 0) c.xp = 0;
+      while (state.currentXP < 0 && state.level > 1) { state.level--; state.currentXP += XP_PER_LEVEL; }
+      if (state.currentXP < 0) state.currentXP = 0;
+    }
+    day.quests = day.quests.filter(q => q.id !== id);
+    saveState(); renderXP(); renderStats(); renderQuests(); renderProgress();
+    showToast(q.routineId ? '오늘 항목만 삭제 (루틴은 유지)' : '퀘스트 삭제됨', '#64748b');
+  };
+
+  if (viewDate !== todayKey()) {
+    confirmModAd(runLogic);
+  } else {
+    runLogic();
   }
-  day.quests = day.quests.filter(q => q.id !== id);
-  saveState(); renderXP(); renderStats(); renderQuests(); renderProgress();
-  showToast(q.routineId ? '오늘 항목만 삭제 (루틴은 유지)' : '퀘스트 삭제됨', '#64748b');
 }
 
 function editQuest(id) {
-  const day = getDay(viewDate);
-  const q = day.quests.find(q => q.id === id);
-  if (!q) return;
-  const el = document.getElementById('qt-' + id);
-  if (!el || el.querySelector('input')) return;   // already editing
-  el.innerHTML = `<input class="game-input w-full px-2 py-1 text-sm" value="${esc(q.text)}"
-    onkeydown="if(event.key==='Enter')this.blur(); if(event.key==='Escape'){this.dataset.cancel=1;this.blur();}"
-    onblur="commitQuestEdit('${id}', this)">`;
-  const inp = el.querySelector('input');
-  inp.focus(); inp.select();
+  const runLogic = () => {
+    const day = getDay(viewDate);
+    const q = day.quests.find(q => q.id === id);
+    if (!q) return;
+    const el = document.getElementById('qt-' + id);
+    if (!el || el.querySelector('input')) return;   // already editing
+    el.innerHTML = `<input class="game-input w-full px-2 py-1 text-sm" value="${esc(q.text)}"
+      onkeydown="if(event.key==='Enter')this.blur(); if(event.key==='Escape'){this.dataset.cancel=1;this.blur();}"
+      onblur="commitQuestEdit('${id}', this)">`;
+    const inp = el.querySelector('input');
+    inp.focus(); inp.select();
+  };
+
+  if (viewDate !== todayKey()) {
+    confirmModAd(runLogic);
+  } else {
+    runLogic();
+  }
 }
 
 function commitQuestEdit(id, inp) {
@@ -2377,7 +2404,10 @@ function renderPlanBoard() {
         <div class="p-2.5 rounded border border-slate-700/50 hover:border-slate-600 transition bg-slate-900/60 ${isSelectedWeek ? 'ring-1 ring-amber-500/50' : ''}">
           <div class="flex justify-between items-center mb-1">
             <span class="text-[10px] font-bold ${isSelectedWeek ? 'text-amber-400' : 'text-slate-400'}">${wIdx + 1}주차 (${monStr} ~ ${sunStr})</span>
-            <button onclick="selectDateAndClosePlanBoard('${wk}')" class="text-[10px] text-slate-500 hover:text-white underline" style="cursor:pointer">이동</button>
+            <div class="flex gap-2">
+              <button onclick="editPlanBoardGoal('weekly', '${wk}')" class="text-[10px] text-slate-400 hover:text-white underline" style="cursor:pointer">수정</button>
+              <button onclick="selectDateAndClosePlanBoard('${wk}')" class="text-[10px] text-slate-500 hover:text-white underline" style="cursor:pointer">이동</button>
+            </div>
           </div>
           <div class="text-xs ${wg ? 'text-slate-200' : 'text-slate-500 italic'}" style="white-space:pre-wrap">${wg || '주간 계획이 없습니다.'}</div>
         </div>
@@ -2396,7 +2426,10 @@ function renderPlanBoard() {
           </svg>
         </button>
         <div class="hidden p-3 border-t border-slate-800 space-y-2 bg-slate-900/20" id="pb-content-${mk}">
-          <div class="text-[10px] font-bold text-slate-500 mb-1">📋 월간 목표</div>
+          <div class="flex justify-between items-center mb-1">
+            <div class="text-[10px] font-bold text-slate-500">📋 월간 목표</div>
+            <button onclick="editPlanBoardGoal('monthly', '${mk}')" class="text-[10px] text-slate-400 hover:text-white underline" style="cursor:pointer">수정</button>
+          </div>
           <div class="text-xs text-slate-200 mb-3 bg-slate-900/40 p-2 rounded border border-slate-800" style="white-space:pre-wrap">${mg || '등록된 월간 목표가 없습니다.'}</div>
           
           <div class="text-[10px] font-bold text-slate-500 mb-1">🗓️ 주간 계획</div>
@@ -3044,6 +3077,183 @@ function cancelDateNav() {
   const overlay = document.getElementById('dateNavAdOverlay');
   if (overlay) overlay.remove();
   pendingDateKey = null;
+}
+
+// 📺 오늘 이외의 날짜에서 수정 시 광고
+let pendingModCallback = null;
+function confirmModAd(onComplete) {
+  if (document.getElementById('modAdOverlay')) return;
+  pendingModCallback = onComplete;
+  const overlay = document.createElement('div');
+  overlay.id = 'modAdOverlay';
+  Object.assign(overlay.style, {
+    position:'fixed', inset:'0', zIndex:'9999',
+    background:'rgba(0,0,0,.7)', display:'flex',
+    alignItems:'center', justifyContent:'center',
+    backdropFilter:'blur(4px)'
+  });
+  overlay.innerHTML = `
+    <div class="card p-6 max-w-sm mx-4 text-center">
+      <div style="font-size:2.5rem;margin-bottom:12px">📺</div>
+      <div style="font-weight:800;font-size:1.1rem;margin-bottom:4px">기록 수정</div>
+      <div style="font-size:.85rem;color:#94a3b8;margin-bottom:16px">
+        오늘이 아닌 다른 날짜의 기록을 수정하려면<br>광고를 1회 시청해야 합니다.
+      </div>
+      <button onclick="showModAd()" class="w-full py-2.5 rounded-lg text-sm font-bold mb-2" style="background:linear-gradient(135deg,#10b981,#38bdf8);color:#fff;border:none;cursor:pointer">📺 광고 보고 수정</button>
+      <button onclick="cancelModAd()" class="w-full py-2 rounded-lg text-xs" style="background:rgba(255,255,255,.08);color:#94a3b8;border:none;cursor:pointer">취소</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+async function showModAd() {
+  const overlay = document.getElementById('modAdOverlay');
+  if (overlay) overlay.remove();
+  if (!window.Capacitor || !window.Capacitor.Plugins.AdMob) {
+    showToast("웹 브라우저 테스트: 광고 시청 완료! ✅", "#10b981");
+    setTimeout(() => { if (pendingModCallback) { pendingModCallback(); pendingModCallback = null; } }, 1000);
+    return;
+  }
+  try {
+    const { AdMob } = window.Capacitor.Plugins;
+    showToast("동영상 광고를 불러오는 중... ⏳", "#38bdf8");
+    await AdMob.prepareRewardVideoAd({ adId: TEST_REWARDED_ID, isTesting: true });
+    const reward = await AdMob.showRewardVideoAd();
+    if (reward && pendingModCallback) { pendingModCallback(); pendingModCallback = null; }
+  } catch (e) {
+    console.error("Modification ad failed", e);
+    showToast("광고를 불러올 수 없습니다. 다시 시도해 주세요.", "#ef4444");
+  }
+}
+function cancelModAd() {
+  const overlay = document.getElementById('modAdOverlay');
+  if (overlay) overlay.remove();
+  pendingModCallback = null;
+}
+
+// 📺 계획 모아보기 편집 및 광고
+let pendingGoalType = null;
+let pendingGoalKey = null;
+function editPlanBoardGoal(type, key) {
+  pendingGoalType = type;
+  pendingGoalKey = key;
+  confirmPlanBoardAd();
+}
+function confirmPlanBoardAd() {
+  if (document.getElementById('planAdOverlay')) return;
+  const overlay = document.createElement('div');
+  overlay.id = 'planAdOverlay';
+  Object.assign(overlay.style, {
+    position:'fixed', inset:'0', zIndex:'99999',
+    background:'rgba(0,0,0,.7)', display:'flex',
+    alignItems:'center', justifyContent:'center',
+    backdropFilter:'blur(4px)'
+  });
+  overlay.innerHTML = `
+    <div class="card p-6 max-w-sm mx-4 text-center">
+      <div style="font-size:2.5rem;margin-bottom:12px">📺</div>
+      <div style="font-weight:800;font-size:1.1rem;margin-bottom:4px">계획 수정</div>
+      <div style="font-size:.85rem;color:#94a3b8;margin-bottom:16px">
+        계획을 수정하려면 광고를 1회 시청해야 합니다.
+      </div>
+      <button onclick="showPlanAd()" class="w-full py-2.5 rounded-lg text-sm font-bold mb-2" style="background:linear-gradient(135deg,#10b981,#38bdf8);color:#fff;border:none;cursor:pointer">📺 광고 보고 수정</button>
+      <button onclick="cancelPlanAd()" class="w-full py-2 rounded-lg text-xs" style="background:rgba(255,255,255,.08);color:#94a3b8;border:none;cursor:pointer">취소</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+async function showPlanAd() {
+  const overlay = document.getElementById('planAdOverlay');
+  if (overlay) overlay.remove();
+  if (!window.Capacitor || !window.Capacitor.Plugins.AdMob) {
+    showToast("웹 브라우저 테스트: 광고 시청 완료! ✅", "#10b981");
+    setTimeout(() => { openPlanEditDialog(); }, 1000);
+    return;
+  }
+  try {
+    const { AdMob } = window.Capacitor.Plugins;
+    showToast("동영상 광고를 불러오는 중... ⏳", "#38bdf8");
+    await AdMob.prepareRewardVideoAd({ adId: TEST_REWARDED_ID, isTesting: true });
+    const reward = await AdMob.showRewardVideoAd();
+    if (reward) { openPlanEditDialog(); }
+  } catch (e) {
+    console.error("Plan edit ad failed", e);
+    showToast("광고를 불러올 수 없습니다. 다시 시도해 주세요.", "#ef4444");
+  }
+}
+function cancelPlanAd() {
+  const overlay = document.getElementById('planAdOverlay');
+  if (overlay) overlay.remove();
+  pendingGoalType = null;
+  pendingGoalKey = null;
+}
+function openPlanEditDialog() {
+  const type = pendingGoalType;
+  const key = pendingGoalKey;
+  let currentVal = '';
+  if (type === 'yearly') {
+    currentVal = state.yearlyGoals[key] || '';
+  } else if (type === 'monthly') {
+    currentVal = state.monthlyGoals[key] || '';
+  } else if (type === 'weekly') {
+    currentVal = state.weeklyGoals[key] || '';
+  }
+  const dialog = document.createElement('div');
+  dialog.id = 'planEditDialog';
+  Object.assign(dialog.style, {
+    position:'fixed', inset:'0', zIndex:'99999',
+    background:'rgba(0,0,0,.7)', display:'flex',
+    alignItems:'center', justifyContent:'center',
+    backdropFilter:'blur(4px)'
+  });
+  const title = type === 'yearly' ? '연간 목표 수정' : type === 'monthly' ? '월간 목표 수정' : '주간 계획 수정';
+  dialog.innerHTML = `
+    <div class="card p-5 max-w-sm w-full mx-4">
+      <div class="font-bold text-sm mb-3" style="color:#10b981">${title}</div>
+      <textarea id="planEditVal" class="game-input w-full p-3 text-sm mb-4" rows="4" placeholder="계획을 입력하세요...">${esc(currentVal)}</textarea>
+      <div class="flex gap-2">
+        <button onclick="savePlanEdit()" class="flex-1 py-2 rounded-lg text-xs font-bold text-white" style="background:#10b981;border:none;cursor:pointer">저장</button>
+        <button onclick="closePlanEditDialog()" class="flex-1 py-2 rounded-lg text-xs text-slate-400" style="background:rgba(255,255,255,.08);border:none;cursor:pointer">취소</button>
+      </div>
+    </div>`;
+  document.body.appendChild(dialog);
+  document.getElementById('planEditVal').focus();
+}
+function savePlanEdit() {
+  const type = pendingGoalType;
+  const key = pendingGoalKey;
+  const val = document.getElementById('planEditVal').value.trim();
+  if (type === 'yearly') {
+    state.yearlyGoals[key] = val;
+    if (key === getYearKey(new Date())) {
+      state.yearlyGoal = val;
+      const el = document.getElementById('yearlyGoal');
+      if (el) el.value = val;
+    }
+  } else if (type === 'monthly') {
+    state.monthlyGoals[key] = val;
+    if (key === getMonthKey(new Date())) {
+      state.monthlyGoal = val;
+      const el = document.getElementById('monthlyGoal');
+      if (el) el.value = val;
+    }
+  } else if (type === 'weekly') {
+    state.weeklyGoals[key] = val;
+    if (key === getWeekKey(new Date())) {
+      state.weeklyGoal = val;
+      const el = document.getElementById('weeklyGoal');
+      if (el) el.value = val;
+    }
+  }
+  saveState();
+  renderPlanBoard();
+  renderProgress();
+  loadGoalInputs();
+  closePlanEditDialog();
+  showToast("계획이 수정되었습니다!", "#10b981");
+}
+function closePlanEditDialog() {
+  const dialog = document.getElementById('planEditDialog');
+  if (dialog) dialog.remove();
+  pendingGoalType = null;
+  pendingGoalKey = null;
 }
 
 // 📺 광고 보고 가구 즉시 해금

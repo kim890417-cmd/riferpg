@@ -22,7 +22,7 @@ function copyDir(src, dst) {
     else { fs.copyFileSync(s, d); console.log('✓ ' + path.relative(root, d)); }
   });
 }
-['icons', 'vendor', 'art'].forEach(dir => {
+['icons', 'vendor', 'art', 'audio'].forEach(dir => {
   const src = path.join(root, dir);
   if (!fs.existsSync(src)) return;
   copyDir(src, path.join(www, dir));

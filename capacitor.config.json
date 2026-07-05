@@ -1,5 +1,11 @@
 {
-  "appId": "com.liferpg.app",
-  "appName": "LIFE RPG",
-  "webDir": "www"
+  "appId": "com.godsaeng.todo.liferpg",
+  "appName": "갓생 투두: 인생 게임 할 일 계획 루틴 RPG",
+  "webDir": "www",
+  "plugins": {
+    "AdMob": {
+      "initializeOnAndroid": true,
+      "androidAppId": "ca-app-pub-3940256099942544~3347511713"
+    }
+  }
 }

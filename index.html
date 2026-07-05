@@ -2,15 +2,15 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="LIFE RPG">
+<meta name="apple-mobile-web-app-title" content="갓생 투두">
 <meta name="theme-color" content="#0f172a">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
-<title>LIFE RPG</title>
+<title>갓생 투두: 인생 게임 할 일 계획 루틴 RPG</title>
 <script src="vendor/tailwind.js"></script>
 <style>
   /* Orbitron — 로컬 번들(오프라인). 한글 본문은 기기 시스템 폰트 사용 */
@@ -27,6 +27,8 @@
     background-color:var(--bg-primary);
     font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic','맑은 고딕',-apple-system,sans-serif;
     color:#e2e8f0; min-height:100vh; overflow-x:hidden;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
     background-image:
       radial-gradient(ellipse at 20% 20%,rgba(16,185,129,.06) 0%,transparent 50%),
       radial-gradient(ellipse at 80% 80%,rgba(56,189,248,.06) 0%,transparent 50%);
@@ -47,8 +49,9 @@
   .dot-pattern-bg { position:fixed; top:0; right:0; width:200px; height:200px; background:url('art/dot-pattern.svg') repeat; opacity:.5; pointer-events:none; z-index:0; }
 
   /* ── RANK EMBLEM (계급 휘장) ── */
-  .rank-emblem { display:inline-flex; align-items:center; gap:6px; padding:3px 11px 3px 7px; border-radius:999px; font-size:.72rem; font-weight:800; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,.18); color:#fff; }
-  .rank-emblem .rank-ico { font-size:.95rem; line-height:1; filter:drop-shadow(0 1px 2px rgba(0,0,0,.4)); }
+  .rank-emblem { display:inline-flex; align-items:center; gap:6px; padding:3px 11px 3px 7px; border-radius:999px; font-size:.72rem; font-weight:800; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,.18); color:#fff; white-space:nowrap; flex-shrink:0; }
+  .rank-emblem span { white-space:nowrap; }
+  .rank-emblem .rank-ico { font-size:.95rem; line-height:1; filter:drop-shadow(0 1px 2px rgba(0,0,0,.4)); flex-shrink:0; }
   .rank-emblem .rank-pic { width:20px; height:20px; border-radius:50%; object-fit:cover; object-position:top center; border:1px solid rgba(255,255,255,.5); flex:none; }
   .levelup-art { display:block; width:min(64vw,240px); aspect-ratio:3/4; object-fit:cover; border-radius:16px; border:2px solid #fff; margin:0 auto 6px; animation:artReveal .6s cubic-bezier(.34,1.56,.64,1); }
   @keyframes artReveal { 0%{opacity:0; transform:scale(.6) rotate(-4deg)} 100%{opacity:1; transform:scale(1) rotate(0)} }
@@ -176,11 +179,56 @@
   .encyclopedia-card .stage-dot { display:inline-block; width:12px; height:12px; border-radius:50%; margin:1px; font-size:.45rem; line-height:12px; text-align:center; }
   .encyclopedia-card .stage-dot.locked { background:rgba(71,85,105,.4); color:#475569; }
   .encyclopedia-card .stage-dot.unlocked { background:rgba(16,185,129,.3); color:#10b981; border:1px solid rgba(16,185,129,.4); }
-  /* 집 */
-  .house-room { position:relative; background:linear-gradient(135deg,#1a1a2e,#16213e); border-radius:16px; min-height:260px; overflow:hidden; border:1px solid rgba(255,255,255,.08); }
-  .house-animal { position:absolute; width:64px; height:88px; border-radius:8px; object-fit:cover; border:1px solid rgba(255,255,255,.15); transition:all .3s; cursor:pointer; }
-  .house-animal:hover { transform:scale(1.1); z-index:5; }
-  .house-furniture { position:absolute; font-size:2rem; filter:drop-shadow(0 2px 4px rgba(0,0,0,.5)); pointer-events:none; }
+  /* ── 2.5D Isometric Room ── */
+  .house-room { 
+    position:relative; 
+    background: radial-gradient(circle at 50% 50%, #1e294b 0%, #0f172a 100%); 
+    border-radius:16px; 
+    min-height:320px; 
+    overflow:hidden; 
+    border:2px solid rgba(56,189,248,.3); 
+    box-shadow: inset 0 0 24px rgba(56,189,248,.2);
+  }
+  /* Isometric Grid helper */
+  .house-room::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(30deg, rgba(56,189,248,0.04) 25%, transparent 25%),
+      linear-gradient(-30deg, rgba(56,189,248,0.04) 25%, transparent 25%);
+    background-size: 40px 70px;
+    background-position: 0 0;
+    pointer-events: none;
+  }
+  .house-animal { 
+    position:absolute; 
+    width:60px; 
+    height:76px; 
+    border-radius:8px; 
+    object-fit:cover; 
+    border:1px solid rgba(255,255,255,.15); 
+    transition: transform 0.2s; 
+    cursor: grab; 
+    z-index: 10;
+  }
+  .house-animal:active { cursor: grabbing; transform: scale(1.1); }
+  .house-furniture { 
+    position:absolute; 
+    font-size:2.5rem; 
+    filter:drop-shadow(0 4px 8px rgba(0,0,0,.5)); 
+    cursor: grab; 
+    user-select: none;
+    z-index: 5;
+    padding: 10px;
+    transition: transform 0.1s, filter 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .house-furniture:active { cursor: grabbing; transform: scale(1.15); filter: drop-shadow(0 8px 16px rgba(56,189,248,.6)); }
+  .house-furniture.dragging, .house-animal.dragging { z-index: 100; opacity: 0.9; }
+  
   .animal-select-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:10px; }
   .animal-select-card { background:rgba(15,23,42,.7); border:2px solid rgba(255,255,255,.08); border-radius:14px; padding:14px 8px; text-align:center; cursor:pointer; transition:all .2s; }
   .animal-select-card:hover { border-color:rgba(56,189,248,.5); transform:translateY(-2px); }
@@ -194,9 +242,211 @@
   .shop-item { background:rgba(15,23,42,.7); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:8px 6px; text-align:center; transition:all .2s; }
   .shop-item.equipped { border-color:rgba(16,185,129,.6); box-shadow:0 0 12px rgba(16,185,129,.25); }
   .shop-buy { width:100%; margin-top:6px; padding:4px; border-radius:7px; font-size:.62rem; font-weight:700; cursor:pointer; border:none; }
+  #splashOverlay {
+    position:fixed; inset:0; z-index:99999;
+    background:#0f172a;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    cursor:pointer;
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  #splashOverlay.hide { opacity:0; transform:scale(1.05); pointer-events:none; }
+  .splash-pulse {
+    animation:splashPulse 2s ease-in-out infinite;
+  }
+  @keyframes splashPulse {
+    0%,100% { opacity:.5; transform:translateY(0); }
+    50% { opacity:1; transform:translateY(4px); }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     STATIC TAILWIND UTILITIES (Android WebView fallback)
+     tailwind.js JIT가 실패해도 레이아웃이 정상 작동하도록
+     사용된 모든 유틸리티를 미리 정의합니다.
+     ══════════════════════════════════════════════════════ */
+
+  /* ── Layout ── */
+  .flex { display:flex; }
+  .inline-flex { display:inline-flex; }
+  .grid { display:grid; }
+  .hidden { display:none; }
+  .block { display:block; }
+  .inline-block { display:inline-block; }
+  .relative { position:relative; }
+  .absolute { position:absolute; }
+  .fixed { position:fixed; }
+
+  /* ── Flexbox ── */
+  .flex-col { flex-direction:column; }
+  .flex-wrap { flex-wrap:wrap; }
+  .flex-1 { flex:1 1 0%; }
+  .flex-shrink-0 { flex-shrink:0; }
+  .items-center { align-items:center; }
+  .items-start { align-items:flex-start; }
+  .items-end { align-items:flex-end; }
+  .justify-center { justify-content:center; }
+  .justify-between { justify-content:space-between; }
+
+  /* ── Grid ── */
+  .grid-cols-2 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .grid-cols-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
+
+  /* ── Gap ── */
+  .gap-1 { gap:0.25rem; }
+  .gap-1\.5 { gap:0.375rem; }
+  .gap-2 { gap:0.5rem; }
+  .gap-3 { gap:0.75rem; }
+  .gap-4 { gap:1rem; }
+
+  /* ── Spacing ── */
+  .space-y-1\.5 > :not([hidden]) ~ :not([hidden]) { margin-top:0.375rem; }
+  .space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top:0.5rem; }
+
+  /* ── Padding ── */
+  .p-1 { padding:0.25rem; }
+  .p-2 { padding:0.5rem; }
+  .p-2\.5 { padding:0.625rem; }
+  .p-3 { padding:0.75rem; }
+  .p-4 { padding:1rem; }
+  .p-5 { padding:1.25rem; }
+  .p-6 { padding:1.5rem; }
+  .px-1 { padding-left:0.25rem; padding-right:0.25rem; }
+  .px-1\.5 { padding-left:0.375rem; padding-right:0.375rem; }
+  .px-2 { padding-left:0.5rem; padding-right:0.5rem; }
+  .px-3 { padding-left:0.75rem; padding-right:0.75rem; }
+  .px-4 { padding-left:1rem; padding-right:1rem; }
+  .px-6 { padding-left:1.5rem; padding-right:1.5rem; }
+  .px-8 { padding-left:2rem; padding-right:2rem; }
+  .py-0\.5 { padding-top:0.125rem; padding-bottom:0.125rem; }
+  .py-1 { padding-top:0.25rem; padding-bottom:0.25rem; }
+  .py-1\.5 { padding-top:0.375rem; padding-bottom:0.375rem; }
+  .py-2 { padding-top:0.5rem; padding-bottom:0.5rem; }
+  .py-2\.5 { padding-top:0.625rem; padding-bottom:0.625rem; }
+  .py-3 { padding-top:0.75rem; padding-bottom:0.75rem; }
+  .py-5 { padding-top:1.25rem; padding-bottom:1.25rem; }
+  .py-6 { padding-top:1.5rem; padding-bottom:1.5rem; }
+  .py-8 { padding-top:2rem; padding-bottom:2rem; }
+  .py-10 { padding-top:2.5rem; padding-bottom:2.5rem; }
+
+  /* ── Margin ── */
+  .m-0 { margin:0; }
+  .mx-4 { margin-left:1rem; margin-right:1rem; }
+  .mx-auto { margin-left:auto; margin-right:auto; }
+  .my-1 { margin-top:0.25rem; margin-bottom:0.25rem; }
+  .mt-0\.5 { margin-top:0.125rem; }
+  .mt-1 { margin-top:0.25rem; }
+  .mt-2 { margin-top:0.5rem; }
+  .mt-3 { margin-top:0.75rem; }
+  .mt-4 { margin-top:1rem; }
+  .mb-1 { margin-bottom:0.25rem; }
+  .mb-2 { margin-bottom:0.5rem; }
+  .mb-3 { margin-bottom:0.75rem; }
+  .mb-4 { margin-bottom:1rem; }
+  .mb-6 { margin-bottom:1.5rem; }
+  .ml-2 { margin-left:0.5rem; }
+  .mr-1 { margin-right:0.25rem; }
+
+  /* ── Width / Height ── */
+  .w-4 { width:1rem; }
+  .w-5 { width:1.25rem; }
+  .w-16 { width:4rem; }
+  .w-20 { width:5rem; }
+  .w-full { width:100%; }
+  .h-3 { height:0.75rem; }
+  .h-4 { height:1rem; }
+  .h-5 { height:1.25rem; }
+  .h-16 { height:4rem; }
+  .h-full { height:100%; }
+  .min-w-0 { min-width:0; }
+  .max-w-sm { max-width:24rem; }
+  .max-w-lg { max-width:32rem; }
+
+  /* ── Position ── */
+  .inset-0 { inset:0; }
+  .top-0 { top:0; }
+  .bottom-6 { bottom:1.5rem; }
+  .left-1\/2 { left:50%; }
+  .z-10 { z-index:10; }
+  .z-50 { z-index:50; }
+
+  /* ── Typography ── */
+  .text-\[9px\] { font-size:9px; }
+  .text-\[10px\] { font-size:10px; }
+  .text-\[11px\] { font-size:11px; }
+  .text-\[0\.6rem\] { font-size:0.6rem; }
+  .text-\[0\.7rem\] { font-size:0.7rem; }
+  .text-xs { font-size:0.75rem; line-height:1rem; }
+  .text-sm { font-size:0.875rem; line-height:1.25rem; }
+  .text-lg { font-size:1.125rem; line-height:1.75rem; }
+  .text-xl { font-size:1.25rem; line-height:1.75rem; }
+  .text-2xl { font-size:1.5rem; line-height:2rem; }
+  .text-3xl { font-size:1.875rem; line-height:2.25rem; }
+  .text-4xl { font-size:2.25rem; line-height:2.5rem; }
+  .text-5xl { font-size:3rem; line-height:1; }
+  .text-6xl { font-size:3.75rem; line-height:1; }
+  .text-center { text-align:center; }
+  .text-left { text-align:left; }
+  .font-medium { font-weight:500; }
+  .font-semibold { font-weight:600; }
+  .font-bold { font-weight:700; }
+  .font-black { font-weight:900; }
+  .tracking-wider { letter-spacing:0.05em; }
+  .tracking-widest { letter-spacing:0.1em; }
+  .leading-tight { line-height:1.25; }
+
+  /* ── Colors ── */
+  .text-white { color:#fff; }
+  .text-slate-200 { color:#e2e8f0; }
+  .text-slate-300 { color:#cbd5e1; }
+  .text-slate-400 { color:#94a3b8; }
+  .text-slate-500 { color:#64748b; }
+  .text-slate-600 { color:#475569; }
+  .text-emerald-400 { color:#34d399; }
+  .text-sky-400 { color:#38bdf8; }
+  .text-blue-400 { color:#60a5fa; }
+  .text-amber-400 { color:#fbbf24; }
+  .text-amber-500 { color:#f59e0b; }
+  .text-amber-500\/70 { color:rgba(245,158,11,.7); }
+  .text-rose-400 { color:#fb7185; }
+  .text-red-400 { color:#f87171; }
+
+  /* ── Backgrounds ── */
+  .bg-black\/20 { background-color:rgba(0,0,0,.2); }
+  .bg-slate-800 { background-color:#1e293b; }
+  .bg-slate-800\/30 { background-color:rgba(30,41,59,.3); }
+  .bg-slate-800\/50 { background-color:rgba(30,41,59,.5); }
+  .bg-slate-900\/20 { background-color:rgba(15,23,42,.2); }
+  .bg-slate-900\/40 { background-color:rgba(15,23,42,.4); }
+  .bg-slate-900\/60 { background-color:rgba(15,23,42,.6); }
+
+  /* ── Borders ── */
+  .border { border-width:1px; border-style:solid; }
+  .border-t { border-top-width:1px; border-top-style:solid; }
+  .border-emerald-500\/30 { border-color:rgba(16,185,129,.3); }
+  .border-slate-700 { border-color:#334155; }
+  .border-slate-700\/50 { border-color:rgba(51,65,85,.5); }
+  .border-slate-800 { border-color:#1e293b; }
+  .rounded { border-radius:0.25rem; }
+  .rounded-lg { border-radius:0.5rem; }
+  .rounded-full { border-radius:9999px; }
+
+  /* ── Effects ── */
+  .opacity-0 { opacity:0; }
+  .overflow-hidden { overflow:hidden; }
+  .cursor-pointer { cursor:pointer; }
+  .transition { transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter; transition-timing-function:cubic-bezier(.4,0,.2,1); transition-duration:150ms; }
+  .transition-all { transition-property:all; transition-timing-function:cubic-bezier(.4,0,.2,1); transition-duration:150ms; }
+  .transition-transform { transition-property:transform; transition-timing-function:cubic-bezier(.4,0,.2,1); transition-duration:150ms; }
+
 </style>
 </head>
 <body class="relative">
+
+<div id="splashOverlay" onclick="dismissSplash()">
+  <div class="font-orbitron text-5xl font-black" style="color:#10b981;text-shadow:0 0 30px rgba(16,185,129,.4);letter-spacing:.05em">LIFE RPG</div>
+  <div style="font-size:.7rem;color:#475569;margin-top:6px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:24px">Slay your day · Conquer your life</div>
+  <img src="art/splash_logo.png" alt="Splash Logo" style="max-height:45vh;max-width:85%;width:auto;height:auto;object-fit:contain;border-radius:24px;box-shadow:0 10px 25px rgba(0,0,0,0.5);margin-bottom:24px;border:1px solid rgba(255,255,255,0.1)">
+  <div class="splash-pulse" style="font-size:.8rem;color:#64748b;letter-spacing:.1em">TAP TO START</div>
+</div>
 
 <canvas id="particles"></canvas>
 
@@ -273,6 +523,22 @@
       <button id="soundToggle" class="shop-buy" style="width:56px" onclick="toggleSound()">ON</button>
     </div>
 
+    <!-- 배경음악(BGM) 선택 -->
+    <div class="cat-row mb-2">
+      <div style="font-size:1.1rem">🎵</div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium">배경음악 (BGM)</div>
+        <div class="text-xs text-slate-500">원하는 BGM 트랙 선택</div>
+      </div>
+      <select id="bgmSelect" class="game-input px-2 py-1 text-xs" style="width:130px" onchange="changeBgm(this.value)">
+        <option value="none">🔇 꺼짐</option>
+        <option value="rpg1">🎮 RPG 테마 1 (조용히)</option>
+        <option value="rpg2">🎮 RPG 테마 2 (조용히)</option>
+        <option value="lofi1">☕ 로파이 테마 1</option>
+        <option value="lofi2">☕ 로파이 테마 2</option>
+      </select>
+    </div>
+
     <!-- 알림 -->
     <div class="cat-row mb-1" style="flex-wrap:wrap">
       <div style="font-size:1.1rem">🔔</div>
@@ -330,7 +596,7 @@
         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
-    <div class="text-xs mb-3" id="shopBalance" style="color:#fbbf24">🪙 0  💎 0</div>
+    <div class="text-xs mb-3" id="shopBalance" style="color:#fbbf24">💰 0  💎 0</div>
     <div class="seg mb-3">
       <div class="seg-btn active" id="shopTabAvatar" onclick="switchShopTab('avatar')">🧙 아바타</div>
       <div class="seg-btn" id="shopTabTheme" onclick="switchShopTab('theme')">🎨 테마</div>
@@ -339,7 +605,23 @@
       <div class="seg-btn" id="shopTabPet" onclick="switchShopTab('pet')">🍖 펫</div>
     </div>
     <div id="shopGrid" class="grid grid-cols-3 gap-2"></div>
-    <div class="text-xs text-slate-600 text-center mt-3">할 일을 완료하면 🪙코인이 떨어져요. 가끔 💎젬도!</div>
+    
+    <!-- AdMob 무료 충전소 (보상형 광고) -->
+    <div class="mt-4 pt-3 border-t border-slate-700/50">
+      <div class="text-[10px] font-bold text-slate-500 mb-2">🎁 무료 충전소</div>
+      <div class="grid grid-cols-2 gap-2">
+        <button onclick="showRewardedAd('coin')" class="btn-primary py-2 text-xs flex items-center justify-center gap-1.5" style="background:linear-gradient(135deg, #fbbf24, #d97706)">
+          <span>📺 무료 코인</span>
+          <span class="bg-black/20 px-1.5 py-0.5 rounded text-[9px] font-bold">💰+30</span>
+        </button>
+        <button onclick="showRewardedAd('gem')" class="btn-primary py-2 text-xs flex items-center justify-center gap-1.5" style="background:linear-gradient(135deg, #a78bfa, #7c3aed)">
+          <span>📺 무료 보석</span>
+          <span class="bg-black/20 px-1.5 py-0.5 rounded text-[9px] font-bold">💎+1</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="text-xs text-slate-600 text-center mt-3">할 일을 완료하면 💰코인이 떨어져요. 가끔 💎젬도!</div>
   </div>
 </div>
 
@@ -421,6 +703,21 @@
   </div>
 </div>
 
+<!-- REVIVE STREAK MODAL (스트릭 복구) -->
+<div class="overlay" id="reviveStreakModal">
+  <div class="modal-card p-5 text-center">
+    <div class="text-3xl mb-2">💔</div>
+    <div class="font-bold text-sm text-rose-400 mb-1">스트릭(연속 완료) 기록이 끊길 위기입니다!</div>
+    <div class="text-xs text-slate-400 mb-4">어제 수행하지 못한 미완료 퀘스트가 남아있습니다.<br>광고를 보고 어제 퀘스트를 완료 처리하여 소중한 연속 스트릭을 지켜내세요!</div>
+    <div class="flex gap-2">
+      <button onclick="useReviveStreakAd()" class="btn-primary flex-1 py-2 text-xs flex items-center justify-center gap-1.5" style="background:linear-gradient(135deg, #10b981, #059669)">
+        <span>📺 광고 보고 스트릭 부활</span>
+      </button>
+      <button onclick="document.getElementById('reviveStreakModal').classList.remove('show')" class="btn-danger py-2 px-4 text-xs">포기하기</button>
+    </div>
+  </div>
+</div>
+
 <!-- REPORT MODAL -->
 <div class="overlay" id="reportModal">
   <div class="modal-card p-5">
@@ -490,35 +787,33 @@
         <button onclick="openHouseModal()" class="navbtn" title="집" style="font-size:.85rem">🏠</button>
         <button onclick="openSettingsModal()" class="navbtn" title="설정" style="font-size:.85rem">⚙️</button>
         <span class="text-slate-500 text-[10px] font-orbitron mr-1">v3.2.0</span>
-        <div class="pulse-dot"></div>
-        <span class="text-emerald-400 text-xs font-medium">ONLINE</span>
       </div>
     </div>
     <div class="card p-4 glow-emerald">
       <div class="flex gap-4">
         <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-3 mb-2">
-            <div id="levelCircle" style="width:48px;height:48px;background:linear-gradient(135deg,#10b981,#38bdf8);border-radius:50%;display:flex;align-items:center;justify-content:center;">
-              <span class="font-orbitron font-black text-white text-xs" id="levelAvatar">LV</span>
-            </div>
-            <div>
-              <div class="font-orbitron font-black text-3xl text-glow-emerald" id="levelDisplay" style="color:#10b981;line-height:1">1</div>
-              <div class="text-xs font-bold" id="rankTitle" style="color:#94a3b8">🌾 떠돌이</div>
-            </div>
+          <div class="flex items-center gap-2 mb-2 flex-wrap min-w-0">
+            <span class="font-orbitron font-black text-xl text-glow-emerald flex items-center gap-1.5" style="color:#10b981;line-height:1;white-space:nowrap;flex-shrink:0;">
+              <span id="levelCircle" style="width:30px;height:30px;background:linear-gradient(135deg,#10b981,#38bdf8);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.2);">
+                <span id="levelAvatar" style="font-size:10px;line-height:1;">LV</span>
+              </span>
+              <span>LV <span id="levelDisplay">1</span></span>
+            </span>
+            <div class="text-xs font-bold" id="rankTitle" style="color:#94a3b8;white-space:nowrap;flex-shrink:0;">🌾 떠돌이</div>
           </div>
           <div class="xp-bar-container h-3 w-full mb-1">
             <div class="xp-bar-fill h-full" id="xpBar" style="width:0%"></div>
           </div>
-          <div class="flex justify-between text-xs text-slate-500 mb-2">
-            <span>
-              <span id="currentXP">0</span> / <span id="maxXP">100</span> XP
-              <span id="petXpBuffIndicator" style="display:none; margin-left:6px; background:rgba(251,191,36,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.3); padding:1px 4px; border-radius:4px; font-weight:bold; font-size:0.65rem;" title="포만도 50% 이상 버프: 경험치 +10%">⚡ XP +10%</span>
-            </span>
-            <span id="xpToNext">다음까지 100 XP</span>
+          <div class="flex flex-col gap-1 mb-2">
+            <div class="flex justify-between items-center text-xs text-slate-500">
+              <span style="white-space:nowrap;"><span id="currentXP">0</span> / <span id="maxXP">100</span> XP</span>
+            </div>
+            <div>
+              <span id="petXpBuffIndicator" style="display:none; background:rgba(251,191,36,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.3); padding:1px 6px; border-radius:4px; font-weight:bold; font-size:0.65rem; white-space:nowrap;" title="포만도 50% 이상 버프: 경험치 +10%">⚡ XP +10%</span>
+            </div>
           </div>
           <div class="text-xs text-slate-500">🔥 연속 <span id="streakDisplay" class="text-amber-400">0</span>일 <span id="streakBadge"></span></div>
-          <div class="text-xs mt-1"><span id="coinDisplay" style="color:#fbbf24">🪙 0</span><span id="gemDisplay" style="color:#c4b5fd" class="ml-2">💎 0</span></div>
-          <div class="text-xs text-slate-600 mt-1" id="nextTitle">다음 칭호 평민 · Lv.4</div>
+          <div class="text-xs mt-1"><span id="coinDisplay" style="color:#fbbf24">💰 0</span><span id="gemDisplay" style="color:#c4b5fd" class="ml-2">💎 0</span></div>
         </div>
         <div class="animal-wrap">
           <div class="relative">
@@ -531,12 +826,12 @@
         </div>
       </div>
       <!-- 펫 상시 정보 UI -->
-      <div id="petInteractUI" class="mt-3 pt-3 border-t border-slate-700/50 flex justify-between items-center text-xs text-slate-400" style="display:none">
-        <div class="flex gap-3">
-          <span>🍗 포만도: <span id="petHungerDisplay" class="font-bold text-amber-400">100</span>%</span>
-          <span>❤️ 친밀도: <span id="petAffectionDisplay" class="font-bold text-rose-400">0</span>%</span>
+      <div id="petInteractUI" class="mt-3 pt-3 border-t border-slate-700/50 flex justify-between items-center gap-2 flex-wrap text-xs text-slate-400" style="display:none">
+        <div class="flex gap-3 flex-wrap">
+          <span style="white-space:nowrap;">🍗 포만도: <span id="petHungerDisplay" class="font-bold text-amber-400">100</span>%</span>
+          <span style="white-space:nowrap;">❤️ 친밀도: <span id="petAffectionDisplay" class="font-bold text-rose-400">0</span>%</span>
         </div>
-        <div class="cursor-pointer hover:underline text-emerald-400 font-semibold" onclick="openPetModal()">👉 교감하기</div>
+        <div class="cursor-pointer hover:underline text-emerald-400 font-semibold" style="white-space:nowrap;" onclick="openPetModal()">👉 교감하기</div>
       </div>
     </div>
   </div>
@@ -811,7 +1106,7 @@ const AVATARS = [
   { id:'av_wizard', emoji:'🧙', name:'마법사',   cost:90 },
   { id:'av_knight', emoji:'🛡️', name:'기사',     cost:120 },
   { id:'av_robot',  emoji:'🤖', name:'로봇',     cost:150 },
-  { id:'av_ninja',  emoji:'🥷', name:'닌자',     cost:200 },
+  { id:'av_ninja',  emoji:'🎯', name:'닌자',     cost:200 },
   { id:'av_king',   emoji:'🤴', name:'왕',       cost:300 },
   { id:'av_dragon', emoji:'🐉', name:'드래곤',   gem:true, gemCost:3 },
   { id:'av_unicorn',emoji:'🦄', name:'유니콘',   gem:true, gemCost:5 }
@@ -949,6 +1244,7 @@ let state = {
   equipped: { avatar:null, theme:'th_default', bg:null },
   celebratedStreak: 0,   // 마지막으로 축하한 스트릭 배지 단계
   soundOn: true,         // 효과음
+  activeBgm: 'rpg1',     // 활성화된 배경음악 키
   notifyOn: false, notifyTime: '21:00',   // 매일 알림
   yearlyGoal:'', monthlyGoal:'', weeklyGoal:'',
   weeklyGoals: {}, monthlyGoals: {}, yearlyGoals: {},
@@ -962,6 +1258,11 @@ let state = {
   petHunger: 100,        // 🍗 포만도 (0 ~ 100)
   petAffection: 0,       // ❤️ 친밀도 (0 ~ 100)
   lastActiveDate: null,  // 직전 접속 날짜
+  housePositions: {},    // 가구 및 동물들의 X, Y 배치 정보: { itemId: {x: 30, y: 50} }
+  skipTicketsUsed: 0,    // 오늘 사용한 퀘스트 즉시 완료권 횟수
+  lastSkipResetDate: null,// 즉시 완료권 일일 리셋 날짜 기록
+  trialThemeExpire: 0,   // 임시 무료 체험 스킨 만료 시간 (Timestamp)
+  trialThemeId: null,     // 대여 중인 테마 ID
 };
 const STREAK_BADGES = [
   { d:100, icon:'👑', label:'100일 전설' },
@@ -973,6 +1274,7 @@ function streakBadge(s) { return STREAK_BADGES.find(b => s >= b.d) || null; }
 let currentTab = 'week';
 let viewDate   = null;   // dateKey currently viewed
 let repeatMode = 0;      // 0 = one-off, 1 = routine
+let pendingDateKey = null; // 날짜 이동 전 광고 시청 대기
 
 // ─────────────────────────────────────────────
 //  UTILS
@@ -1030,6 +1332,7 @@ function loadState() {
       if (!state.owned) state.owned = [];
       if (!state.equipped) state.equipped = { avatar:null, theme:'th_default' };
       if (typeof state.soundOn !== 'boolean') state.soundOn = true;
+      if (typeof state.activeBgm !== 'string') state.activeBgm = 'rpg1';
       if (typeof state.notifyOn !== 'boolean') state.notifyOn = false;
       if (!state.notifyTime) state.notifyTime = '21:00';
       if (!state.encyclopedia) state.encyclopedia = {};
@@ -1044,6 +1347,11 @@ function loadState() {
       if (!state.weeklyGoals) state.weeklyGoals = {};
       if (!state.monthlyGoals) state.monthlyGoals = {};
       if (!state.yearlyGoals) state.yearlyGoals = {};
+      if (!state.housePositions) state.housePositions = {};
+      if (typeof state.skipTicketsUsed !== 'number') state.skipTicketsUsed = 0;
+      if (!state.lastSkipResetDate) state.lastSkipResetDate = null;
+      if (typeof state.trialThemeExpire !== 'number') state.trialThemeExpire = 0;
+      if (!state.trialThemeId) state.trialThemeId = null;
       
       // Auto-migrate single properties if exist
       if (state.weeklyGoal && Object.keys(state.weeklyGoals).length === 0) {
@@ -1185,6 +1493,45 @@ function init() {
   document.getElementById('yearlyGoal').addEventListener('input', debounce(()=>{ saveGoals(); renderProgress(); }, 500));
   document.getElementById('monthlyGoal').addEventListener('input', debounce(saveGoals, 500));
   document.getElementById('weeklyGoal').addEventListener('input', debounce(saveGoals, 500));
+  
+  // Streak Revive check (AdMob is initialized after splash dismiss)
+  checkForStreakBreak();
+  
+  // Start BGM on user interaction due to browser audio policies
+  const startAudioOnInteraction = () => {
+    initAudio();
+    updateBgmState();
+    window.removeEventListener('click', startAudioOnInteraction);
+    window.removeEventListener('touchstart', startAudioOnInteraction);
+  };
+  window.addEventListener('click', startAudioOnInteraction);
+  window.addEventListener('touchstart', startAudioOnInteraction);
+}
+
+function dismissSplash() {
+  const el = document.getElementById('splashOverlay');
+  if (!el || el.classList.contains('hide')) return;
+  el.classList.add('hide');
+  setTimeout(() => { el.style.display = 'none'; }, 500);
+  initAdMob();
+}
+
+function checkForStreakBreak() {
+  // Check if yesterday had quests and none/some were left incomplete
+  const prevDate = new Date();
+  prevDate.setDate(prevDate.getDate() - 1);
+  const prevKey = dateKey(prevDate);
+  const day = state.days[prevKey];
+  if (day && day.quests.length > 0) {
+    const incomplete = day.quests.some(q => !q.completed);
+    if (incomplete) {
+      // Show streak revive modal
+      setTimeout(() => {
+        const modal = document.getElementById('reviveStreakModal');
+        if (modal) modal.classList.add('show');
+      }, 1000);
+    }
+  }
 }
 
 function renderDate() {
@@ -1209,7 +1556,8 @@ function renderXP() {
   document.getElementById('levelDisplay').textContent = state.level;
   document.getElementById('currentXP').textContent    = state.currentXP;
   document.getElementById('xpBar').style.width        = pct + '%';
-  document.getElementById('xpToNext').textContent     = `다음 레벨까지 ${XP_PER_LEVEL - state.currentXP} XP`;
+  const elXpToNext = document.getElementById('xpToNext');
+  if (elXpToNext) elXpToNext.textContent = `다음 레벨까지 ${XP_PER_LEVEL - state.currentXP} XP`;
   const s = computeStreak();
   document.getElementById('streakDisplay').textContent = s;
   const bd = document.getElementById('streakBadge');
@@ -1529,6 +1877,10 @@ function setViewDate(k) {
 function shiftDay(delta) {
   const d = parseKey(viewDate); d.setDate(d.getDate() + delta);
   const k = dateKey(d);
+  if (viewDate === todayKey() && k !== todayKey()) {
+    confirmDateNavAd(k);
+    return;
+  }
   setViewDate(k);
 }
 function shiftDateUnit(unit, delta) {
@@ -1540,7 +1892,12 @@ function shiftDateUnit(unit, delta) {
   } else if (unit === 'year') {
     d.setFullYear(d.getFullYear() + delta);
   }
-  setViewDate(dateKey(d));
+  const k = dateKey(d);
+  if (viewDate === todayKey() && k !== todayKey()) {
+    confirmDateNavAd(k);
+    return;
+  }
+  setViewDate(k);
 }
 function goToday() { setViewDate(todayKey()); }
 
@@ -1866,6 +2223,12 @@ function questHTML(q, cat) {
           <span class="text-xs text-slate-500">${q.xp} XP</span>
         </div>
       </div>
+      <!-- Skip ticket button (AdMob) -->
+      ${!q.completed ? `
+      <button class="btn-edit flex items-center justify-center" style="background:rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.3)" title="광고 보고 즉시 완료" onclick="useSkipTicket('${q.id}', event)">
+        <span style="font-size:0.8rem">🎟️</span>
+      </button>
+      ` : ''}
       <button class="btn-edit" onclick="editQuest('${q.id}')">
         <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -2115,11 +2478,16 @@ function renderSettings() {
     nt.style.background = on ? 'rgba(16,185,129,.2)' : 'rgba(100,116,139,.2)';
     nt.style.color = on ? '#10b981' : '#94a3b8';
   }
+  const bgmSel = document.getElementById('bgmSelect');
+  if (bgmSel) {
+    bgmSel.value = state.activeBgm || 'none';
+  }
 }
 
 function toggleSound() {
   state.soundOn = !state.soundOn;
   saveState(); renderSettings();
+  updateBgmState();
   if (state.soundOn) sfx('coin');
 }
 
@@ -2282,7 +2650,7 @@ function checkRewardUnlocks(oldLv, newLv) {
 //  CURRENCY · COIN DROPS · COSMETICS
 // ─────────────────────────────────────────────
 function renderCurrency() {
-  const c = document.getElementById('coinDisplay'); if (c) c.textContent = `🪙 ${state.coins || 0}`;
+  const c = document.getElementById('coinDisplay'); if (c) c.textContent = `💰 ${state.coins || 0}`;
   const g = document.getElementById('gemDisplay'); if (g) g.textContent = `💎 ${state.gems || 0}`;
 }
 
@@ -2294,13 +2662,20 @@ function coinRoll(diff) {
 }
 
 function showCoinFloat(drop, x, y) {
-  setTimeout(() => showXPFloat(`+${drop.coins} 🪙`, x + 28, y, '#fbbf24'), 250);
+  setTimeout(() => showXPFloat(`+${drop.coins} 💰`, x + 28, y, '#fbbf24'), 250);
   if (drop.gems) {
     setTimeout(() => { showXPFloat(`💎 +${drop.gems} JACKPOT!`, x, y - 32, '#a78bfa'); spawnParticleBurst(); }, 450);
   }
 }
 
 function applyTheme() {
+  // Check trial theme expiration
+  if (state.trialThemeId && state.trialThemeExpire && Date.now() >= state.trialThemeExpire) {
+    state.trialThemeId = null;
+    state.trialThemeExpire = 0;
+    state.equipped.theme = 'th_default';
+    saveState();
+  }
   const t = THEMES.find(t => t.id === ((state.equipped && state.equipped.theme) || 'th_default')) || THEMES[0];
   document.documentElement.style.setProperty('--bg-primary', t.bg);
   document.body.style.backgroundColor = t.bg;
@@ -2330,20 +2705,40 @@ function applyAvatar() {
   if (!span) return;
   const id = state.equipped && state.equipped.avatar;
   const av = AVATARS.find(a => a.id === id);
-  if (av && av.emoji !== 'LV') { span.textContent = av.emoji; span.style.fontSize = '1.5rem'; }
-  else { span.textContent = 'LV'; span.style.fontSize = ''; }
+  if (av && av.emoji !== 'LV') { span.textContent = av.emoji; span.style.fontSize = '1.1rem'; }
+  else { span.textContent = 'LV'; span.style.fontSize = '10px'; }
   applyAnimal();
 }
 
 // ─────────────────────────────────────────────
 //  SOUND (Web Audio — 파일 없이 합성, 완전 오프라인)
 // ─────────────────────────────────────────────
+// ─────────────────────────────────────────────
+//  SOUND & BGM (HTML5 Audio Player - MP3 재생)
+// ─────────────────────────────────────────────
 let audioCtx = null;
+let bgmAudio = null;
+
+const BGM_FILES = {
+  rpg1: { path: 'audio/bgm_rpg1.mp3', volume: 0.16 },  // RPG BGM 볼륨 대폭 낮춤
+  rpg2: { path: 'audio/bgm_rpg2.mp3', volume: 0.16 },  // RPG BGM 볼륨 대폭 낮춤
+  lofi1: { path: 'audio/bgm_lofi1.mp3', volume: 0.35 },
+  lofi2: { path: 'audio/bgm_lofi2.mp3', volume: 0.35 }
+};
+
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+
 function sfx(type) {
   if (!state.soundOn) return;
   try {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
+    initAudio();
     const now = audioCtx.currentTime;
     const seq = {
       complete: [[660,0],[990,0.09]],
@@ -2359,12 +2754,75 @@ function sfx(type) {
       o.frequency.value = freq;
       o.connect(g); g.connect(audioCtx.destination);
       g.gain.setValueAtTime(0.0001, now + t);
-      g.gain.exponentialRampToValueAtTime(0.16, now + t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.12, now + t + 0.02);
       g.gain.exponentialRampToValueAtTime(0.0001, now + t + 0.2);
       o.start(now + t); o.stop(now + t + 0.22);
     });
   } catch (e) {}
 }
+
+function startBgm() {
+  const bgmKey = state.activeBgm || 'none';
+  if (!state.soundOn || bgmKey === 'none') {
+    stopBgm();
+    return;
+  }
+  
+  const bgmData = BGM_FILES[bgmKey];
+  if (!bgmData) return;
+
+  try {
+    if (bgmAudio) {
+      // 이미 같은 곡이 재생 중이면 건너뜀
+      if (bgmAudio.src.includes(bgmData.path)) {
+        if (bgmAudio.paused) bgmAudio.play().catch(()=>{});
+        return;
+      }
+      stopBgm();
+    }
+
+    bgmAudio = new Audio(bgmData.path);
+    bgmAudio.loop = true;
+    bgmAudio.volume = bgmData.volume;
+    
+    // 모바일 자동재생 대응 및 재생
+    const playPromise = bgmAudio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(error => {
+        console.log("BGM autoplay delayed until interaction");
+      });
+    }
+  } catch (e) {
+    console.error("BGM start failed", e);
+  }
+}
+
+function stopBgm() {
+  if (bgmAudio) {
+    try {
+      bgmAudio.pause();
+    } catch(e){}
+    bgmAudio = null;
+  }
+}
+
+function changeBgm(key) {
+  state.activeBgm = key;
+  saveState();
+  updateBgmState();
+  if (key !== 'none') {
+    showToast('배경음악을 설정했습니다 🎵', '#10b981');
+  }
+}
+
+function updateBgmState() {
+  if (state.soundOn && (state.activeBgm && state.activeBgm !== 'none')) {
+    startBgm();
+  } else {
+    stopBgm();
+  }
+}
+
 
 // ─────────────────────────────────────────────
 //  DAILY NOTIFICATION
@@ -2414,6 +2872,357 @@ function fireNotify() {
 }
 
 // ─────────────────────────────────────────────
+//  DAILY NOTIFICATION - ADMOB
+// ─────────────────────────────────────────────
+const TEST_BANNER_ID = 'ca-app-pub-3940256099942544/6300978111';
+const TEST_REWARDED_ID = 'ca-app-pub-3940256099942544/5224354917';
+
+let isAdMobInitialized = false;
+
+async function initAdMob() {
+  if (typeof window === 'undefined' || !window.Capacitor) {
+    return;
+  }
+  try {
+    const { AdMob } = window.Capacitor.Plugins;
+    if (!AdMob) return;
+
+    await AdMob.initialize({
+      requestTrackingAuthorization: true,
+      testingDevices: [],
+      initializeForTesting: true,
+    });
+    isAdMobInitialized = true;
+    console.log("AdMob Initialized");
+  } catch (e) {
+    console.warn("AdMob initialization failed:", e);
+  }
+}
+
+async function showBanner() {
+  if (!isAdMobInitialized || !window.Capacitor) {
+    showWebBanner();
+    return;
+  }
+  try {
+    const { AdMob } = window.Capacitor.Plugins;
+    if (!AdMob) return;
+
+    // AdMob margin 단위 = 물리 픽셀(px). dp로 계산 후 dpr 곱해서 변환
+    const dpr = window.devicePixelRatio || 1;
+
+    // 상태바 높이만큼 margin을 줘서 광고가 상태바 아래에 위치하도록 함
+    const STATUS_BAR_DP = 24;
+    const marginPx = Math.round((STATUS_BAR_DP + 4) * dpr);
+
+    await AdMob.showBanner({
+      adId: TEST_BANNER_ID,
+      adSize: "BANNER",
+      position: "TOP_CENTER",
+      margin: marginPx,
+      isTesting: true
+    });
+
+    // 최상단 콘텐츠가 광고에 가리지 않도록 여유 공간 추가
+    document.body.style.paddingTop = '80px';
+    console.log("Banner Ad Shown (TOP), marginPx=" + marginPx);
+  } catch (e) {
+    console.error("Banner show failed", e);
+    showWebBanner();
+  }
+}
+
+function showWebBanner() {
+  if (document.getElementById('webAdBanner')) return;
+  const b = document.createElement('div');
+  b.id = 'webAdBanner';
+  b.innerHTML = '📺 <span style="color:#38bdf8">테스트 광고 배너</span> <span style="color:#64748b;font-size:9px">(Google AdMob · Web Fallback)</span>';
+  Object.assign(b.style, {
+    position:'fixed', top:'0', left:'0', right:'0', zIndex:'9995',
+    background:'rgba(15,23,42,.96)', borderBottom:'1px solid rgba(56,189,248,.25)',
+    color:'#94a3b8', fontSize:'11px', textAlign:'center',
+    padding:'7px 16px 7px 16px', fontFamily:'monospace, sans-serif',
+    letterSpacing:'.05em', backdropFilter:'blur(8px)',
+    display:'flex', alignItems:'center', justifyContent:'center', gap:'6px'
+  });
+  b.style.paddingTop = 'env(safe-area-inset-top, 0px)';
+  document.body.appendChild(b);
+}
+
+async function showRewardedAd(type) {
+  // Web fallback if Capacitor AdMob is not available (for testing on desktop browser)
+  if (!window.Capacitor || !window.Capacitor.Plugins.AdMob) {
+    showToast("웹 브라우저 테스트: 광고 로딩 중... ⏳", "#64748b");
+    setTimeout(() => {
+      giveReward(type);
+    }, 2000);
+    return;
+  }
+
+  try {
+    const { AdMob } = window.Capacitor.Plugins;
+    
+    showToast("동영상 광고를 불러오는 중... ⏳", "#38bdf8");
+    
+    await AdMob.prepareRewardVideoAd({
+      adId: TEST_REWARDED_ID,
+      isTesting: true
+    });
+
+    const rewardResult = await AdMob.showRewardVideoAd();
+    if (rewardResult) {
+      giveReward(type);
+    }
+  } catch (e) {
+    console.error("Rewarded ad failed", e);
+    showToast("광고를 불러올 수 없습니다. 다시 시도해 주세요.", "#ef4444");
+  }
+}
+
+function giveReward(type) {
+  if (type === 'coin') {
+    state.coins = (state.coins || 0) + 30;
+    showToast("🎉 광고 보상! 무료 💰 30코인 획득!", "#fbbf24");
+    sfx('reward');
+  } else if (type === 'gem') {
+    state.gems = (state.gems || 0) + 1;
+    showToast("🎉 광고 보상! 무료 💎 1보석 획득!", "#a78bfa");
+    sfx('gem');
+  }
+  saveState();
+  renderCurrency();
+  renderShop();
+}
+
+// 📺 광고 보고 날짜 이동
+function confirmDateNavAd(targetKey) {
+  if (document.getElementById('dateNavAdOverlay')) return;
+  pendingDateKey = targetKey;
+  const d = parseKey(targetKey);
+  const days = ['일','월','화','수','목','금','토'];
+  const label = `${d.getMonth()+1}.${d.getDate()} (${days[d.getDay()]})`;
+  const overlay = document.createElement('div');
+  overlay.id = 'dateNavAdOverlay';
+  Object.assign(overlay.style, {
+    position:'fixed', inset:'0', zIndex:'9999',
+    background:'rgba(0,0,0,.7)', display:'flex',
+    alignItems:'center', justifyContent:'center',
+    backdropFilter:'blur(4px)'
+  });
+  overlay.innerHTML = `
+    <div class="card p-6 max-w-sm mx-4 text-center">
+      <div style="font-size:2.5rem;margin-bottom:12px">📺</div>
+      <div style="font-weight:800;font-size:1.1rem;margin-bottom:4px">날짜 이동</div>
+      <div style="font-size:.85rem;color:#94a3b8;margin-bottom:16px">
+        광고 1번 보고 <span style="color:#38bdf8;font-weight:600">${label}</span> 기록 보기
+      </div>
+      <button onclick="showDateNavAd()" class="w-full py-2.5 rounded-lg text-sm font-bold mb-2" style="background:linear-gradient(135deg,#10b981,#38bdf8);color:#fff;border:none;cursor:pointer">📺 광고 보고 이동</button>
+      <button onclick="cancelDateNav()" class="w-full py-2 rounded-lg text-xs" style="background:rgba(255,255,255,.08);color:#94a3b8;border:none;cursor:pointer">취소</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+async function showDateNavAd() {
+  const overlay = document.getElementById('dateNavAdOverlay');
+  if (overlay) overlay.remove();
+  if (!window.Capacitor || !window.Capacitor.Plugins.AdMob) {
+    showToast("웹 브라우저 테스트: 날짜 이동 광고 완료! ✅", "#10b981");
+    setTimeout(() => { if (pendingDateKey) { setViewDate(pendingDateKey); pendingDateKey = null; } }, 1500);
+    return;
+  }
+  try {
+    const { AdMob } = window.Capacitor.Plugins;
+    showToast("동영상 광고를 불러오는 중... ⏳", "#38bdf8");
+    await AdMob.prepareRewardVideoAd({ adId: TEST_REWARDED_ID, isTesting: true });
+    const reward = await AdMob.showRewardVideoAd();
+    if (reward && pendingDateKey) { setViewDate(pendingDateKey); pendingDateKey = null; }
+  } catch (e) {
+    console.error("Date nav ad failed", e);
+    showToast("광고를 불러올 수 없습니다. 다시 시도해 주세요.", "#ef4444");
+  }
+}
+function cancelDateNav() {
+  const overlay = document.getElementById('dateNavAdOverlay');
+  if (overlay) overlay.remove();
+  pendingDateKey = null;
+}
+
+// 📺 광고 보고 가구 즉시 해금
+async function unlockFurnitureAd(id) {
+  if (!window.Capacitor || !window.Capacitor.Plugins.AdMob) {
+    showToast("웹 브라우저 테스트: 가구 광고 완료! 🔨", "#10b981");
+    setTimeout(() => {
+      finishUnlockFurniture(id);
+    }, 1500);
+    return;
+  }
+  try {
+    const { AdMob } = window.Capacitor.Plugins;
+    showToast("가구 잠금 해제 광고 로딩 중... ⏳", "#38bdf8");
+    await AdMob.prepareRewardVideoAd({ adId: TEST_REWARDED_ID, isTesting: true });
+    const reward = await AdMob.showRewardVideoAd();
+    if (reward) finishUnlockFurniture(id);
+  } catch (e) {
+    showToast("광고 로딩 실패. 다시 시도해 주세요.", "#ef4444");
+  }
+}
+function finishUnlockFurniture(id) {
+  if (!state.houseFurniture) state.houseFurniture = [];
+  if (!state.houseFurniture.includes(id)) {
+    state.houseFurniture.push(id);
+  }
+  saveState();
+  renderShop();
+  renderHouse();
+  showToast("🎉 광고 보상! 가구가 즉시 지급되었습니다!", "#10b981");
+  sfx('reward');
+}
+
+// 📺 광고 보고 테마 24시간 대여
+async function rentThemeAd(id) {
+  if (!window.Capacitor || !window.Capacitor.Plugins.AdMob) {
+    showToast("웹 브라우저 테스트: 테마 24h 대여 완료! 🎨", "#10b981");
+    setTimeout(() => {
+      finishRentTheme(id);
+    }, 1500);
+    return;
+  }
+  try {
+    const { AdMob } = window.Capacitor.Plugins;
+    showToast("테마 대여 광고 로딩 중... ⏳", "#38bdf8");
+    await AdMob.prepareRewardVideoAd({ adId: TEST_REWARDED_ID, isTesting: true });
+    const reward = await AdMob.showRewardVideoAd();
+    if (reward) finishRentTheme(id);
+  } catch (e) {
+    showToast("광고 로딩 실패. 다시 시도해 주세요.", "#ef4444");
+  }
+}
+function finishRentTheme(id) {
+  state.trialThemeId = id;
+  state.trialThemeExpire = Date.now() + (24 * 60 * 60 * 1000); // 24 Hours
+  state.equipped.theme = id;
+  saveState();
+  applyTheme();
+  renderShop();
+  showToast("🎉 24시간 동안 테마가 무료 대여되었습니다!", "#10b981");
+  sfx('reward');
+}
+
+// 📺 퀘스트 즉시 완료권 (Skip-Ticket) - 일일 1회 제한
+let activeSkipQuestId = null;
+async function useSkipTicket(id, event) {
+  if (event) event.stopPropagation();
+  
+  // Daily check reset
+  const today = todayKey();
+  if (state.lastSkipResetDate !== today) {
+    state.skipTicketsUsed = 0;
+    state.lastSkipResetDate = today;
+    saveState();
+  }
+  
+  if (state.skipTicketsUsed >= 1) {
+    showToast("🎟️ 즉시 완료권은 하루에 1번만 사용할 수 있어요!", "#ef4444");
+    return;
+  }
+  
+  activeSkipQuestId = id;
+  
+  if (!window.Capacitor || !window.Capacitor.Plugins.AdMob) {
+    showToast("웹 브라우저 테스트: 즉시 완료권 완료! 🎟️", "#10b981");
+    setTimeout(() => {
+      finishSkipQuest();
+    }, 1500);
+    return;
+  }
+  
+  try {
+    const { AdMob } = window.Capacitor.Plugins;
+    showToast("즉시 완료권 광고 로딩 중... ⏳", "#38bdf8");
+    await AdMob.prepareRewardVideoAd({ adId: TEST_REWARDED_ID, isTesting: true });
+    const reward = await AdMob.showRewardVideoAd();
+    if (reward) finishSkipQuest();
+  } catch (e) {
+    showToast("광고 로딩 실패. 다시 시도해 주세요.", "#ef4444");
+  }
+}
+function finishSkipQuest() {
+  if (!activeSkipQuestId) return;
+  const day = getDay(viewDate);
+  const q = day.quests.find(x => x.id === activeSkipQuestId);
+  if (q && !q.completed) {
+    q.completed = true;
+    state.skipTicketsUsed = (state.skipTicketsUsed || 0) + 1;
+    saveState();
+    
+    // Simulate completion click triggers
+    const actualXP = q.xp;
+    q.xpAwarded = actualXP;
+    gainXP(actualXP, window.innerWidth / 2, window.innerHeight / 2, q.catId);
+    
+    const drop = coinRoll(q.difficulty);
+    q.coinAward = drop.coins; q.gemAward = drop.gems;
+    state.coins += drop.coins; state.gems += drop.gems;
+    
+    showToast("🎉 광고 보상! 퀘스트가 즉시 완료되었습니다!", "#10b981");
+    sfx('reward');
+    saveState();
+    renderQuests();
+    renderProgress();
+    renderCurrency();
+  }
+  activeSkipQuestId = null;
+}
+
+// 📺 어제 깨진 스트릭 부활권 광고
+async function useReviveStreakAd() {
+  if (!window.Capacitor || !window.Capacitor.Plugins.AdMob) {
+    showToast("웹 브라우저 테스트: 스트릭 부활 완료! 🔥", "#10b981");
+    setTimeout(() => {
+      finishReviveStreak();
+    }, 1500);
+    return;
+  }
+  try {
+    const { AdMob } = window.Capacitor.Plugins;
+    showToast("스트릭 보호 광고 로딩 중... ⏳", "#38bdf8");
+    await AdMob.prepareRewardVideoAd({ adId: TEST_REWARDED_ID, isTesting: true });
+    const reward = await AdMob.showRewardVideoAd();
+    if (reward) finishReviveStreak();
+  } catch (e) {
+    showToast("광고 로딩 실패. 다시 시도해 주세요.", "#ef4444");
+  }
+}
+function finishReviveStreak() {
+  // Get yesterday's date
+  const prevDate = new Date();
+  prevDate.setDate(prevDate.getDate() - 1);
+  const prevKey = dateKey(prevDate);
+  
+  // Auto-complete yesterday's incomplete quests to restore streak
+  const day = getDay(prevKey);
+  let revivedAny = false;
+  if (day && day.quests.length > 0) {
+    day.quests.forEach(q => {
+      if (!q.completed) {
+        q.completed = true;
+        revivedAny = true;
+      }
+    });
+  }
+  if (revivedAny) {
+    saveState();
+    updateMood();
+    renderProgress();
+    showToast("🔥 어제의 퀘스트가 복구되어 스트릭이 부활했습니다!", "#10b981");
+    sfx('reward');
+  } else {
+    showToast("어제 복구할 미완료 퀘스트가 없습니다.", "#64748b");
+  }
+  const modal = document.getElementById('reviveStreakModal');
+  if (modal) modal.classList.remove('show');
+}
+
+// ─────────────────────────────────────────────
 //  SHOP
 // ─────────────────────────────────────────────
 let shopTab = 'avatar';
@@ -2429,7 +3238,7 @@ function isEquipped(it) {
 }
 
 function renderShop() {
-  document.getElementById('shopBalance').innerHTML = `🪙 ${state.coins || 0}　💎 ${state.gems || 0}`;
+  document.getElementById('shopBalance').innerHTML = `💰 ${state.coins || 0}　💎 ${state.gems || 0}`;
   document.getElementById('shopTabAvatar').classList.toggle('active', shopTab === 'avatar');
   document.getElementById('shopTabTheme').classList.toggle('active', shopTab === 'theme');
   document.getElementById('shopTabBg').classList.toggle('active', shopTab === 'bg');
@@ -2453,8 +3262,14 @@ function renderShop() {
     } else if (owned) {
       btn = `<button class="shop-buy" style="background:rgba(56,189,248,.18);color:#38bdf8" onclick="equipItem('${it.id}')">장착</button>`;
     } else {
-      const price = it.gem ? `💎 ${it.gemCost}` : `🪙 ${it.cost}`;
-      btn = `<button class="shop-buy" style="background:rgba(251,191,36,.18);color:#fbbf24" onclick="buyItem('${it.id}')">${price}</button>`;
+      const price = it.gem ? `💎 ${it.gemCost}` : `💰 ${it.cost}`;
+      const trialBtn = (shopTab === 'theme' && it.cost > 0) 
+        ? `<button class="shop-buy mt-1 text-[9px]" style="background:rgba(167,139,250,0.18);color:#a78bfa;" onclick="rentThemeAd('${it.id}')">📺 24h 대여</button>`
+        : '';
+      btn = `<div class="flex flex-col gap-1 w-full">
+        <button class="shop-buy" style="background:rgba(251,191,36,.18);color:#fbbf24" onclick="buyItem('${it.id}')">${price}</button>
+        ${trialBtn}
+      </div>`;
     }
     return `<div class="shop-item ${equipped ? 'equipped' : ''}">
       ${preview}
@@ -2482,7 +3297,7 @@ function renderPetShop() {
       <span style="position:absolute;bottom:-4px;right:-4px;background:#3b82f6;color:white;font-size:0.6rem;padding:1px 4px;border-radius:4px;font-weight:bold;line-height:1;">${count}개</span>
     </div>`;
 
-    const btn = `<button class="shop-buy" style="background:rgba(251,191,36,.18);color:#fbbf24" onclick="buyPetItem('${it.id}', ${it.cost})">🪙 ${it.cost}</button>`;
+    const btn = `<button class="shop-buy" style="background:rgba(251,191,36,.18);color:#fbbf24" onclick="buyPetItem('${it.id}', ${it.cost})">💰 ${it.cost}</button>`;
 
     return `<div class="shop-item flex flex-col justify-between" style="padding: 10px 4px;">
       <div class="flex flex-col items-center">
@@ -2497,7 +3312,7 @@ function renderPetShop() {
 
 function buyPetItem(id, cost) {
   if (state.coins < cost) {
-    showToast("코인이 부족합니다! 🪙", "#ef4444");
+    showToast("코인이 부족합니다! 💰", "#ef4444");
     return;
   }
   state.coins -= cost;
@@ -2561,14 +3376,14 @@ function buyItem(id) {
   if (!it || isOwned(it)) { if (it) equipItem(id); return; }
   const useGem = !!it.gem, price = useGem ? it.gemCost : it.cost;
   const bal = useGem ? (state.gems || 0) : (state.coins || 0);
-  if (bal < price) { showToast(useGem ? '젬이 부족해요 💎' : '코인이 부족해요 🪙', '#ef4444'); return; }
+  if (bal < price) { showToast(useGem ? '젬이 부족해요 💎' : '코인이 부족해요 💰', '#ef4444'); return; }
   if (useGem) state.gems -= price; else state.coins -= price;
   if (!state.owned) state.owned = [];
   state.owned.push(id);
   showToast(`${it.name} 구매 완료! 🎉`, '#fbbf24');
   spawnParticleBurst();
   sfx('reward');
-  equipItem(id);   // 구매 즉시 장착 (saveState 포함)
+  equipItem(id);
 }
 
 function equipItem(id) {
@@ -2576,7 +3391,15 @@ function equipItem(id) {
   const isFurniture = HOUSE_FURNITURE.some(f => f.id === id);
   if (!state.equipped) state.equipped = { avatar:null, theme:'th_default' };
   if (isAvatar) state.equipped.avatar = id;
-  else if (!isFurniture) state.equipped.theme = id;
+  else if (!isFurniture) {
+    state.equipped.theme = id;
+    if (state.trialThemeId === id && Date.now() < state.trialThemeExpire) {
+      // Keep trial status
+    } else {
+      state.trialThemeId = null;
+      state.trialThemeExpire = 0;
+    }
+  }
   saveState();
   applyAvatar(); applyTheme(); renderCurrency(); renderShop();
 }
@@ -2589,11 +3412,14 @@ function renderHouseShop() {
     if (owned) {
       btn = `<button class="shop-buy" style="background:rgba(16,185,129,.2);color:#10b981">보유중</button>`;
     } else {
-      btn = `<button class="shop-buy" style="background:rgba(251,191,36,.18);color:#fbbf24" onclick="buyHouseFurniture('${it.id}')">🪙 ${it.cost}</button>`;
+      btn = `<div class="flex flex-col gap-1 w-full">
+        <button class="shop-buy" style="background:rgba(251,191,36,.18);color:#fbbf24" onclick="buyHouseFurniture('${it.id}')">💰 ${it.cost}</button>
+        <button class="shop-buy text-[9px]" style="background:rgba(56,189,248,0.18);color:#38bdf8;padding:2px 0;" onclick="unlockFurnitureAd('${it.id}')">📺 즉시 잠금해제</button>
+      </div>`;
     }
-    return `<div class="shop-item ${owned ? 'equipped' : ''}">
-      <div style="font-size:2rem;line-height:1.2">${it.emoji}</div>
-      <div class="text-xs mt-1 truncate" style="color:#cbd5e1">${esc(it.name)}</div>
+    return `<div class="shop-item ${owned ? 'equipped' : ''}" style="height: 105px; display: flex; flex-direction: column; justify-content: space-between; padding: 6px;">
+      <div style="font-size:1.8rem;line-height:1.2">${it.emoji}</div>
+      <div class="text-xs truncate" style="color:#cbd5e1">${esc(it.name)}</div>
       ${btn}
     </div>`;
   }).join('');
@@ -2603,7 +3429,7 @@ function buyHouseFurniture(id) {
   const it = HOUSE_FURNITURE.find(f => f.id === id);
   if (!it) return;
   if ((state.houseFurniture || []).includes(id)) { showToast('이미 보유한 가구예요', '#64748b'); return; }
-  if ((state.coins || 0) < it.cost) { showToast('코인이 부족해요 🪙', '#ef4444'); return; }
+  if ((state.coins || 0) < it.cost) { showToast('코인이 부족해요 💰', '#ef4444'); return; }
   state.coins -= it.cost;
   if (!state.houseFurniture) state.houseFurniture = [];
   state.houseFurniture.push(id);
@@ -2953,41 +3779,99 @@ function renderHouse() {
   
   let html = '';
   
-  // 가구 먼저 배치 (뒷배경)
-  const furPositions = [
-    { left:'5%', top:'55%', emoji:'🛏️', size:'2.8rem' },
-    { left:'50%', top:'60%', emoji:'🪑', size:'2rem' },
-    { left:'25%', top:'65%', emoji:'🟫', size:'3.5rem' },
-    { left:'70%', top:'35%', emoji:'💡', size:'2rem' },
-    { left:'10%', top:'30%', emoji:'🌱', size:'2.2rem' },
-    { left:'40%', top:'15%', emoji:'📚', size:'2.5rem' },
-    { left:'65%', top:'20%', emoji:'🖼️', size:'2rem' },
-    { left:'80%', top:'55%', emoji:'⏰', size:'1.8rem' },
-    { left:'55%', top:'45%', emoji:'📺', size:'2.5rem' },
-    { left:'15%', top:'50%', emoji:'🟣', size:'1.8rem' }
-  ];
-  
-  let furHtml = '';
+  // Render Drag and Drop Furniture
   furniture.forEach((f, i) => {
-    const pos = furPositions[i % furPositions.length];
-    if (f) {
-      furHtml += `<div class="house-furniture" style="left:${pos.left};top:${pos.top};font-size:${pos.size}">${f.emoji}</div>`;
-    }
+    // Load saved position or use default scattering
+    const pos = state.housePositions[f.id] || { x: 10 + (i * 20) % 70, y: 20 + Math.floor(i / 4) * 20 };
+    html += `<div class="house-furniture" id="drag-${f.id}" data-id="${f.id}" style="left:${pos.x}%;top:${pos.y}%;" onmousedown="startItemDrag(event, '${f.id}')" ontouchstart="startItemDrag(event, '${f.id}')">
+      ${f.emoji}
+    </div>`;
   });
-  html += furHtml;
   
-  // 동물 배치
+  // Render Drag and Drop Completed Animals
   animals.forEach((a, i) => {
-    const x = 10 + (i * 20) % 80;
-    const y = 55 + (Math.floor(i / 4) * 20);
-    html += `<img class="house-animal" src="art/char_${a.id}_legendary.webp" alt="${a.name}" style="left:${x}%;top:${y}%;" title="${a.emoji} ${a.name}" onerror="this.style.display='none'">`;
+    const pos = state.housePositions[a.id] || { x: 20 + (i * 25) % 60, y: 50 + Math.floor(i / 3) * 15 };
+    html += `<img class="house-animal" id="drag-${a.id}" data-id="${a.id}" src="art/char_${a.id}_legendary.webp" alt="${a.name}" 
+      style="left:${pos.x}%;top:${pos.y}%;" title="${a.emoji} ${a.name}" 
+      onmousedown="startItemDrag(event, '${a.id}')" ontouchstart="startItemDrag(event, '${a.id}')"
+      onerror="this.style.display='none'">`;
   });
   
   if (!animals.length && !furniture.length) {
-    html += `<div class="text-center text-slate-600 text-sm py-10">아직 집이 비어 있어요.<br>동물을 최종 진화시키고 가구를 꾸며보세요!</div>`;
+    html += `<div class="text-center text-slate-400 text-xs py-10 w-full">아직 집이 비어 있어요.<br>동물을 최종 진화시키고 가구를 꾸며보세요!</div>`;
   }
   
   room.innerHTML = html;
+}
+
+// ── Drag & Drop Engine for Isometric Decorator ──
+let dragItem = null;
+let dragStartX = 0;
+let dragStartY = 0;
+let dragStartLeft = 0;
+let dragStartTop = 0;
+
+function startItemDrag(e) {
+  const target = e.target.closest('.house-furniture, .house-animal');
+  if (!target) return;
+  e.preventDefault();
+  
+  dragItem = target;
+  dragItem.classList.add('dragging');
+  
+  const clientX = e.type.startsWith('touch') ? e.touches[0].clientX : e.clientX;
+  const clientY = e.type.startsWith('touch') ? e.touches[0].clientY : e.clientY;
+  
+  dragStartX = clientX;
+  dragStartY = clientY;
+  
+  const parent = document.getElementById('houseRoom');
+  const parentRect = parent.getBoundingClientRect();
+  const rect = dragItem.getBoundingClientRect();
+  
+  dragStartLeft = ((rect.left - parentRect.left) / parentRect.width) * 100;
+  dragStartTop = ((rect.top - parentRect.top) / parentRect.height) * 100;
+  
+  const moveHandler = (moveEvent) => {
+    if (!dragItem) return;
+    const currentX = moveEvent.type.startsWith('touch') ? moveEvent.touches[0].clientX : moveEvent.clientX;
+    const currentY = moveEvent.type.startsWith('touch') ? moveEvent.touches[0].clientY : moveEvent.clientY;
+    
+    const deltaX = ((currentX - dragStartX) / parentRect.width) * 100;
+    const deltaY = ((currentY - dragStartY) / parentRect.height) * 100;
+    
+    // Bounds clamping (keep furniture inside room boundaries)
+    const newLeft = Math.min(Math.max(dragStartLeft + deltaX, 0), 90);
+    const newTop = Math.min(Math.max(dragStartTop + deltaY, 0), 82);
+    
+    dragItem.style.left = `${newLeft}%`;
+    dragItem.style.top = `${newTop}%`;
+  };
+  
+  const stopHandler = () => {
+    if (dragItem) {
+      dragItem.classList.remove('dragging');
+      const id = dragItem.getAttribute('data-id');
+      const leftPct = parseFloat(dragItem.style.left);
+      const topPct = parseFloat(dragItem.style.top);
+      
+      // Save item position
+      if (!state.housePositions) state.housePositions = {};
+      state.housePositions[id] = { x: leftPct, y: topPct };
+      saveState();
+      
+      dragItem = null;
+    }
+    window.removeEventListener('mousemove', moveHandler);
+    window.removeEventListener('mouseup', stopHandler);
+    window.removeEventListener('touchmove', moveHandler);
+    window.removeEventListener('touchend', stopHandler);
+  };
+  
+  window.addEventListener('mousemove', moveHandler);
+  window.addEventListener('mouseup', stopHandler);
+  window.addEventListener('touchmove', moveHandler, { passive: false });
+  window.addEventListener('touchend', stopHandler);
 }
 
 // ═════════════════════════════════════════════

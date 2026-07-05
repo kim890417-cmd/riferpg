@@ -1,7 +1,7 @@
 {
-  "name": "LIFE RPG",
-  "short_name": "LIFE RPG",
-  "description": "인생을 게임처럼 — 할 일 RPG",
+  "name": "갓생 투두: 인생 게임 할 일 계획 루틴 RPG",
+  "short_name": "갓생 투두",
+  "description": "갓생 투두: 인생 게임 할 일 계획 루틴 RPG",
   "lang": "ko",
   "start_url": "./",
   "scope": "./",

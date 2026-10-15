@@ -1,0 +1,70 @@
+name: Build Android App Bundle (.aab)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    name: Build Release AAB
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies & Sync Capacitor
+        run: |
+          npm install
+          node scripts/copy-web.js
+          npx cap sync android
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Android SDK tools
+        uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+
+      - name: Install Android 36 SDK
+        run: sdkmanager "platforms;android-36" "build-tools;35.0.0"
+
+      - name: Ensure Release Keystore Exists
+        run: |
+          if [ ! -f android/app/release-key.jks ]; then
+            keytool -genkeypair -v -keystore android/app/release-key.jks -alias godsaeng -keyalg RSA -keysize 2048 -validity 10000 -storepass godsaeng123! -keypass godsaeng123! -dname "CN=Godsaeng, OU=App, O=Godsaeng, L=Seoul, ST=Seoul, C=KR"
+          fi
+
+      - name: Make Gradlew Executable
+        run: chmod +x android/gradlew
+
+      - name: Build Release Bundle
+        run: |
+          cd android
+          ./gradlew bundleRelease --stacktrace
+
+      - name: Upload AAB Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: godsaeng-release-v1.1-aab
+          path: android/app/build/outputs/bundle/release/*.aab
+          retention-days: 30
+
+      - name: Upload Keystore Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: godsaeng-release-keystore
+          path: android/app/release-key.jks
+          retention-days: 30

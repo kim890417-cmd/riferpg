@@ -4295,6 +4295,26 @@ function updatePetUI() {
 
 document.addEventListener('DOMContentLoaded', init);
 
+// Android hardware back button handler
+window.handleAndroidBack = function() {
+  const visibleModals = Array.from(document.querySelectorAll('.overlay, [id$="Modal"]')).filter(el => {
+    const style = window.getComputedStyle(el);
+    return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0' && (el.classList.contains('show') || el.classList.contains('active') || style.display === 'flex' || style.display === 'block');
+  });
+  if (visibleModals.length > 0) {
+    const topModal = visibleModals[visibleModals.length - 1];
+    const closeBtn = topModal.querySelector('button[onclick*="close"], .btn-danger, [onclick*="close"]');
+    if (closeBtn) {
+      closeBtn.click();
+      return true;
+    }
+    topModal.classList.remove('show', 'active');
+    topModal.style.display = 'none';
+    return true;
+  }
+  return false;
+};
+
 // PWA: register service worker (installable + offline)
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));

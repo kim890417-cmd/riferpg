@@ -1,8 +1,14 @@
 node_modules/
-android/
+.gradle/
+build/
+android/app/build/
+android/.gradle/
+android/local.properties
 .vscode/
 .idea/
 *.log
+*.aab
+*.apk
 .DS_Store
 Thumbs.db
 *.local

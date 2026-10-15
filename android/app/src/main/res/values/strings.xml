@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">갓생 투두: 인생 게임 할 일 계획 루틴 RPG</string>
+    <string name="title_activity_main">갓생 투두: 인생 게임 할 일 계획 루틴 RPG</string>
+    <string name="package_name">com.godsaeng.todo.liferpg</string>
+    <string name="custom_url_scheme">com.godsaeng.todo.liferpg</string>
+</resources>

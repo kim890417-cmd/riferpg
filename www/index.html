@@ -1498,7 +1498,12 @@ function dateKey(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 function todayKey() { return dateKey(); }
-function parseKey(k) { const [y,m,d] = k.split('-').map(Number); return new Date(y, m-1, d); }
+function parseKey(k) {
+  if (!k || typeof k !== 'string') return new Date();
+  const parts = k.split('-').map(Number);
+  if (parts.length < 3 || isNaN(parts[0])) return new Date();
+  return new Date(parts[0], parts[1]-1, parts[2]);
+}
 // 이번 주 일요일(주의 끝) — 여기까지는 미리 계획(미래 퀘스트 등록) 가능
 function weekEndKey() {
   const d = new Date(); const dow = d.getDay();          // 0=일
@@ -1701,10 +1706,10 @@ function init() {
   renderCurrency();
   applyTheme();
   applyAvatar();
-  scheduleNotify();
-  scheduleMorningNotify();
-  renderBufferPipeline();
-  checkMorningBufferAlert();
+  try { scheduleNotify(); } catch(e) {}
+  try { scheduleMorningNotify(); } catch(e) {}
+  try { renderBufferPipeline(); } catch(e) {}
+  try { checkMorningBufferAlert(); } catch(e) {}
   initParticles();
   initAnimal();
   applyAnimal();

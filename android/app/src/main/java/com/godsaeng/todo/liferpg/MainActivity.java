@@ -20,15 +20,17 @@ public class MainActivity extends BridgeActivity {
         super.onCreate(savedInstanceState);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         View content = findViewById(android.R.id.content);
-        ViewCompat.setOnApplyWindowInsetsListener(content, (view, windowInsets) -> {
-            Insets safe = windowInsets.getInsets(
-                WindowInsetsCompat.Type.systemBars()
-                    | WindowInsetsCompat.Type.displayCutout()
-                    | WindowInsetsCompat.Type.ime());
-            view.setPadding(safe.left, safe.top, safe.right, safe.bottom);
-            return WindowInsetsCompat.CONSUMED;
-        });
-        ViewCompat.requestApplyInsets(content);
+        if (content != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(content, (view, windowInsets) -> {
+                Insets safe = windowInsets.getInsets(
+                    WindowInsetsCompat.Type.systemBars()
+                        | WindowInsetsCompat.Type.displayCutout()
+                        | WindowInsetsCompat.Type.ime());
+                view.setPadding(safe.left, safe.top, safe.right, safe.bottom);
+                return WindowInsetsCompat.CONSUMED;
+            });
+            ViewCompat.requestApplyInsets(content);
+        }
 
         // Hardware Back Button Handler
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {

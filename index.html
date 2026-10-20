@@ -437,6 +437,26 @@
   .transition-all { transition-property:all; transition-timing-function:cubic-bezier(.4,0,.2,1); transition-duration:150ms; }
   .transition-transform { transition-property:transform; transition-timing-function:cubic-bezier(.4,0,.2,1); transition-duration:150ms; }
 
+
+  /* ── Buffer Pipeline Styles ── */
+  .buffer-filter-btn {
+    flex: 1;
+    min-width: fit-content;
+    padding: 5px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 6px;
+    color: #94a3b8;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+  }
+  .buffer-filter-btn.active {
+    background: rgba(16, 185, 129, 0.25);
+    color: #34d399;
+  }
 </style>
 </head>
 <body class="relative">
@@ -550,6 +570,18 @@
       <button id="notifyToggle" class="shop-buy" style="width:56px" onclick="toggleNotify()">OFF</button>
     </div>
     <div class="text-xs text-slate-600 mb-4" id="notifyHint">⏰ 앱이 실행 중일 때 알려줘요. 폰을 완전히 닫으면 못 울릴 수 있어요.</div>
+
+    <!-- 아침 비축분 브리핑 알림 -->
+    <div class="cat-row mb-1" style="flex-wrap:wrap">
+      <div style="font-size:1.1rem">🛡️</div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium">아침 비축분 브리핑</div>
+        <div class="text-xs text-slate-500">기한 도래 및 마감 알림</div>
+      </div>
+      <input type="time" id="morningNotifyTimeInput" class="game-input px-2 py-1 text-xs" style="width:92px" onchange="setMorningNotifyTime(this.value)">
+      <button id="morningNotifyToggle" class="shop-buy" style="width:56px" onclick="toggleMorningNotify()">ON</button>
+    </div>
+    <div class="text-xs text-slate-600 mb-4">☀️ 매일 아침 오늘 마감되는 비축분과 D-Day 현황을 브리핑합니다.</div>
 
     <!-- 백업 -->
     <div class="border-t border-slate-700 pt-3">
@@ -772,9 +804,141 @@
   </div>
 </div>
 
+
+<!-- NOTION IMPORT MODAL (1초 일괄 등록) -->
+<div class="overlay" id="notionImportModal">
+  <div class="modal-card p-5" style="max-height:85vh; display:flex; flex-direction:column;">
+    <div class="flex items-center justify-between mb-2">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">📥</span>
+        <div>
+          <div class="font-orbitron text-sm font-bold text-emerald-400">노션 계획 일괄 가져오기</div>
+          <div class="text-[11px] text-slate-400">메모나 노션 내용을 그대로 복사해 붙여넣으세요.</div>
+        </div>
+      </div>
+      <button onclick="closeNotionImportModal()" class="btn-danger" style="width:30px;height:30px">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- FORMAT EXAMPLE ACCORDION / HINT -->
+    <div class="p-2.5 rounded-lg mb-3 text-[11px] leading-relaxed" style="background:rgba(15,23,42,.7);border:1px solid rgba(51,65,85,.6)">
+      <div class="font-semibold text-slate-300 mb-1">💡 작성 예시 (줄 단위 자동 인식):</div>
+      <div class="text-slate-400 font-mono text-[10.5px] space-y-0.5">
+        <div>• 티스토리 정부 ~ 10.22</div>
+        <div>• 네이버블로그 여행 ~ 11.06 > 7.8공유</div>
+        <div>• 건강 ~ 10.28 (10.9일 글까지씀)</div>
+      </div>
+    </div>
+
+    <!-- TEXTAREA -->
+    <textarea id="notionImportInput" class="game-input w-full p-3 text-xs font-mono mb-3" rows="5"
+      placeholder="노션이나 메모장 텍스트를 여기에 붙여넣으세요..."
+      oninput="onNotionInputChanged()"></textarea>
+
+    <!-- LIVE PREVIEW ACCORDION -->
+    <div class="flex-1 overflow-y-auto mb-3" style="max-height:200px">
+      <div class="flex items-center justify-between mb-1.5 px-1">
+        <div class="text-xs font-bold text-slate-300">인식 결과 미리보기</div>
+        <div class="text-xs text-emerald-400 font-bold" id="notionDetectedCount">0건 인식됨</div>
+      </div>
+      <div id="notionPreviewList" class="space-y-1.5">
+        <div class="text-center py-4 text-xs text-slate-500">텍스트를 입력하면 분석 결과가 여기에 표시됩니다.</div>
+      </div>
+    </div>
+
+    <!-- FOOTER BUTTONS -->
+    <div class="flex gap-2 pt-2 border-t border-slate-700">
+      <button id="confirmNotionImportBtn" onclick="confirmNotionImport()" class="btn-primary flex-1 py-2.5 text-xs font-bold font-orbitron tracking-wider disabled:opacity-50" disabled>
+        ⚡ 파이프라인에 일괄 등록 (0건)
+      </button>
+      <button onclick="closeNotionImportModal()" class="px-4 py-2.5 text-xs rounded-lg bg-slate-800 text-slate-400 hover:text-white">
+        닫기
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- BUFFER PLAN EDIT/ADD MODAL -->
+<div class="overlay" id="bufferPlanModal">
+  <div class="modal-card p-5">
+    <div class="flex items-center justify-between mb-3">
+      <div class="font-orbitron text-sm font-bold text-emerald-400" id="bufferPlanModalTitle">🛡️ 비축분 계획 추가</div>
+      <button onclick="closeBufferPlanModal()" class="btn-danger" style="width:30px;height:30px">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <input type="hidden" id="editBufferPlanId" value="">
+
+    <div class="space-y-3 mb-4">
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">채널 / 분류</label>
+        <div class="flex gap-2">
+          <select id="bufferChannelSelect" class="game-input px-2 py-2 text-xs flex-1">
+            <option value="티스토리">티스토리</option>
+            <option value="네이버블로그">네이버블로그</option>
+            <option value="유튜브">유튜브</option>
+            <option value="인스타">인스타</option>
+            <option value="건강">건강</option>
+            <option value="운동">운동</option>
+            <option value="공부">공부</option>
+            <option value="업무">업무</option>
+            <option value="기타">기타 (직접 입력)</option>
+          </select>
+          <input type="text" id="bufferCustomChannel" class="game-input px-2 py-2 text-xs flex-1" placeholder="직접 입력" style="display:none">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">항목명 / 주제</label>
+        <input type="text" id="bufferTitleInput" class="game-input w-full px-3 py-2 text-sm" placeholder="예: 정부 지원금 2탄 작성">
+      </div>
+
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">마감 기한 (목표일)</label>
+        <input type="date" id="bufferTargetDateInput" class="game-input w-full px-3 py-2 text-xs">
+      </div>
+
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">진행 메모 (선택)</label>
+        <input type="text" id="bufferMemoInput" class="game-input w-full px-3 py-2 text-xs" placeholder="예: 7.8공유, 초안 작성 완료">
+      </div>
+    </div>
+
+    <div class="flex gap-2">
+      <button onclick="saveBufferPlanModal()" class="btn-primary flex-1 py-2.5 text-xs font-bold font-orbitron tracking-wider">
+        저장하기
+      </button>
+      <button onclick="closeBufferPlanModal()" class="px-4 py-2.5 text-xs rounded-lg bg-slate-800 text-slate-400 hover:text-white">
+        취소
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- MAIN -->
 <div class="dot-pattern-bg"></div>
 <div class="relative z-10 max-w-lg mx-auto px-4 py-5 pb-24">
+
+    <!-- MORNING DUE ALERT BANNER -->
+  <div id="bufferMorningAlert" class="mb-3 p-3 rounded-xl border flex items-center justify-between gap-2 shadow-lg transition" style="display:none;background:linear-gradient(135deg,rgba(239,68,68,.18),rgba(245,158,11,.15));border-color:rgba(239,68,68,.4)">
+    <div class="flex items-center gap-2.5 flex-1 min-w-0">
+      <span class="text-xl">🚨</span>
+      <div class="min-w-0">
+        <div class="text-xs font-bold text-rose-400" id="morningAlertTitle">오늘 마감 비축분 알림</div>
+        <div class="text-[11px] text-slate-300 truncate" id="morningAlertSub">오늘 마감 비축분이 도래했습니다!</div>
+      </div>
+    </div>
+    <div class="flex items-center gap-1.5 flex-shrink-0">
+      <button onclick="scrollToBufferPipeline()" class="px-2.5 py-1 text-[11px] rounded font-bold bg-rose-500/30 text-rose-300 border border-rose-500/50 hover:bg-rose-500/50 transition">
+        확인
+      </button>
+      <button onclick="dismissMorningAlert()" class="p-1 text-slate-400 hover:text-slate-200">
+        ✕
+      </button>
+    </div>
+  </div>
 
   <!-- DATE & LEVEL -->
   <div class="mb-4">
@@ -950,6 +1114,52 @@
       <div id="emptyState" class="text-center py-8 text-slate-600">
         <div class="text-4xl mb-2">⚔️</div>
         <div class="text-sm">할 일이 없습니다.<br>새로운 퀘스트를 추가하세요!</div>
+      </div>
+    </div>
+  </div>
+
+    <!-- BUFFER PIPELINE (기한도래 & 비축분 파이프라인) -->
+  <div class="mb-4" id="bufferPipelineSection">
+    <div class="flex items-center justify-between mb-2">
+      <div class="flex items-center gap-2">
+        <div class="section-title" style="margin-bottom:0">BUFFER PIPELINE</div>
+        <span class="text-[10px] px-1.5 py-0.5 rounded font-bold" style="background:rgba(16,185,129,.18);color:#10b981;border:1px solid rgba(16,185,129,.3)">기한도래 관리</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <button onclick="openNotionImportModal()" class="px-2.5 py-1 text-xs rounded-lg font-medium flex items-center gap-1 transition" style="background:linear-gradient(135deg,rgba(16,185,129,.25),rgba(6,182,212,.25));border:1px solid rgba(16,185,129,.4);color:#34d399;cursor:pointer">
+          <span>📥</span> <span>노션 가져오기</span>
+        </button>
+        <button onclick="openAddBufferPlanModal()" class="px-2 py-1 text-xs rounded-lg text-slate-300 hover:text-white transition" style="background:rgba(51,65,85,.6);border:1px solid rgba(71,85,105,.5);cursor:pointer">
+          + 추가
+        </button>
+      </div>
+    </div>
+
+    <!-- PIPELINE CARD -->
+    <div class="card p-4" style="border-color:rgba(16,185,129,.35);box-shadow:0 0 20px rgba(16,185,129,.08)">
+      <!-- SHIELD STATUS BANNER -->
+      <div id="bufferShieldBanner" class="p-3 rounded-xl mb-3 transition"></div>
+
+      <!-- FILTER TABS & STATS -->
+      <div class="flex items-center justify-between gap-1 mb-3 p-1 rounded-lg" style="background:rgba(15,23,42,.6);overflow-x:auto;">
+        <button class="buffer-filter-btn active" id="bFilter-all" onclick="setBufferFilter('all')">전체 (<span id="bCount-all">0</span>)</button>
+        <button class="buffer-filter-btn" id="bFilter-urgent" onclick="setBufferFilter('urgent')">🔴 오늘/지연 (<span id="bCount-urgent">0</span>)</button>
+        <button class="buffer-filter-btn" id="bFilter-warning" onclick="setBufferFilter('warning')">🟡 임박 D-3 (<span id="bCount-warning">0</span>)</button>
+        <button class="buffer-filter-btn" id="bFilter-safe" onclick="setBufferFilter('safe')">🟢 여유 (<span id="bCount-safe">0</span>)</button>
+        <button class="buffer-filter-btn" id="bFilter-done" onclick="setBufferFilter('done')">✅ 완료 (<span id="bCount-done">0</span>)</button>
+      </div>
+
+      <!-- LIST CONTAINER -->
+      <div id="bufferPlansList" class="space-y-2"></div>
+
+      <!-- EMPTY STATE -->
+      <div id="bufferEmptyState" class="text-center py-6 text-slate-500" style="display:none">
+        <div class="text-3xl mb-2">🛡️</div>
+        <div class="text-xs font-medium text-slate-300 mb-1">등록된 비축분 계획이 없습니다.</div>
+        <div class="text-[11px] text-slate-500 mb-3">노션에 작성한 계획을 복사해서 붙여넣으면<br>D-Day와 마감 알림이 자동으로 등록됩니다!</div>
+        <button onclick="openNotionImportModal()" class="px-3 py-1.5 text-xs rounded-lg font-bold" style="background:rgba(16,185,129,.2);border:1px solid #10b981;color:#10b981">
+          📥 노션 계획 1초 등록하기
+        </button>
       </div>
     </div>
   </div>
@@ -1249,6 +1459,7 @@ let state = {
   soundOn: true,         // 효과음
   activeBgm: 'rpg1',     // 활성화된 배경음악 키
   notifyOn: false, notifyTime: '21:00',   // 매일 알림
+  bufferPlans: [], morningNotifyOn: true, morningNotifyTime: '08:30',
   yearlyGoal:'', monthlyGoal:'', weeklyGoal:'',
   weeklyGoals: {}, monthlyGoals: {}, yearlyGoals: {},
   activeAnimal: null,    // 현재 키우는 동물 id (fox, hamster, cat, dog_husky, dog_pomeranian, dog_retriever)
@@ -1338,6 +1549,9 @@ function loadState() {
       if (typeof state.activeBgm !== 'string') state.activeBgm = 'rpg1';
       if (typeof state.notifyOn !== 'boolean') state.notifyOn = false;
       if (!state.notifyTime) state.notifyTime = '21:00';
+      if (!state.bufferPlans) state.bufferPlans = [];
+      if (typeof state.morningNotifyOn !== 'boolean') state.morningNotifyOn = true;
+      if (!state.morningNotifyTime) state.morningNotifyTime = '08:30';
       if (!state.encyclopedia) state.encyclopedia = {};
       if (!state.houseAnimals) state.houseAnimals = [];
       if (!state.houseFurniture) state.houseFurniture = [];
@@ -1488,6 +1702,9 @@ function init() {
   applyTheme();
   applyAvatar();
   scheduleNotify();
+  scheduleMorningNotify();
+  renderBufferPipeline();
+  checkMorningBufferAlert();
   initParticles();
   initAnimal();
   applyAnimal();
@@ -1528,7 +1745,17 @@ function checkForStreakBreak() {
   if (day && day.quests.length > 0) {
     const incomplete = day.quests.some(q => !q.completed);
     if (incomplete) {
-      // Show streak revive modal
+      // Check if Buffer Shield is active!
+      const shield = getBufferShieldStatus();
+      if (shield && shield.active) {
+        day.quests.forEach(q => { q.completed = true; });
+        saveState();
+        renderQuests();
+        setTimeout(() => {
+          showToast('🛡️ [비축분 안심 실드] 비축분이 있어 어제 스트릭이 자동 보호되었습니다!', '#10b981');
+        }, 1200);
+        return;
+      }
       setTimeout(() => {
         const modal = document.getElementById('reviveStreakModal');
         if (modal) modal.classList.add('show');
@@ -2492,6 +2719,8 @@ function openSettingsModal() {
   document.getElementById('lastBackupInfo').textContent =
     state.lastBackup ? new Date(state.lastBackup).toLocaleString('ko-KR') : '기록 없음';
   document.getElementById('notifyTimeInput').value = state.notifyTime || '21:00';
+  const mTimeInput = document.getElementById('morningNotifyTimeInput');
+  if (mTimeInput) mTimeInput.value = state.morningNotifyTime || '08:30';
   renderSettings();
   document.getElementById('settingsModal').classList.add('show');
 }
@@ -2510,6 +2739,13 @@ function renderSettings() {
     nt.textContent = on ? 'ON' : 'OFF';
     nt.style.background = on ? 'rgba(16,185,129,.2)' : 'rgba(100,116,139,.2)';
     nt.style.color = on ? '#10b981' : '#94a3b8';
+  }
+  const mnt = document.getElementById('morningNotifyToggle');
+  if (mnt) {
+    const on = state.morningNotifyOn;
+    mnt.textContent = on ? 'ON' : 'OFF';
+    mnt.style.background = on ? 'rgba(16,185,129,.2)' : 'rgba(100,116,139,.2)';
+    mnt.style.color = on ? '#10b981' : '#94a3b8';
   }
   const bgmSel = document.getElementById('bgmSelect');
   if (bgmSel) {
@@ -2901,6 +3137,685 @@ function fireNotify() {
       ? `오늘 남은 퀘스트 ${remaining}개! 용사여, 모험을 이어가세요 ⚔️`
       : '오늘의 퀘스트를 등록하고 성장을 이어가세요! 🔥';
     new Notification('LIFE RPG', { body, icon: 'icons/icon-192.png' });
+  } catch (e) {}
+}
+
+// ─────────────────────────────────────────────
+//  BUFFER PIPELINE & NOTION PARSER (기한도래 & 비축분 파이프라인)
+// ─────────────────────────────────────────────
+let currentBufferFilter = 'all';
+
+const BUFFER_CHANNEL_META = {
+  '티스토리': { color: '#fb923c', bg: 'rgba(249,115,22,0.15)', border: 'rgba(249,115,22,0.4)' },
+  '네이버블로그': { color: '#4ade80', bg: 'rgba(34,197,94,0.15)', border: 'rgba(34,197,94,0.4)' },
+  '유튜브': { color: '#f87171', bg: 'rgba(239,68,68,0.15)', border: 'rgba(239,68,68,0.4)' },
+  '인스타': { color: '#f472b6', bg: 'rgba(244,114,182,0.15)', border: 'rgba(244,114,182,0.4)' },
+  '건강': { color: '#22d3ee', bg: 'rgba(6,182,212,0.15)', border: 'rgba(6,182,212,0.4)' },
+  '운동': { color: '#38bdf8', bg: 'rgba(56,189,248,0.15)', border: 'rgba(56,189,248,0.4)' },
+  '공부': { color: '#a78bfa', bg: 'rgba(167,139,250,0.15)', border: 'rgba(167,139,250,0.4)' },
+  '업무': { color: '#60a5fa', bg: 'rgba(96,165,250,0.15)', border: 'rgba(96,165,250,0.4)' },
+  '쇼핑': { color: '#fbbf24', bg: 'rgba(251,191,36,0.15)', border: 'rgba(251,191,36,0.4)' },
+  '기타': { color: '#94a3b8', bg: 'rgba(148,163,184,0.15)', border: 'rgba(148,163,184,0.4)' },
+};
+
+function getBufferChannelStyle(ch) {
+  return BUFFER_CHANNEL_META[ch] || BUFFER_CHANNEL_META['기타'];
+}
+
+function getDDay(targetDateStr) {
+  if (!targetDateStr) return { days: 0, text: '기한 없음', status: 'normal', color: '#94a3b8', bg: 'rgba(100,116,139,0.15)', border: 'rgba(100,116,139,0.3)' };
+  const today = parseKey(todayKey());
+  const target = parseKey(targetDateStr);
+  const diffTime = target.getTime() - today.getTime();
+  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 0) {
+    return { days: diffDays, text: `🚨 D+${Math.abs(diffDays)} 지연`, status: 'overdue', color: '#ef4444', bg: 'rgba(239,68,68,0.18)', border: 'rgba(239,68,68,0.4)' };
+  } else if (diffDays === 0) {
+    return { days: 0, text: '🔥 D-DAY 오늘 마감', status: 'today', color: '#f43f5e', bg: 'rgba(244,63,94,0.22)', border: 'rgba(244,63,94,0.5)' };
+  } else if (diffDays <= 3) {
+    return { days: diffDays, text: `⚡ D-${diffDays} 임박`, status: 'urgent', color: '#f59e0b', bg: 'rgba(245,158,11,0.18)', border: 'rgba(245,158,11,0.4)' };
+  } else {
+    return { days: diffDays, text: `🌱 D-${diffDays} 여유`, status: 'safe', color: '#10b981', bg: 'rgba(16,185,129,0.15)', border: 'rgba(16,185,129,0.35)' };
+  }
+}
+
+function getBufferShieldStatus() {
+  const activePlans = (state.bufferPlans || []).filter(p => !p.completed);
+  const safePlans = activePlans.filter(p => getDDay(p.targetDate).days >= 2);
+  const overdueOrToday = activePlans.filter(p => getDDay(p.targetDate).days <= 0);
+
+  if (safePlans.length >= 3) {
+    return {
+      active: true,
+      label: '🛡️ 비축분 안심 실드 발동 중',
+      desc: `안전 비축분 ${safePlans.length}건 확보 완료! 스트릭이 든든하게 자동 보호됩니다.`,
+      color: '#34d399',
+      bg: 'linear-gradient(135deg, rgba(16,185,129,0.18), rgba(6,182,212,0.12))',
+      border: 'rgba(16,185,129,0.4)'
+    };
+  } else if (overdueOrToday.length > 0) {
+    return {
+      active: false,
+      label: '🚨 마감 도래 / 비축분 위험',
+      desc: `오늘 마감 또는 기한 초과 항목이 ${overdueOrToday.length}건 있습니다! 발행을 서두르세요.`,
+      color: '#f87171',
+      bg: 'linear-gradient(135deg, rgba(239,68,68,0.18), rgba(244,63,94,0.12))',
+      border: 'rgba(239,68,68,0.45)'
+    };
+  } else if (activePlans.length > 0) {
+    return {
+      active: false,
+      label: '⚠️ 비축분 보충 권장',
+      desc: `미래 비축분이 ${safePlans.length}건으로 부족합니다 (안심 실드 기준: 3건 이상).`,
+      color: '#fbbf24',
+      bg: 'linear-gradient(135deg, rgba(245,158,11,0.15), rgba(217,119,6,0.1))',
+      border: 'rgba(245,158,11,0.35)'
+    };
+  } else {
+    return {
+      active: false,
+      label: '💤 비축분 실드 비활성',
+      desc: '비축분을 등록해 두면 기한도래 알림과 스트릭 자동 보호 혜택이 적용됩니다.',
+      color: '#94a3b8',
+      bg: 'rgba(30,41,59,0.5)',
+      border: 'rgba(71,85,105,0.3)'
+    };
+  }
+}
+
+function renderBufferPipeline() {
+  if (!state.bufferPlans) state.bufferPlans = [];
+  const listEl = document.getElementById('bufferPlansList');
+  const emptyEl = document.getElementById('bufferEmptyState');
+  const bannerEl = document.getElementById('bufferShieldBanner');
+  if (!listEl) return;
+
+  // 1. Shield Banner
+  const shield = getBufferShieldStatus();
+  if (bannerEl) {
+    bannerEl.style.background = shield.bg;
+    bannerEl.style.borderColor = shield.border;
+    bannerEl.style.borderWidth = '1px';
+    bannerEl.style.borderStyle = 'solid';
+    bannerEl.innerHTML = `
+      <div class="flex items-center justify-between gap-2">
+        <div>
+          <div class="text-xs font-bold flex items-center gap-1.5" style="color:${shield.color}">
+            <span>${shield.label}</span>
+          </div>
+          <div class="text-[11px] text-slate-300 mt-0.5">${shield.desc}</div>
+        </div>
+        <div class="text-2xl">${shield.active ? '🛡️' : (shield.label.includes('🚨') ? '⚠️' : '📦')}</div>
+      </div>
+    `;
+  }
+
+  // 2. Counters
+  const allActive = state.bufferPlans.filter(p => !p.completed);
+  const urgentCount = allActive.filter(p => getDDay(p.targetDate).days <= 0).length;
+  const warningCount = allActive.filter(p => { const d = getDDay(p.targetDate).days; return d >= 1 && d <= 3; }).length;
+  const safeCount = allActive.filter(p => getDDay(p.targetDate).days >= 4).length;
+  const doneCount = state.bufferPlans.filter(p => p.completed).length;
+
+  const countAllEl = document.getElementById('bCount-all');
+  const countUrgentEl = document.getElementById('bCount-urgent');
+  const countWarningEl = document.getElementById('bCount-warning');
+  const countSafeEl = document.getElementById('bCount-safe');
+  const countDoneEl = document.getElementById('bCount-done');
+
+  if (countAllEl) countAllEl.textContent = allActive.length;
+  if (countUrgentEl) countUrgentEl.textContent = urgentCount;
+  if (countWarningEl) countWarningEl.textContent = warningCount;
+  if (countSafeEl) countSafeEl.textContent = safeCount;
+  if (countDoneEl) countDoneEl.textContent = doneCount;
+
+  // 3. Filter items
+  let filtered = [];
+  if (currentBufferFilter === 'all') {
+    filtered = allActive.slice();
+  } else if (currentBufferFilter === 'urgent') {
+    filtered = allActive.filter(p => getDDay(p.targetDate).days <= 0);
+  } else if (currentBufferFilter === 'warning') {
+    filtered = allActive.filter(p => { const d = getDDay(p.targetDate).days; return d >= 1 && d <= 3; });
+  } else if (currentBufferFilter === 'safe') {
+    filtered = allActive.filter(p => getDDay(p.targetDate).days >= 4);
+  } else if (currentBufferFilter === 'done') {
+    filtered = state.bufferPlans.filter(p => p.completed);
+  }
+
+  // Sort by targetDate ascending
+  filtered.sort((a, b) => {
+    if (a.completed && !b.completed) return 1;
+    if (!a.completed && b.completed) return -1;
+    return (a.targetDate || '').localeCompare(b.targetDate || '');
+  });
+
+  // 4. Update Tabs UI
+  ['all', 'urgent', 'warning', 'safe', 'done'].forEach(f => {
+    const btn = document.getElementById('bFilter-' + f);
+    if (btn) btn.classList.toggle('active', currentBufferFilter === f);
+  });
+
+  // 5. Render cards
+  if (filtered.length === 0) {
+    listEl.innerHTML = '';
+    emptyEl.style.display = 'block';
+    return;
+  }
+  emptyEl.style.display = 'none';
+
+  listEl.innerHTML = filtered.map(item => {
+    const dDay = getDDay(item.targetDate);
+    const chStyle = getBufferChannelStyle(item.channel);
+    const borderCol = item.completed ? 'rgba(71,85,105,0.3)' : dDay.border;
+
+    return `
+      <div class="p-3 rounded-xl border flex flex-col gap-2 transition" style="background: rgba(30, 41, 59, 0.7); border-color: ${borderCol};">
+        <div class="flex items-start justify-between gap-2">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-1.5 flex-wrap mb-1">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full" style="background:${chStyle.bg}; color:${chStyle.color}; border:1px solid ${chStyle.border};">
+                ${esc(item.channel || '기타')}
+              </span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full" style="background:${dDay.bg}; color:${dDay.color}; border:1px solid ${dDay.border};">
+                ${dDay.text}
+              </span>
+              <span class="text-[10px] text-slate-400 font-mono">📅 ${item.targetDate || '날짜 미지정'}</span>
+            </div>
+            <div class="text-sm font-semibold text-white break-words ${item.completed ? 'line-through text-slate-500' : ''}">
+              ${esc(item.title)}
+            </div>
+            ${item.memo ? `<div class="text-xs text-slate-400 mt-1 bg-slate-800/80 px-2 py-1 rounded inline-block">📝 ${esc(item.memo)}</div>` : ''}
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="editBufferPlan('${item.id}')" class="p-1 text-slate-400 hover:text-white" title="수정">✏️</button>
+            <button onclick="deleteBufferPlan('${item.id}')" class="p-1 text-slate-400 hover:text-rose-400" title="삭제">🗑️</button>
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-700/60 flex-wrap">
+          ${!item.completed ? `
+            <div class="flex items-center gap-1.5">
+              <button onclick="convertBufferToQuest('${item.id}')" class="px-2 py-1 text-[11px] rounded bg-sky-500/20 text-sky-300 border border-sky-500/40 hover:bg-sky-500/30 flex items-center gap-1">
+                <span>⚔️</span> 오늘 할 일 등록
+              </button>
+              <button onclick="extendBufferPlan('${item.id}', 3)" class="px-2 py-1 text-[11px] rounded bg-slate-700/60 text-slate-300 hover:bg-slate-700 hover:text-white">
+                +3일 연장
+              </button>
+            </div>
+            <button onclick="completeBufferPlan('${item.id}')" class="px-3 py-1 text-[11px] font-bold rounded bg-emerald-500/25 text-emerald-300 border border-emerald-500/50 hover:bg-emerald-500/40">
+              ✅ 완료 (+50 XP)
+            </button>
+          ` : `
+            <div class="text-xs text-slate-500">완료일: ${item.completedDate || '기록됨'}</div>
+            <button onclick="reopenBufferPlan('${item.id}')" class="px-2 py-1 text-[11px] rounded bg-slate-800 text-slate-400 hover:text-slate-200">
+              ↩️ 다시 진행
+            </button>
+          `}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function setBufferFilter(filterName) {
+  currentBufferFilter = filterName;
+  renderBufferPipeline();
+}
+
+// ── Notion Parser (Pure Rule-Based / Zero AI) ──
+function parseNotionText(rawText) {
+  const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
+  const now = new Date();
+  const curYear = now.getFullYear();
+  const curMonth = now.getMonth() + 1;
+  const results = [];
+
+  const KNOWN_CHANNELS = [
+    { key: '티스토리', name: '티스토리' },
+    { key: '네이버블로그', name: '네이버블로그' },
+    { key: '네이버', name: '네이버블로그' },
+    { key: '블로그', name: '네이버블로그' },
+    { key: '유튜브', name: '유튜브' },
+    { key: '숏츠', name: '유튜브' },
+    { key: '쇼츠', name: '유튜브' },
+    { key: '인스타', name: '인스타' },
+    { key: '릴스', name: '인스타' },
+    { key: '건강', name: '건강' },
+    { key: '운동', name: '운동' },
+    { key: '공부', name: '공부' },
+    { key: '독서', name: '공부' },
+    { key: '업무', name: '업무' },
+    { key: '프로젝트', name: '업무' },
+    { key: '쇼핑', name: '쇼핑' },
+    { key: '스토어', name: '쇼핑' },
+    { key: '쿠팡', name: '쇼핑' }
+  ];
+
+  for (const line of lines) {
+    const memos = [];
+    const memoRegex = /[\(\[\{]([^\)\]\}]+)[\)\]\}]/g;
+    let mMatch;
+    while ((mMatch = memoRegex.exec(line)) !== null) {
+      memos.push(mMatch[1].trim());
+    }
+    const memo = memos.join(' / ');
+
+    let targetDate = null;
+    let dateStrMatch = null;
+    const yearMatch = line.match(/(202\d)[\.\-\/](\d{1,2})[\.\-\/](\d{1,2})/);
+    if (yearMatch) {
+      const y = parseInt(yearMatch[1], 10);
+      const m = parseInt(yearMatch[2], 10);
+      const d = parseInt(yearMatch[3], 10);
+      targetDate = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      dateStrMatch = yearMatch[0];
+    } else {
+      const mdMatch = line.match(/(?:~|>|\s)?\s*(\d{1,2})[\.\-\~/](\d{1,2})/);
+      if (mdMatch) {
+        const m = parseInt(mdMatch[1], 10);
+        const d = parseInt(mdMatch[2], 10);
+        if (m >= 1 && m <= 12 && d >= 1 && d <= 31) {
+          let yr = curYear;
+          if (m < curMonth && (curMonth - m > 6)) yr += 1;
+          targetDate = `${yr}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+          dateStrMatch = mdMatch[0];
+        }
+      }
+    }
+
+    let clean = line;
+    if (dateStrMatch) clean = clean.replace(dateStrMatch, ' ');
+    clean = clean.replace(/[\(\[\{][^\)\]\}]*[\)\]\}]/g, ' ');
+    clean = clean.replace(/[\~>\-:;|]+/g, ' ').replace(/\s+/g, ' ').trim();
+
+    let channel = '기타';
+    const matchedChan = KNOWN_CHANNELS.find(c => line.includes(c.key));
+    if (matchedChan) {
+      channel = matchedChan.name;
+    }
+
+    let title = clean;
+    if (matchedChan) {
+      const r = new RegExp('^' + matchedChan.key + '\\s*', 'i');
+      title = title.replace(r, '').trim();
+    }
+    if (!title) title = clean || line;
+
+    if (!targetDate) {
+      const defDate = new Date();
+      defDate.setDate(defDate.getDate() + 3);
+      targetDate = dateKey(defDate);
+    }
+
+    results.push({ channel, title, targetDate, memo: memo || '' });
+  }
+  return results;
+}
+
+// ── Notion Modal Handlers ──
+let parsedNotionItems = [];
+
+function openNotionImportModal() {
+  const modal = document.getElementById('notionImportModal');
+  const input = document.getElementById('notionImportInput');
+  if (input) input.value = '';
+  parsedNotionItems = [];
+  renderNotionPreview();
+  if (modal) modal.classList.add('show');
+}
+
+function closeNotionImportModal() {
+  const modal = document.getElementById('notionImportModal');
+  if (modal) modal.classList.remove('show');
+}
+
+function onNotionInputChanged() {
+  const input = document.getElementById('notionImportInput');
+  const text = input ? input.value : '';
+  parsedNotionItems = parseNotionText(text);
+  renderNotionPreview();
+}
+
+function renderNotionPreview() {
+  const previewList = document.getElementById('notionPreviewList');
+  const countEl = document.getElementById('notionDetectedCount');
+  const btn = document.getElementById('confirmNotionImportBtn');
+  if (!previewList) return;
+
+  const count = parsedNotionItems.length;
+  if (countEl) countEl.textContent = `${count}건 인식됨`;
+  if (btn) {
+    btn.disabled = count === 0;
+    btn.textContent = `⚡ 파이프라인에 일괄 등록 (${count}건)`;
+  }
+
+  if (count === 0) {
+    previewList.innerHTML = '<div class="text-center py-4 text-xs text-slate-500">텍스트를 입력하면 분석 결과가 여기에 표시됩니다.</div>';
+    return;
+  }
+
+  previewList.innerHTML = parsedNotionItems.map(p => {
+    const chStyle = getBufferChannelStyle(p.channel);
+    const dDay = getDDay(p.targetDate);
+    return `
+      <div class="p-2 rounded-lg bg-slate-800/80 border border-slate-700/60 flex items-center justify-between gap-2 text-xs">
+        <div class="flex items-center gap-1.5 flex-1 min-w-0">
+          <span class="text-[9px] font-bold px-1.5 py-0.5 rounded" style="background:${chStyle.bg}; color:${chStyle.color}">
+            ${esc(p.channel)}
+          </span>
+          <span class="font-medium text-slate-200 truncate">${esc(p.title)}</span>
+          ${p.memo ? `<span class="text-[10px] text-slate-400 truncate">(${esc(p.memo)})</span>` : ''}
+        </div>
+        <div class="flex items-center gap-1.5 flex-shrink-0">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded" style="background:${dDay.bg}; color:${dDay.color}">
+            ${dDay.text}
+          </span>
+          <span class="text-[10px] text-slate-400 font-mono">${p.targetDate}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function confirmNotionImport() {
+  if (parsedNotionItems.length === 0) return;
+  if (!state.bufferPlans) state.bufferPlans = [];
+
+  let addedCount = 0;
+  parsedNotionItems.forEach(item => {
+    const exists = state.bufferPlans.some(b => b.title === item.title && b.targetDate === item.targetDate);
+    if (!exists) {
+      state.bufferPlans.push({
+        id: uid(),
+        channel: item.channel,
+        title: item.title,
+        targetDate: item.targetDate,
+        memo: item.memo,
+        completed: false,
+        completedDate: null,
+        createdAt: Date.now()
+      });
+      addedCount++;
+    }
+  });
+
+  saveState();
+  renderBufferPipeline();
+  checkMorningBufferAlert();
+  closeNotionImportModal();
+  sfx('coin');
+  showToast(`🎉 노션 계획 ${addedCount}건이 파이프라인에 등록되었습니다!`, '#10b981');
+}
+
+// ── Manual Add / Edit Modal ──
+function openAddBufferPlanModal() {
+  const modal = document.getElementById('bufferPlanModal');
+  const titleEl = document.getElementById('bufferPlanModalTitle');
+  if (titleEl) titleEl.textContent = '🛡️ 비축분 계획 추가';
+  document.getElementById('editBufferPlanId').value = '';
+  document.getElementById('bufferChannelSelect').value = '티스토리';
+  document.getElementById('bufferCustomChannel').style.display = 'none';
+  document.getElementById('bufferCustomChannel').value = '';
+  document.getElementById('bufferTitleInput').value = '';
+  
+  const defDate = new Date();
+  defDate.setDate(defDate.getDate() + 3);
+  document.getElementById('bufferTargetDateInput').value = dateKey(defDate);
+  document.getElementById('bufferMemoInput').value = '';
+  
+  if (modal) modal.classList.add('show');
+}
+
+function editBufferPlan(id) {
+  const item = (state.bufferPlans || []).find(b => b.id === id);
+  if (!item) return;
+
+  const modal = document.getElementById('bufferPlanModal');
+  const titleEl = document.getElementById('bufferPlanModalTitle');
+  if (titleEl) titleEl.textContent = '✏️ 비축분 계획 수정';
+  document.getElementById('editBufferPlanId').value = id;
+
+  const chanSel = document.getElementById('bufferChannelSelect');
+  const customChan = document.getElementById('bufferCustomChannel');
+  const known = ['티스토리', '네이버블로그', '유튜브', '인스타', '건강', '운동', '공부', '업무'];
+  if (known.includes(item.channel)) {
+    chanSel.value = item.channel;
+    customChan.style.display = 'none';
+    customChan.value = '';
+  } else {
+    chanSel.value = '기타';
+    customChan.style.display = 'block';
+    customChan.value = item.channel || '';
+  }
+
+  document.getElementById('bufferTitleInput').value = item.title || '';
+  document.getElementById('bufferTargetDateInput').value = item.targetDate || todayKey();
+  document.getElementById('bufferMemoInput').value = item.memo || '';
+
+  if (modal) modal.classList.add('show');
+}
+
+function closeBufferPlanModal() {
+  const modal = document.getElementById('bufferPlanModal');
+  if (modal) modal.classList.remove('show');
+}
+
+function saveBufferPlanModal() {
+  const id = document.getElementById('editBufferPlanId').value;
+  const chanSel = document.getElementById('bufferChannelSelect').value;
+  const customChan = document.getElementById('bufferCustomChannel').value.trim();
+  const channel = chanSel === '기타' && customChan ? customChan : chanSel;
+  const title = document.getElementById('bufferTitleInput').value.trim();
+  const targetDate = document.getElementById('bufferTargetDateInput').value;
+  const memo = document.getElementById('bufferMemoInput').value.trim();
+
+  if (!title) {
+    showToast('항목명을 입력해주세요', '#ef4444');
+    return;
+  }
+  if (!targetDate) {
+    showToast('마감 기한을 선택해주세요', '#ef4444');
+    return;
+  }
+
+  if (!state.bufferPlans) state.bufferPlans = [];
+
+  if (id) {
+    const item = state.bufferPlans.find(b => b.id === id);
+    if (item) {
+      item.channel = channel;
+      item.title = title;
+      item.targetDate = targetDate;
+      item.memo = memo;
+    }
+    showToast('비축분 계획이 수정되었습니다.', '#10b981');
+  } else {
+    state.bufferPlans.push({
+      id: uid(),
+      channel,
+      title,
+      targetDate,
+      memo,
+      completed: false,
+      completedDate: null,
+      createdAt: Date.now()
+    });
+    showToast('새로운 비축분이 등록되었습니다.', '#10b981');
+  }
+
+  saveState();
+  renderBufferPipeline();
+  checkMorningBufferAlert();
+  closeBufferPlanModal();
+}
+
+function deleteBufferPlan(id) {
+  if (!confirm('이 비축분 계획을 삭제하시겠습니까?')) return;
+  state.bufferPlans = (state.bufferPlans || []).filter(b => b.id !== id);
+  saveState();
+  renderBufferPipeline();
+  checkMorningBufferAlert();
+  showToast('삭제되었습니다.', '#94a3b8');
+}
+
+function completeBufferPlan(id) {
+  const item = (state.bufferPlans || []).find(b => b.id === id);
+  if (!item) return;
+
+  item.completed = true;
+  item.completedDate = todayKey();
+
+  // RPG Reward: +50 XP, +10 Coins
+  gainXP(50, window.innerWidth / 2, window.innerHeight / 2);
+  state.coins = (state.coins || 0) + 10;
+  renderCurrency();
+  saveState();
+  renderBufferPipeline();
+  checkMorningBufferAlert();
+  sfx('complete');
+  showToast('🎉 비축분 완료! (+50 XP, +10 골드)', '#10b981');
+}
+
+function reopenBufferPlan(id) {
+  const item = (state.bufferPlans || []).find(b => b.id === id);
+  if (!item) return;
+  item.completed = false;
+  item.completedDate = null;
+  saveState();
+  renderBufferPipeline();
+  checkMorningBufferAlert();
+  showToast('비축분이 다시 진행 중으로 변경되었습니다.', '#38bdf8');
+}
+
+function extendBufferPlan(id, days) {
+  const item = (state.bufferPlans || []).find(b => b.id === id);
+  if (!item || !item.targetDate) return;
+  const d = parseKey(item.targetDate);
+  d.setDate(d.getDate() + (days || 3));
+  item.targetDate = dateKey(d);
+  saveState();
+  renderBufferPipeline();
+  checkMorningBufferAlert();
+  sfx('coin');
+  showToast(`📅 기한이 +${days || 3}일 연장되었습니다 (${item.targetDate})`, '#38bdf8');
+}
+
+function convertBufferToQuest(id) {
+  const item = (state.bufferPlans || []).find(b => b.id === id);
+  if (!item) return;
+
+  const tKey = todayKey();
+  const day = state.days[tKey] = state.days[tKey] || { quests: [] };
+  const questText = `[${item.channel}] ${item.title}` + (item.memo ? ` (${item.memo})` : '');
+
+  if (day.quests.some(q => q.text === questText)) {
+    showToast('오늘 퀘스트에 이미 등록되어 있습니다!', '#fbbf24');
+    return;
+  }
+
+  const newQuest = {
+    id: uid(),
+    text: questText,
+    catId: state.categories[0]?.id || 'work',
+    difficulty: 'medium',
+    xp: 25,
+    completed: false
+  };
+
+  day.quests.push(newQuest);
+  saveState();
+  renderQuests();
+  sfx('coin');
+  showToast(`⚔️ "${item.title}" 오늘 퀘스트로 등록되었습니다!`, '#10b981');
+}
+
+// ── Morning Briefing & Top Alert Banner ──
+function checkMorningBufferAlert() {
+  const alertEl = document.getElementById('bufferMorningAlert');
+  if (!alertEl) return;
+
+  const active = (state.bufferPlans || []).filter(p => !p.completed);
+  const dueItems = active.filter(p => getDDay(p.targetDate).days <= 0);
+
+  if (dueItems.length > 0) {
+    const titleEl = document.getElementById('morningAlertTitle');
+    const subEl = document.getElementById('morningAlertSub');
+    if (titleEl) titleEl.textContent = `🚨 오늘 마감 비축분 알림 (${dueItems.length}건)`;
+    if (subEl) subEl.textContent = `"${dueItems[0].title}"${dueItems.length > 1 ? ` 외 ${dueItems.length - 1}건` : ''} 마감이 도래했습니다!`;
+    alertEl.style.display = 'flex';
+  } else {
+    alertEl.style.display = 'none';
+  }
+}
+
+function dismissMorningAlert() {
+  const alertEl = document.getElementById('bufferMorningAlert');
+  if (alertEl) alertEl.style.display = 'none';
+}
+
+function scrollToBufferPipeline() {
+  const target = document.getElementById('bufferPipelineSection');
+  if (target) target.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── Morning Notification Handlers ──
+let morningNotifyTimer = null;
+
+function toggleMorningNotify() {
+  if (!state.morningNotifyOn) {
+    if (!('Notification' in window)) { showToast('이 기기는 알림을 지원하지 않아요', '#ef4444'); return; }
+    Notification.requestPermission().then(p => {
+      if (p === 'granted') {
+        state.morningNotifyOn = true; saveState(); scheduleMorningNotify();
+        showToast('아침 비축분 브리핑 알림이 켜졌어요 🛡️', '#10b981');
+      } else {
+        showToast('알림 권한을 허용해주세요', '#ef4444');
+      }
+      renderSettings();
+    });
+  } else {
+    state.morningNotifyOn = false; saveState();
+    if (morningNotifyTimer) { clearTimeout(morningNotifyTimer); morningNotifyTimer = null; }
+    renderSettings();
+  }
+}
+
+function setMorningNotifyTime(v) {
+  state.morningNotifyTime = v || '08:30';
+  saveState();
+  if (state.morningNotifyOn) scheduleMorningNotify();
+}
+
+function scheduleMorningNotify() {
+  if (morningNotifyTimer) { clearTimeout(morningNotifyTimer); morningNotifyTimer = null; }
+  if (!state.morningNotifyOn || !('Notification' in window) || Notification.permission !== 'granted') return;
+  const [hh, mm] = (state.morningNotifyTime || '08:30').split(':').map(Number);
+  const now = new Date(), next = new Date();
+  next.setHours(hh, mm, 0, 0);
+  if (next <= now) next.setDate(next.getDate() + 1);
+  morningNotifyTimer = setTimeout(() => { fireMorningNotify(); scheduleMorningNotify(); }, next - now);
+}
+
+function fireMorningNotify() {
+  try {
+    const active = (state.bufferPlans || []).filter(p => !p.completed);
+    const dueToday = active.filter(p => getDDay(p.targetDate).days <= 0);
+    const upcoming = active.filter(p => { const d = getDDay(p.targetDate).days; return d >= 1 && d <= 3; });
+
+    let body = '';
+    if (dueToday.length > 0) {
+      body = `🚨 오늘 마감 비축분 ${dueToday.length}건 도래! ("${dueToday[0].title}" 등) 지금 확인하고 발행하세요!`;
+    } else if (upcoming.length > 0) {
+      body = `⚡ 3일 내 마감임박 비축분이 ${upcoming.length}건 있습니다. 미리 비축분을 준비하세요!`;
+    } else if (active.length > 0) {
+      body = `☀️ 오늘 비축분 파이프라인 안전! 갓생을 위해 오늘도 파이팅 🔥`;
+    } else {
+      return;
+    }
+    new Notification('갓생투두 비축분 브리핑 🛡️', { body, icon: 'icons/icon-192.png' });
   } catch (e) {}
 }
 
